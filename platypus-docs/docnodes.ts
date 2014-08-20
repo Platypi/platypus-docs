@@ -1,28 +1,96 @@
 ﻿export module DocNodes {
     export interface INode {
         name: string;
-        parent?: INameSpaceNode;
-        namespaces?: Array<INameSpaceNode>;
+        description?: string;
+        kind: string;
+        published?: boolean;
     }
-    
+
+    export interface IHaveExampleNode {
+        example?: string;
+        exampleurl?: string;
+    }
+
+    export interface IHaveTypeNode {
+        methodtype: IMethodNode;
+        classtype: IClassNode;
+        interfacetype: IInterfaceNode;
+    }
+
+    export interface IRegisteredNode {
+        registeredtype?: string;
+        registeredname?: string;
+    }
+
+    export interface IHaveOverride {
+        overrides?: boolean;
+    }
+
     export interface INameSpaceNode extends INode {
         classes?: Array<IClassNode>;
         interfaces?: Array<IInterfaceNode>;
-        methods?: Array<IMethod>;
+        methods?: Array<IMethodNode>;
     }
 
-    export interface IClassNode extends INode {
-        interfaces?: Array<IInterfaceNode>;
-        methods?: Array<IMethod>;
+    export interface IEvent extends INode {
+        class?: IClassNode;
+        remarks?: string;
+    }
+
+    export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
+        parent?: IClassNode;
+        namespace?: INameSpaceNode;
+        exported?: boolean;
+        remarks?: string;
+        methods?: Array<IMethodNode>;
+        static?: boolean;
     } 
 
-    export interface IInterfaceNode extends INode {
-        interfaces?: Array<IInterfaceNode>;
-        methods?: Array<IMethod>;
+    export interface IInterfaceNode extends INode, IRegisteredNode {
+        namespace?: INameSpaceNode;
+        remarks?: string;
+        exported?: boolean;
+        methods?: Array<IMethodNode>;
     }
 
-    export interface IMethod extends INode {
-        parameters: Array<IClassNode>;
-        return: IClassNode;
+    export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
+        interfaceNode?: IInterfaceNode;
+        namespaceNode?: INameSpaceNode;
+        classNode?: IClassNode;
+        remarks?: string;
+        visibility?: string;
+        static?: boolean;
+        returntype?: string;
+        returntypedesc?: string;
+        returntypemethod?: IMethodNode;
+        returntypeinterface?: IInterfaceNode;
+        returnttypeclass?: IClassNode;
+        returntypenamespace?: INameSpaceNode;
+        optional?: boolean;
+        parameters: Array<IParameterNode>;
     }
+
+    export interface IParameterNode extends INode, IHaveTypeNode {
+        method?: IMethodNode;
+        type?: string;
+        defaultvalue?: string;
+        optional?: boolean;
+        porder?: string;
+    }
+
+    export interface IPropertyNode extends INode, IHaveTypeNode, IHaveOverride {
+        interface?: IInterfaceNode;
+        namespace?: INameSpaceNode;
+        class?: IClassNode;
+        type?: string;
+        remarks?: string;
+        visibility?: string;
+        static?: boolean;
+        readonly?: boolean;
+        returntypedesc?: string;
+        optional?: boolean;
+    }
+
+
+
 }
