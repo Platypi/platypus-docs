@@ -1,30 +1,28 @@
 ﻿module DocNodes {
-    export interface INameSpaceNode {
+    export interface INode {
         name: string;
         parent?: INameSpaceNode;
         namespaces?: Array<INameSpaceNode>;
+    }
+    
+    export interface INameSpaceNode extends INode {
         classes?: Array<IClassNode>;
         interfaces?: Array<IInterfaceNode>;
         methods?: Array<IMethod>;
     }
 
-    export interface IClassNode {
-        name: string;
-        parent?: IClassNode;
-        namespace?: INameSpaceNode;
+    export interface IClassNode extends INode {
         interfaces?: Array<IInterfaceNode>;
         methods?: Array<IMethod>;
     } 
 
-    export interface IInterfaceNode {
-        name: string;
-        parent?: IInterfaceNode;
-        namespace?: INameSpaceNode;
+    export interface IInterfaceNode extends INode {
         interfaces?: Array<IInterfaceNode>;
         methods?: Array<IMethod>;
     }
 
-    export interface IMethod {
-        name: string;
+    export interface IMethod extends INode {
+        parameters: Array<IClassNode>;
+        return: IClassNode;
     }
 }
