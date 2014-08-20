@@ -4,6 +4,5 @@
     "author":  "Donald Jones <donald@getplatypi.com",
     "main":  "docgen.js",
     "dependencies":  {
-        "comment-parser": "latest"
     }
 }
