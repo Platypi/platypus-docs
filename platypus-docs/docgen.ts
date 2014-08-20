@@ -50,6 +50,15 @@ export module DocGen {
                 properties: []
             };
 
+            var flat: {
+                namespaces: Array<DocNodeTypes.INameSpaceNode>[];
+                interfaces: Array<DocNodeTypes.IInterfaceNode>[];
+                classes: Array<DocNodeTypes.IClassNode>[];
+                methods: Array<DocNodeTypes.IMethodNode>[];
+                properties: Array<DocNodeTypes.IPropertyNode>[];
+                events: Array<DocNodeTypes.IEvent>[];
+            };
+
             for (var i = 0; i < tags.length; i++) {
                 var tmpObj:any = {};
                 for (var j = 0; j < tags[i].length; j++) {
@@ -72,16 +81,7 @@ export module DocGen {
                                 published: true
                             };
 
-                            switch (member.kind) {
-                                case 'class':
-                                    break;
-                                case 'interface':
-                                    break;
-                                case 'namespace':
-                                    newMethod.namespaceNode = member;
-                                    member.methods.push(newMethod);
-                                    break;
-                            }
+
 
                             break;
                         case 'property':
@@ -107,3 +107,15 @@ export module DocGen {
         description: string;
     }
 }
+
+// for future function to determine what kind to push new node to
+//switch (member.kind) {
+//    case 'class':
+//        break;
+//    case 'interface':
+//        break;
+//    case 'namespace':
+//        newMethod.namespaceNode = member;
+//        member.methods.push(newMethod);
+//        break;
+//}

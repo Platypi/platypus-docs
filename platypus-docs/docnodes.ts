@@ -28,6 +28,7 @@ export interface IHaveOverride {
 export interface INameSpaceNode extends INode {
     parent?: INameSpaceNode;
     classes?: Array<IClassNode>;
+    namespaces?: Array<INameSpaceNode>;
     interfaces?: Array<IInterfaceNode>;
     methods?: Array<IMethodNode>;
     properties?: Array<IPropertyNode>;
