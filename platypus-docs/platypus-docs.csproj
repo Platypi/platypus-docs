@@ -19,6 +19,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="docgen.ts" />
     <TypeScriptCompile Include="docnodes.ts" />
+    <TypeScriptCompile Include="index.ts" />
     <TypeScriptCompile Include="typings\node\node.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
   </ItemGroup>

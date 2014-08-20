@@ -1,4 +1,4 @@
-﻿module DocNodes {
+﻿export module DocNodes {
     export interface INode {
         name: string;
         parent?: INameSpaceNode;
