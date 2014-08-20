@@ -1,8 +1,9 @@
 {
-    "name":  "platypus-docs",
-    "description":  "Document generation tool for TypeScript projects.",
-    "author":  "Donald Jones <donald@getplatypi.com",
-    "main":  "docgen.js",
-    "dependencies":  {
+    "name": "platypus-docs",
+    "description": "Document generation tool for TypeScript projects.",
+    "author": "Donald Jones <donald@getplatypi.com",
+    "main": "docgen.js",
+    "dependencies": {
+        "comment-parser": "git+https://github.com/pwdonald/comment-parser.git"
     }
 }
