@@ -78,7 +78,7 @@ export module DocGen {
                 namespaces: [],
                 interfaces: [],
                 classes: [],
-                methods: [][],
+                methods: {},
                 properties: [],
                 events: []
             };
@@ -152,17 +152,16 @@ export module DocGen {
                                     };
                                     newMethod.parameters.push(newParameter);
                                 }
-
                             }
 
-                            flat.methods[newMethod.name].push(newMethod);
+                            var methodName = (newMethod.name !== '') ? newMethod.name : '()';
 
-                            //if (!(flat.methods[newMethod.name] instanceof Array)) {
-                            //    flat.methods[newMethod.name] = [];
-                            //} else {
-                                
-                            //}
-                            //flat.methods.push(newMethod.name, newMethod);
+                            if (!(flat.methods[methodName] instanceof Array)) {
+                                flat.methods[methodName] = [];
+                            }
+
+                            flat.methods[methodName].push(newMethod);
+                            
                             break;
                         case 'property':
                             if (!tmpObj.description) {
@@ -223,7 +222,7 @@ export module DocGen {
                                 kind: tmpObj.kind.name,
                                 description: tmpObj.description.description,
                                 published: (!tmpObj.published ? true : tmpObj.published),
-                                exported: (!tmpObj.exported ? true : tmpObj.exported),
+                                exported: (!tmpObj.exported ? true : tmpObj.exported.name !== 'false'),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
                                 //methods
                             };
