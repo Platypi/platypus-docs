@@ -174,7 +174,6 @@ public/img/uploads/
 !Gruntfile.js
 !public/css/lib/flat-ui.css
 server/iisnode
-test-data/
 output.txt
 output.json
 *.log

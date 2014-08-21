@@ -15,7 +15,7 @@ export module DocGen {
                 if (!err) {
                     this.__grabTags(data, (tags: Array<Array<ITag>>) => {
                         this.__treeGen(data, (tree: any) => {
-                            console.log(JSON.stringify(tree));
+                            console.log(JSON.stringify(tree, null, 4));
                         });
                     });
                 } else {
