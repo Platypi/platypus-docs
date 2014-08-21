@@ -106,6 +106,13 @@ export module DocGen {
                             tmpObj.params.push(t);
                         }
                     }
+
+                    if (t.tag !== 'implements') {
+                        tmpObj[t.tag] = t;
+                    } else {
+                        tmpObj.implements = new Array<ITag>();
+                        tmpObj.implements.push(t);
+                    }
                 }
 
                 if (tmpObj.kind) {
@@ -183,10 +190,23 @@ export module DocGen {
                                 //parent (extends)
                                 parent: (tmpObj['extends'] ? tmpObj['extends'].type : ''),
                                 //namespace (memberof)
-                                namespace: (tmpObj.namespace ? tmpObj.namespace.type : '')
+                                namespace: (tmpObj.namespace ? tmpObj.namespace.type : ''),
+                                interfaces: []
                             };
 
                             //interfaces (implements) treat like params
+                            if (tmpObj.implements) {
+                                for (var k in tmpObj.implements) {
+                                    var tag = tmpObj.implements[k],
+                                        newInterface: DocNodeTypes.IInterfaceNode = {
+                                            name: tag.name,
+                                            kind: 'interface'
+                                        };
+                                    newClass.interfaces.push(newInterface);
+                                }
+                            }
+
+
                             flat.classes.push(newClass);
                             break;
                         case 'interface':

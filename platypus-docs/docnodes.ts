@@ -47,6 +47,7 @@ export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
     remarks?: string;
     methods?: Array<IMethodNode>;
     static?: boolean;
+    interfaces?: Array<IInterfaceNode>;
 }
 
 export interface IInterfaceNode extends INode, IRegisteredNode {
