@@ -150,6 +150,9 @@ export module DocGen {
                             flat.methods.push(newMethod);
                             break;
                         case 'property':
+                            if (!tmpObj.description) {
+                                console.log(tmpObj);
+                            }
                             var newProperty: DocNodeTypes.IPropertyNode = {
                                 name: tmpObj.name.name,
                                 description: tmpObj.description.description,
