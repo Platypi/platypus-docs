@@ -71,14 +71,14 @@ export module DocGen {
                 namespaces: Array<DocNodeTypes.INameSpaceNode>;
                 interfaces: Array<DocNodeTypes.IInterfaceNode>;
                 classes: Array<DocNodeTypes.IClassNode>;
-                methods: Array<DocNodeTypes.IMethodNode>;
+                methods: { [name:string]: Array<DocNodeTypes.IMethodNode> };
                 properties: Array<DocNodeTypes.IPropertyNode>;
                 events: Array<DocNodeTypes.IEvent>;
             } = {
                 namespaces: [],
                 interfaces: [],
                 classes: [],
-                methods: [],
+                methods: [][],
                 properties: [],
                 events: []
             };
@@ -152,9 +152,17 @@ export module DocGen {
                                     };
                                     newMethod.parameters.push(newParameter);
                                 }
+
                             }
 
-                            flat.methods.push(newMethod);
+                            flat.methods[newMethod.name].push(newMethod);
+
+                            //if (!(flat.methods[newMethod.name] instanceof Array)) {
+                            //    flat.methods[newMethod.name] = [];
+                            //} else {
+                                
+                            //}
+                            //flat.methods.push(newMethod.name, newMethod);
                             break;
                         case 'property':
                             if (!tmpObj.description) {
