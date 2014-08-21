@@ -127,7 +127,7 @@ export module DocGen {
                                 exported: (!tmpObj.exported ? true : false),
                                 typeparamaters: (tmpObj.typeparam ? tmpObj.typeparam.name : ''),
                                 returnType: (tmpObj.returns ? tmpObj.returns.type : ''),
-                                returntypedesc: (tmpObj.returns ? tmpObj.returns.description : ''),
+                                returntypedesc: (tmpObj.returns ? tmpObj.returns.name + tmpObj.returns.description : ''),
                                 optional: (tmpObj.optional ? true : false),
                                 parameters: [],
                                 published: true
