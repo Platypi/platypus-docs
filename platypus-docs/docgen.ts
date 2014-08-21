@@ -5,6 +5,10 @@ import DocNodeTypes = require('./docnodes');
 var parser = require('comment-parser');
 
 export module DocGen {
+    
+    /**
+     * Generate Docs from source file.
+     */
     export class DocGenerator {
         fromFile = (filename: string) => {
             parser.file(filename, (err: any, data: any) => {
@@ -20,6 +24,9 @@ export module DocGen {
             });
         };
 
+        /**
+         * Populate the tags from comments into an array.
+         */
         private __grabTags = (data: Array<any>, callback: (tags: Array<Array<ITag>>) => void) => {
             var tags: Array<Array<ITag>> = [],
                 unmatchedTags = [];
@@ -37,6 +44,9 @@ export module DocGen {
             callback(tags);
         };
 
+        /**
+         * Generate a tree structure of tags as they appear in code.
+         */
         private __treeGen = (tags: any, callback: (tree: any) => void) => {
             var tree: {
                 [index: string]: DocNodeTypes.INameSpaceNode
@@ -52,6 +62,11 @@ export module DocGen {
                 properties: []
             };
 
+            /*
+             * First run through will generate a flat 
+             * data structure as we may not yet have all the tags
+             * need to reference each other in memory.
+             */
             var flat: {
                 namespaces: Array<DocNodeTypes.INameSpaceNode>;
                 interfaces: Array<DocNodeTypes.IInterfaceNode>;
@@ -68,12 +83,19 @@ export module DocGen {
                 events: []
             };
 
-
+            /**
+             * Two loops are needed as the output of the parser 
+             * results in nested tags.
+             */
             for (var k in tags) {
+
+                // tmpObj stores the tags in an object so they can be referenced by name.
                 var tmpObj: any = {};
 
                 for (var l in tags[k].tags) {
                     var t = tags[k].tags[l];
+
+                    // There can be multiple params for a given comment.
                     if (t.tag !== 'param') {
                         tmpObj[t.tag] = t;
                     } else {
@@ -104,13 +126,14 @@ export module DocGen {
                                     remarks: tmpObj.remarks,
                                     exported: (!tmpObj.exported ? true : false),
                                     typeparamaters: (tmpObj.typeparam ? tmpObj.typeparam.name : ''),
-                                    returnType: (tmpObj.returns ? tmpObj.returns.name : ''),
+                                    returnType: (tmpObj.returns ? tmpObj.returns.type : ''),
                                     returntypedesc: (tmpObj.returns ? tmpObj.returns.description : ''),
                                     optional: (tmpObj.optional ? true : false),
                                     parameters: [],
                                     published: true
                                 };
 
+                                // push the params onto the tmpObj
                                 if (tmpObj.params) {
                                     for (var z = 0; z < tmpObj.params.length; z++) {
                                         var newParameter: DocNodeTypes.IParameterNode = {
@@ -129,6 +152,27 @@ export module DocGen {
                             }
                             break;
                         case 'property':
+                            if (tmpObj.name) {
+                                var newProperty: DocNodeTypes.IPropertyNode = {
+                                    name: tmpObj.name,
+                                    description: tmpObj.description,
+                                    kind: tmpObj.kind.name,
+                                    published: (!tmpObj.published ? true : tmpObj.published),
+                                    exported: (!tmpObj.exported ? true : tmpObj.exported),
+                                    //interface
+                                    //namespace
+                                    //class
+                                    type: tmpObj.type.type,
+                                    remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
+                                    visibility: tmpObj.access.name,
+                                    static: (tmpObj.static ? true : false),
+                                    readonly: (tmpObj.readonly ? true : false),
+                                    //returntypedesc: 
+                                    optional: (tmpObj.optional ? true : false)
+                                };
+
+                                flat.properties.push(newProperty);
+                            }
                             break;
                         case 'class':
                             break;
