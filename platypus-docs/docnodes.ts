@@ -3,6 +3,7 @@
     description?: string;
     kind: string;
     published?: boolean;
+    exported?: boolean;
 }
 
 export interface IHaveExampleNode {
@@ -11,9 +12,9 @@ export interface IHaveExampleNode {
 }
 
 export interface IHaveTypeNode {
-    methodtype: IMethodNode;
-    classtype: IClassNode;
-    interfacetype: IInterfaceNode;
+    methodtype?: IMethodNode;
+    classtype?: IClassNode;
+    interfacetype?: IInterfaceNode;
 }
 
 export interface IRegisteredNode {
@@ -62,6 +63,7 @@ export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     remarks?: string;
     visibility?: string;
     static?: boolean;
+    typeparamaters?: Array<IParameterNode>;
     returntype?: string;
     returntypedesc?: string;
     returntypemethod?: IMethodNode;
