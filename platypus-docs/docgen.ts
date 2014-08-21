@@ -68,19 +68,19 @@ export module DocGen {
              * need to reference each other in memory.
              */
             var flat: {
-                namespaces: Array<DocNodeTypes.INameSpaceNode>;
-                interfaces: Array<DocNodeTypes.IInterfaceNode>;
-                classes: Array<DocNodeTypes.IClassNode>;
+                namespaces: { [name: string]: DocNodeTypes.INameSpaceNode };
+                interfaces: { [name: string]: DocNodeTypes.IInterfaceNode };
+                classes: { [name: string]: DocNodeTypes.IClassNode };
                 methods: { [name:string]: Array<DocNodeTypes.IMethodNode> };
-                properties: Array<DocNodeTypes.IPropertyNode>;
-                events: Array<DocNodeTypes.IEvent>;
+                properties: {[name: string]: DocNodeTypes.IPropertyNode};
+                events: {[name:string]: DocNodeTypes.IEvent};
             } = {
-                namespaces: [],
-                interfaces: [],
-                classes: [],
+                namespaces: {},
+                interfaces: {},
+                classes: {},
                 methods: {},
-                properties: [],
-                events: []
+                properties: {},
+                events: {}
             };
 
             /**
@@ -184,7 +184,8 @@ export module DocGen {
                                 optional: (tmpObj.optional ? true : false)
                             };
 
-                            flat.properties.push(newProperty);
+                            flat.properties[newProperty.name] = newProperty;
+                            //flat.properties.push(newProperty);
                             break;
                         case 'class':
                             var newClass: DocNodeTypes.IClassNode = {
@@ -213,8 +214,8 @@ export module DocGen {
                                 }
                             }
 
-
-                            flat.classes.push(newClass);
+                            flat.classes[newClass.name] = newClass;
+                            //flat.classes.push(newClass);
                             break;
                         case 'interface':
                             var newInterface: DocNodeTypes.IInterfaceNode = {
@@ -226,7 +227,8 @@ export module DocGen {
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
                                 //methods
                             };
-                            flat.interfaces.push(newInterface);
+                            flat.interfaces[newInterface.name] = newInterface;
+                            //flat.interfaces.push(newInterface);
                             break;
                         case 'event':
                             var newEvent: DocNodeTypes.IEvent = {
@@ -240,7 +242,8 @@ export module DocGen {
                                 class: tmpObj.class.name
                             };
 
-                            flat.events.push(newEvent);
+                            flat.events[newEvent.name] = newEvent;
+                            //flat.events.push(newEvent);
                             break;
                         case 'namespace':
                             var newNamespace: DocNodeTypes.INameSpaceNode = {
@@ -252,7 +255,8 @@ export module DocGen {
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
                             };
 
-                            flat.namespaces.push(newNamespace);
+                            flat.namespaces[newNamespace.name] = newNamespace;
+                            //flat.namespaces.push(newNamespace);
                             break;
                     }
                 }
