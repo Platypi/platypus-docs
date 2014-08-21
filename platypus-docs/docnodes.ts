@@ -4,6 +4,7 @@
     kind: string;
     published?: boolean;
     exported?: boolean;
+    memberof?: string;
 }
 
 export interface IHaveExampleNode {

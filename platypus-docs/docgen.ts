@@ -45,6 +45,28 @@ export module DocGen {
         };
 
         /**
+         * Return a node by its fully qualified name
+         * If a node is not found the deepest node found will be returned.
+         */
+        private __findNode = (fullyQualifiedName: string, tree: any, callback: (node: any) => void) => {
+            var names = fullyQualifiedName.split('.'),
+                current = names.shift(),
+                deepest = tree;
+
+            while (!!current) {
+                if (deepest[current]) {
+                    deepest = deepest[current];
+                    current = names.shift();
+                } else {
+                    // can't go any deeper
+                    return callback(fullyQualifiedName);
+                }
+            }
+
+            callback(deepest);
+        };
+
+        /**
          * Generate a tree structure of tags as they appear in code.
          */
         private __treeGen = (tags: any, callback: (tree: any) => void) => {
@@ -107,6 +129,7 @@ export module DocGen {
                         }
                     }
 
+                    // There can be multiple interfaces that a class implements
                     if (t.tag !== 'implements') {
                         tmpObj[t.tag] = t;
                     } else {
@@ -137,7 +160,8 @@ export module DocGen {
                                 returntypedesc: (tmpObj.returns ? tmpObj.returns.name + ' ' + tmpObj.returns.description : ''),
                                 optional: (tmpObj.optional ? true : false),
                                 parameters: [],
-                                published: true
+                                published: true,
+                                memberof: memberof
                             };
 
                             // push the params onto the tmpObj
@@ -181,11 +205,12 @@ export module DocGen {
                                 visibility: tmpObj.access.name,
                                 static: (tmpObj.static ? true : false),
                                 readonly: (tmpObj.readonly ? true : false),
-                                optional: (tmpObj.optional ? true : false)
+                                optional: (tmpObj.optional ? true : false),
+                                memberof: memberof
                             };
 
                             flat.properties[newProperty.name] = newProperty;
-                            //flat.properties.push(newProperty);
+
                             break;
                         case 'class':
                             var newClass: DocNodeTypes.IClassNode = {
@@ -199,7 +224,8 @@ export module DocGen {
                                 parent: (tmpObj['extends'] ? tmpObj['extends'].type : ''),
                                 //namespace (memberof)
                                 namespace: (tmpObj.namespace ? tmpObj.namespace.type : ''),
-                                interfaces: []
+                                interfaces: [],
+                                memberof: memberof
                             };
 
                             //interfaces (implements) treat like params
@@ -215,7 +241,7 @@ export module DocGen {
                             }
 
                             flat.classes[newClass.name] = newClass;
-                            //flat.classes.push(newClass);
+                            
                             break;
                         case 'interface':
                             var newInterface: DocNodeTypes.IInterfaceNode = {
@@ -225,7 +251,8 @@ export module DocGen {
                                 published: (!tmpObj.published ? true : tmpObj.published),
                                 exported: (!tmpObj.exported ? true : tmpObj.exported.name !== 'false'),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
-                                //methods
+                                //methods,
+                                memberof: memberof
                             };
                             flat.interfaces[newInterface.name] = newInterface;
                             //flat.interfaces.push(newInterface);
@@ -239,11 +266,12 @@ export module DocGen {
                                 exported: (!tmpObj.exported ? true : tmpObj.exported),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
                                 //class @class
-                                class: tmpObj.class.name
+                                class: tmpObj.class.name,
+                                memberof: memberof
                             };
 
                             flat.events[newEvent.name] = newEvent;
-                            //flat.events.push(newEvent);
+                            
                             break;
                         case 'namespace':
                             var newNamespace: DocNodeTypes.INameSpaceNode = {
@@ -253,10 +281,11 @@ export module DocGen {
                                 published: (!tmpObj.published ? true : tmpObj.published),
                                 exported: (!tmpObj.exported ? true : tmpObj.exported),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
+                                memberof: memberof
                             };
 
                             flat.namespaces[newNamespace.name] = newNamespace;
-                            //flat.namespaces.push(newNamespace);
+                            
                             break;
                     }
                 }
