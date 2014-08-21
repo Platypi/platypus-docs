@@ -199,7 +199,7 @@ export module DocGen {
                                 for (var k in tmpObj.implements) {
                                     var tag = tmpObj.implements[k],
                                         newInterface: DocNodeTypes.IInterfaceNode = {
-                                            name: tag.name,
+                                            name: tag.type,
                                             kind: 'interface'
                                         };
                                     newClass.interfaces.push(newInterface);
