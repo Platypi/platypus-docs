@@ -37,7 +37,7 @@ export module DocGen {
             callback(tags);
         };
 
-        private __treeGen = (tags: Array<Array<ITag>>, callback: (tree: any) => void) => {
+        private __treeGen = (tags: any, callback: (tree: any) => void) => {
             var tree: {
                 [index: string]: DocNodeTypes.INameSpaceNode
             } = {};
@@ -53,20 +53,27 @@ export module DocGen {
             };
 
             var flat: {
-                namespaces: Array<DocNodeTypes.INameSpaceNode>[];
-                interfaces: Array<DocNodeTypes.IInterfaceNode>[];
-                classes: Array<DocNodeTypes.IClassNode>[];
-                methods: Array<DocNodeTypes.IMethodNode>[];
-                properties: Array<DocNodeTypes.IPropertyNode>[];
-                events: Array<DocNodeTypes.IEvent>[];
+                namespaces: Array<DocNodeTypes.INameSpaceNode>;
+                interfaces: Array<DocNodeTypes.IInterfaceNode>;
+                classes: Array<DocNodeTypes.IClassNode>;
+                methods: Array<DocNodeTypes.IMethodNode>;
+                properties: Array<DocNodeTypes.IPropertyNode>;
+                events: Array<DocNodeTypes.IEvent>;
+            } = {
+                namespaces: [],
+                interfaces: [],
+                classes: [],
+                methods: [],
+                properties: [],
+                events: []
             };
 
 
             for (var k in tags) {
                 var tmpObj: any = {};
 
-                for (var l in tags[k]) {
-                    var t = tags[k][l];
+                for (var l in tags[k].tags) {
+                    var t = tags[k].tags[l];
                     if (t.tag !== 'param') {
                         tmpObj[t.tag] = t;
                     } else {
@@ -79,43 +86,47 @@ export module DocGen {
                     }
                 }
 
-                //console.log(tmpObj);
-
                 if (tmpObj.kind) {
                     var kind: string = (<string>tmpObj.kind.name).trim().toLowerCase(),
-                        memberof: string = (<string>tmpObj.memberof.name).trim().toLowerCase();
+                        memberof: string = (tmpObj.memberof ? (<string>tmpObj.memberof.name).trim().toLowerCase() : '');
 
                     switch (kind) {
                         case 'function':
-                            var member = tree[memberof];
-                            var newMethod: DocNodeTypes.IMethodNode = {
-                                name: tmpObj.name.name,
-                                description: tmpObj.description.descrption,
-                                kind: tmpObj.kind.name,
-                                overrides: (tmpObj.variation ? true : false),
-                                visibility: tmpObj.access.name,
-                                static: (tmpObj.static ? true : false),
-                                remarks: tmpObj.remarks,
-                                exported: (!tmpObj.exported ? true : false),
-                                typeparamaters: tmpObj.typeparam.name,
-                                returnType: tmpObj.returns.name,
-                                returntypedesc: tmpObj.returns.description,
-                                optional: (tmpObj.optional ? true : false),
-                                parameters: [],
-                                published: true
-                            };
-
-                            for (var z = 0; z < tmpObj.params.length; z++) {
-                                var newParameter: DocNodeTypes.IParameterNode = {
-                                    name: tmpObj.params[z].name,
-                                    kind: tmpObj.params[z].kind,
-                                    description: tmpObj.params[z].description,
-                                    published: true,
+                            if (tmpObj.name) {
+                                //var member = tree[memberof];
+                                var newMethod: DocNodeTypes.IMethodNode = {
+                                    name: tmpObj.name.name,
+                                    description: tmpObj.description.descrption,
+                                    kind: tmpObj.kind.name,
+                                    overrides: (tmpObj.variation ? true : false),
+                                    visibility: tmpObj.access.name,
+                                    static: (tmpObj.static ? true : false),
+                                    remarks: tmpObj.remarks,
                                     exported: (!tmpObj.exported ? true : false),
+                                    typeparamaters: (tmpObj.typeparam ? tmpObj.typeparam.name : ''),
+                                    returnType: (tmpObj.returns ? tmpObj.returns.name : ''),
+                                    returntypedesc: (tmpObj.returns ? tmpObj.returns.description : ''),
+                                    optional: (tmpObj.optional ? true : false),
+                                    parameters: [],
+                                    published: true
                                 };
-                                newMethod.parameters.push(newParameter);
+
+                                if (tmpObj.params) {
+                                    for (var z = 0; z < tmpObj.params.length; z++) {
+                                        var newParameter: DocNodeTypes.IParameterNode = {
+                                            name: tmpObj.params[z].name,
+                                            kind: tmpObj.params[z].kind,
+                                            description: tmpObj.params[z].description,
+                                            published: true,
+                                            exported: (!tmpObj.exported ? true : false),
+                                        };
+                                        newMethod.parameters.push(newParameter);
+                                    }
+                                }
+
+                                (<any>flat.methods).push(newMethod);
+
                             }
-                            (<any>flat.methods).push(newMethod);
                             break;
                         case 'property':
                             break;
