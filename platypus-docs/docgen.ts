@@ -83,16 +83,6 @@ export module DocGen {
                 [index: string]: DocNodeTypes.INameSpaceNode
             } = {};
 
-            //tree['plat'] = {
-            //    name: 'plat',
-            //    kind: 'namespace',
-            //    namespaces: [],
-            //    interfaces: [],
-            //    classes: [],
-            //    methods: [],
-            //    properties: []
-            //};
-
             /*
              * First run through will generate a flat 
              * data structure as we may not yet have all the tags
@@ -388,60 +378,11 @@ export module DocGen {
                 parentNode[childContainer] = {};
             }
 
-            //(<Array<DocNodeTypes.INode>>parent[childContainer]).push(childNode);
             parent[childContainer][childNode.name.toLowerCase()] = childNode;
 
-            //var namespacePre = (parent.memberof ? parent.memberof : parent.name).toLocaleLowerCase();
             var namespacePre = childNode.memberof.toLocaleLowerCase();
 
             this.nameHash[namespacePre + '.' + childNode.name.toLocaleLowerCase()] = parent[childContainer][childNode.name.toLowerCase()];
-            
-            //var parentKind = parentNode.kind;
-            //switch (parentKind) {
-            //    case 'namespace':
-            //        var namespaceNode = (<DocNodeTypes.INameSpaceNode>parentNode),
-            //            childContainer = this.__nodeContainer(childNode);
-
-            //        (<Array<DocNodeTypes.INode>> namespaceNode[childContainer]).push(childNode);
-            //        break;
-            //    case 'interface':
-            //        var interfaceNode = (<DocNodeTypes.IInterfaceNode>parentNode),
-            //            childcontainer = this.__nodeContainer(childNode);
-
-            //        (<Array<DocNodeTypes.INode>> interfaceNode[childcontainer]).push(childNode);
-            //        break;
-            //    case 'class': 
-            //        var classNode = (<DocNodeTypes.IClassNode>parentNode),
-            //            childcontainer = this.__nodeContainer(childNode);
-
-            //        (<Array<DocNodeTypes.INode>> classNode[childcontainer]).push(childNode);
-            //        break;
-            //    case 'function': 
-            //        var methodNode = (<DocNodeTypes.IMethodNode>parentNode),
-            //            childcontainer = this.__nodeContainer(childNode);
-
-            //        (<Array<DocNodeTypes.INode>> methodNode[childcontainer]).push(childNode);
-            //        break;
-            //    case 'parameter':
-            //        var parameterNode = (<DocNodeTypes.IParameterNode>parentNode),
-            //            childcontainer = this.__nodeContainer(childNode);
-
-            //        (<Array<DocNodeTypes.INode>> parameterNode[childcontainer]).push(childNode);
-            //        break;
-            //    case 'property':
-            //        var propertyNode = (<DocNodeTypes.IPropertyNode>parentNode),
-            //            childcontainer = this.__nodeContainer(childNode);
-
-            //        (<Array<DocNodeTypes.INode>> propertyNode[childcontainer]).push(childNode);
-            //        break;
-            //    case 'event':
-            //        var eventNode = (<DocNodeTypes.IEvent>parentNode),
-            //            childcontainer = this.__nodeContainer(childNode);
-
-            //        (<Array<DocNodeTypes.INode>> eventNode[childcontainer]).push(childNode);
-            //        break;
-            //}
-
         };
 
         private __nodeContainer = (node: DocNodeTypes.INode) => {
