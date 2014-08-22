@@ -94,13 +94,15 @@ export module DocGen {
                 interfaces: { [name: string]: DocNodeTypes.IInterfaceNode };
                 classes: { [name: string]: DocNodeTypes.IClassNode };
                 methods: { [name:string]: Array<DocNodeTypes.IMethodNode> };
-                properties: {[name: string]: DocNodeTypes.IPropertyNode};
+                properties: { [name: string]: DocNodeTypes.IPropertyNode };
+                parameters: { [name: string]: DocNodeTypes.IParameterNode };
                 events: {[name:string]: DocNodeTypes.IEvent};
             } = {
                 namespaces: {},
                 interfaces: {},
                 classes: {},
                 methods: {},
+                parameters: {},
                 properties: {},
                 events: {}
             };
@@ -298,7 +300,7 @@ export module DocGen {
                             this.__findNode(currentNamespace.memberof, tree, (node) => {
                                 parent = node;
                                 currentNamespace.parent = parent;
-                                (<DocNodeTypes.INameSpaceNode>parent).namespaces.push(currentNamespace);
+                                this.__appendChild(currentInterface, parent);
                             });
                         } else {
                             tree[currentNamespace.name] = currentNamespace;
@@ -312,45 +314,139 @@ export module DocGen {
 
                         this.__findNode(currentInterface.memberof, tree, (node) => {
                             parent = node;
-                            
+                            this.__appendChild(currentInterface, parent);
                         });
-                        
                     }
 
                     //classes
+                    for (var classNode in flat.classes) {
+                        var currentClass = flat.classes[classNode],
+                            parent = null;
+
+                        this.__findNode(currentClass.memberof, tree, (node) => {
+                            parent = node;
+                            this.__appendChild(currentClass, parent);
+                        });
+                    }
 
                     //methods
+                    for (var methodArrayNode in flat.methods) {
+                        for (var methodNode in flat.methods[methodArrayNode]) {
+                            var currentMethod = flat.methods[methodArrayNode][methodNode],
+                                parent = null;
 
-                    //events
+                            this.__findNode(currentMethod.memberof, tree, (node) => {
+                                parent = node;
+                                this.__appendChild(currentMethod, parent);
+                            });
+                        }
+                    }
 
                     //properties
+                    for (var propertyNode in flat.properties) {
+                        var currentProperty = flat.properties[propertyNode],
+                            parent = null;
+
+                        this.__findNode(currentProperty.memberof, tree, (node) => {
+                            parent = node;
+                            this.__appendChild(currentProperty, parent);
+                        });
+                    }
+
+                    //events
+                    for (var eventNode in flat.events) {
+                        var currentEvent = flat.events[eventNode],
+                            parent = null;
+
+                        this.__findNode(currentEvent.memberof, tree, (node) => {
+                            parent = node;
+                            this.__appendChild(currentMethod, parent);
+                        });
+                    }
                 }
             }
 
-            callback(flat);
+            callback(tree);
         };
 
-        private __appendChild = (childNode: DocNodeTypes.INode, parentNode: DocNodeTypes.INode): DocNodeTypes.INode => {
-            var parentKind = parentNode.kind,
-                childKind = parentNode.kind;
+        private __appendChild = (childNode: DocNodeTypes.INode, parentNode: DocNodeTypes.INode): void => {
+            var parentKind = parentNode.kind;
 
             switch (parentKind) {
                 case 'namespace':
+                    var namespaceNode = (<DocNodeTypes.INameSpaceNode>parentNode),
+                        childContainer = this.__nodeContainer(childNode);
+
+                    (<Array<DocNodeTypes.INode>> namespaceNode[childContainer]).push(childNode);
                     break;
                 case 'interface':
+                    var interfaceNode = (<DocNodeTypes.IInterfaceNode>parentNode),
+                        childcontainer = this.__nodeContainer(childNode);
+
+                    (<Array<DocNodeTypes.INode>> interfaceNode[childcontainer]).push(childNode);
                     break;
                 case 'class': 
+                    var classNode = (<DocNodeTypes.IClassNode>parentNode),
+                        childcontainer = this.__nodeContainer(childNode);
+
+                    (<Array<DocNodeTypes.INode>> classNode[childcontainer]).push(childNode);
                     break;
                 case 'function': 
+                    var methodNode = (<DocNodeTypes.IMethodNode>parentNode),
+                        childcontainer = this.__nodeContainer(childNode);
+
+                    (<Array<DocNodeTypes.INode>> methodNode[childcontainer]).push(childNode);
                     break;
-                case 'method':
+                case 'parameter':
+                    var parameterNode = (<DocNodeTypes.IParameterNode>parentNode),
+                        childcontainer = this.__nodeContainer(childNode);
+
+                    (<Array<DocNodeTypes.INode>> parameterNode[childcontainer]).push(childNode);
                     break;
                 case 'property':
+                    var propertyNode = (<DocNodeTypes.IPropertyNode>parentNode),
+                        childcontainer = this.__nodeContainer(childNode);
+
+                    (<Array<DocNodeTypes.INode>> propertyNode[childcontainer]).push(childNode);
                     break;
                 case 'event':
+                    var eventNode = (<DocNodeTypes.IEvent>parentNode),
+                        childcontainer = this.__nodeContainer(childNode);
+
+                    (<Array<DocNodeTypes.INode>> eventNode[childcontainer]).push(childNode);
                     break;
             }
 
+        };
+
+        private __nodeContainer = (node: DocNodeTypes.INode) => {
+            var containerString = '';
+
+            switch (node.kind) {
+                case 'namespace':
+                    containerString = 'namespaces';
+                    break;
+                case 'interface':
+                    containerString = 'interfaces';
+                    break;
+                case 'class':
+                    containerString = 'classes';
+                    break;
+                case 'function':
+                    containerString = 'methods';
+                    break;
+                case 'parameter':
+                    containerString = 'parameters';
+                    break;
+                case 'property':
+                    containerString = 'properties';
+                    break;
+                case 'event':
+                    containerString = 'events'
+                    break;
+            }
+
+            return containerString;
         };
 
     }
