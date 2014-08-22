@@ -10,12 +10,15 @@ export module DocGen {
      * Generate Docs from source file.
      */
     export class DocGenerator {
+
+        nameHash = {};
+
         fromFile = (filename: string) => {
             parser.file(filename, (err: any, data: any) => {
                 if (!err) {
                     this.__grabTags(data, (tags: Array<Array<ITag>>) => {
                         this.__treeGen(data, (tree: any) => {
-                            console.log(JSON.stringify(tree, null, 4));
+                            //console.log(JSON.stringify(tree, censor(tree), 4));
                         });
                     });
                 } else {
@@ -48,18 +51,24 @@ export module DocGen {
          * Return a node by its fully qualified name
          * If a node is not found the deepest node found will be returned.
          */
-        private __findNode = (fullyQualifiedName: string, tree: any, callback: (node: any) => void) => {
-            var names = fullyQualifiedName.split('.'),
+        private __findNode = (node: DocNodeTypes.INode, tree: any, callback: (node: any) => void) => {
+            var names = node.memberof.toLowerCase().split('.'),
                 current = names.shift(),
-                deepest = tree;
+                deepest = tree,
+                container = null;
 
             while (!!current) {
                 if (deepest[current]) {
                     deepest = deepest[current];
                     current = names.shift();
+                } else if (this.nameHash[node.memberof]) {
+                    return callback(this.nameHash[node.memberof]);
                 } else {
                     // can't go any deeper
-                    return callback(fullyQualifiedName);
+                    //console.log('error: ' + JSON.stringify(tree));
+                    //return callback(node);
+                    console.log(JSON.stringify(this.nameHash,censor(this.nameHash),4));
+                    throw new Error(node.name + '\'s parent cannot be found');
                 }
             }
 
@@ -297,10 +306,10 @@ export module DocGen {
                             parent = null;
 
                         if (currentNamespace.memberof) {
-                            this.__findNode(currentNamespace.memberof, tree, (node) => {
+                            this.__findNode(currentNamespace, tree, (node) => {
                                 parent = node;
                                 currentNamespace.parent = parent;
-                                this.__appendChild(currentInterface, parent);
+                                this.__appendChild(currentNamespace, parent);
                             });
                         } else {
                             tree[currentNamespace.name] = currentNamespace;
@@ -312,7 +321,7 @@ export module DocGen {
                         var currentInterface = flat.interfaces[interfaceNode],
                             parent = null;
 
-                        this.__findNode(currentInterface.memberof, tree, (node) => {
+                        this.__findNode(currentInterface, tree, (node) => {
                             parent = node;
                             this.__appendChild(currentInterface, parent);
                         });
@@ -323,7 +332,7 @@ export module DocGen {
                         var currentClass = flat.classes[classNode],
                             parent = null;
 
-                        this.__findNode(currentClass.memberof, tree, (node) => {
+                        this.__findNode(currentClass, tree, (node) => {
                             parent = node;
                             this.__appendChild(currentClass, parent);
                         });
@@ -335,7 +344,7 @@ export module DocGen {
                             var currentMethod = flat.methods[methodArrayNode][methodNode],
                                 parent = null;
 
-                            this.__findNode(currentMethod.memberof, tree, (node) => {
+                            this.__findNode(currentMethod, tree, (node) => {
                                 parent = node;
                                 this.__appendChild(currentMethod, parent);
                             });
@@ -347,7 +356,7 @@ export module DocGen {
                         var currentProperty = flat.properties[propertyNode],
                             parent = null;
 
-                        this.__findNode(currentProperty.memberof, tree, (node) => {
+                        this.__findNode(currentProperty, tree, (node) => {
                             parent = node;
                             this.__appendChild(currentProperty, parent);
                         });
@@ -358,7 +367,7 @@ export module DocGen {
                         var currentEvent = flat.events[eventNode],
                             parent = null;
 
-                        this.__findNode(currentEvent.memberof, tree, (node) => {
+                        this.__findNode(currentEvent, tree, (node) => {
                             parent = node;
                             this.__appendChild(currentMethod, parent);
                         });
@@ -370,52 +379,62 @@ export module DocGen {
         };
 
         private __appendChild = (childNode: DocNodeTypes.INode, parentNode: DocNodeTypes.INode): void => {
-            var parentKind = parentNode.kind;
+            var childContainer = this.__nodeContainer(childNode),
+                parent = parentNode;
 
-            switch (parentKind) {
-                case 'namespace':
-                    var namespaceNode = (<DocNodeTypes.INameSpaceNode>parentNode),
-                        childContainer = this.__nodeContainer(childNode);
-
-                    (<Array<DocNodeTypes.INode>> namespaceNode[childContainer]).push(childNode);
-                    break;
-                case 'interface':
-                    var interfaceNode = (<DocNodeTypes.IInterfaceNode>parentNode),
-                        childcontainer = this.__nodeContainer(childNode);
-
-                    (<Array<DocNodeTypes.INode>> interfaceNode[childcontainer]).push(childNode);
-                    break;
-                case 'class': 
-                    var classNode = (<DocNodeTypes.IClassNode>parentNode),
-                        childcontainer = this.__nodeContainer(childNode);
-
-                    (<Array<DocNodeTypes.INode>> classNode[childcontainer]).push(childNode);
-                    break;
-                case 'function': 
-                    var methodNode = (<DocNodeTypes.IMethodNode>parentNode),
-                        childcontainer = this.__nodeContainer(childNode);
-
-                    (<Array<DocNodeTypes.INode>> methodNode[childcontainer]).push(childNode);
-                    break;
-                case 'parameter':
-                    var parameterNode = (<DocNodeTypes.IParameterNode>parentNode),
-                        childcontainer = this.__nodeContainer(childNode);
-
-                    (<Array<DocNodeTypes.INode>> parameterNode[childcontainer]).push(childNode);
-                    break;
-                case 'property':
-                    var propertyNode = (<DocNodeTypes.IPropertyNode>parentNode),
-                        childcontainer = this.__nodeContainer(childNode);
-
-                    (<Array<DocNodeTypes.INode>> propertyNode[childcontainer]).push(childNode);
-                    break;
-                case 'event':
-                    var eventNode = (<DocNodeTypes.IEvent>parentNode),
-                        childcontainer = this.__nodeContainer(childNode);
-
-                    (<Array<DocNodeTypes.INode>> eventNode[childcontainer]).push(childNode);
-                    break;
+            if (!parentNode[childContainer]) {
+                parentNode[childContainer] = {};
             }
+
+            //(<Array<DocNodeTypes.INode>>parent[childContainer]).push(childNode);
+            parent[childContainer][childNode.name.toLowerCase()] = childNode;
+            this.nameHash[parent.name.toLocaleLowerCase() + '.' + childNode.name.toLocaleLowerCase()] = parent[childContainer][childNode.name.toLowerCase()];
+            
+            //var parentKind = parentNode.kind;
+            //switch (parentKind) {
+            //    case 'namespace':
+            //        var namespaceNode = (<DocNodeTypes.INameSpaceNode>parentNode),
+            //            childContainer = this.__nodeContainer(childNode);
+
+            //        (<Array<DocNodeTypes.INode>> namespaceNode[childContainer]).push(childNode);
+            //        break;
+            //    case 'interface':
+            //        var interfaceNode = (<DocNodeTypes.IInterfaceNode>parentNode),
+            //            childcontainer = this.__nodeContainer(childNode);
+
+            //        (<Array<DocNodeTypes.INode>> interfaceNode[childcontainer]).push(childNode);
+            //        break;
+            //    case 'class': 
+            //        var classNode = (<DocNodeTypes.IClassNode>parentNode),
+            //            childcontainer = this.__nodeContainer(childNode);
+
+            //        (<Array<DocNodeTypes.INode>> classNode[childcontainer]).push(childNode);
+            //        break;
+            //    case 'function': 
+            //        var methodNode = (<DocNodeTypes.IMethodNode>parentNode),
+            //            childcontainer = this.__nodeContainer(childNode);
+
+            //        (<Array<DocNodeTypes.INode>> methodNode[childcontainer]).push(childNode);
+            //        break;
+            //    case 'parameter':
+            //        var parameterNode = (<DocNodeTypes.IParameterNode>parentNode),
+            //            childcontainer = this.__nodeContainer(childNode);
+
+            //        (<Array<DocNodeTypes.INode>> parameterNode[childcontainer]).push(childNode);
+            //        break;
+            //    case 'property':
+            //        var propertyNode = (<DocNodeTypes.IPropertyNode>parentNode),
+            //            childcontainer = this.__nodeContainer(childNode);
+
+            //        (<Array<DocNodeTypes.INode>> propertyNode[childcontainer]).push(childNode);
+            //        break;
+            //    case 'event':
+            //        var eventNode = (<DocNodeTypes.IEvent>parentNode),
+            //            childcontainer = this.__nodeContainer(childNode);
+
+            //        (<Array<DocNodeTypes.INode>> eventNode[childcontainer]).push(childNode);
+            //        break;
+            //}
 
         };
 
@@ -458,6 +477,23 @@ export module DocGen {
         description: string;
     }
 }
+
+function censor(censor) {
+    var i = 0;
+
+  return function (key, value) {
+        if (i !== 0 && typeof (censor) === 'object' && typeof (value) == 'object' && censor == value)
+            return '[Circular]';
+
+        if (i >= 29) // seems to be a harded maximum of 30 serialized objects?
+            return '[Unknown]';
+
+        ++i; // so we know we aren't using the original object anymore
+
+        return value;
+    }
+}
+
 
 // for future function to determine what kind to push new node to
 //switch (member.kind) {
