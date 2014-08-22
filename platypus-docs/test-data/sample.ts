@@ -2550,7 +2550,7 @@ module plat {
         export interface IAjaxError extends Error, IAjaxResponse<any> { }
 
         /**
-         * @name IAjaxPromise
+         * @name AjaxPromise
          * @memberof plat.async
          * @kind interface
          * 

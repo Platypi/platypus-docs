@@ -170,7 +170,7 @@ export module DocGen {
                                 returntype: (tmpObj.returns ? tmpObj.returns.type : ''),
                                 returntypedesc: (tmpObj.returns ? tmpObj.returns.name + ' ' + tmpObj.returns.description : ''),
                                 optional: (tmpObj.optional ? true : false),
-                                parameters: [],
+                                parameters: {},
                                 published: true,
                                 memberof: memberof
                             };
@@ -185,7 +185,8 @@ export module DocGen {
                                         published: true,
                                         exported: (!tmpObj.exported ? true : false),
                                     };
-                                    newMethod.parameters.push(newParameter);
+                                    newMethod.parameters[newParameter.name] = newParameter;
+                                    //newMethod.parameters.push(newParameter);
                                 }
                             }
 
@@ -235,7 +236,7 @@ export module DocGen {
                                 parent: (tmpObj['extends'] ? tmpObj['extends'].type : ''),
                                 //namespace (memberof)
                                 namespace: (tmpObj.namespace ? tmpObj.namespace.type : ''),
-                                interfaces: [],
+                                interfaces: {},
                                 memberof: memberof
                             };
 
@@ -247,7 +248,8 @@ export module DocGen {
                                             name: tag.type,
                                             kind: 'interface'
                                         };
-                                    newClass.interfaces.push(newInterface);
+                                    newClass.interfaces[newInterface.name] = newInterface;
+                                    //newClass.interfaces.push(newInterface);
                                 }
                             }
 
@@ -485,17 +487,20 @@ export module DocGen {
 function censor(censor) {
     var i = 0;
 
-  return function (key, value) {
-        if (i !== 0 && typeof (censor) === 'object' && typeof (value) == 'object' && censor == value)
-            return '[Circular]';
-
-        if (i >= 29) // seems to be a harded maximum of 30 serialized objects?
-            return '[Unknown]';
-
-        ++i; // so we know we aren't using the original object anymore
+    return function (key, value) {
+        if (key === 'parent' ||
+            key === 'namespace' ||
+            key === 'class' ||
+            key === 'interface' ||
+            key === 'interfaceNode' ||
+            key === 'namespaceNode' ||
+            key === 'classNode' ||
+            key === 'method') {
+            return '[Circular] ' + value.name;
+        }
 
         return value;
-    }
+    };
 }
 
 
