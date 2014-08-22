@@ -68,7 +68,7 @@ export module DocGen {
                     //console.log('error: ' + JSON.stringify(tree));
                     //return callback(node);
                     console.log(JSON.stringify(this.nameHash,censor(this.nameHash),4));
-                    throw new Error(node.name + '\'s parent cannot be found');
+                    throw new Error(node.name + '\'s parent cannot be found, looked for: ' + node.memberof);
                 }
             }
 
@@ -388,7 +388,11 @@ export module DocGen {
 
             //(<Array<DocNodeTypes.INode>>parent[childContainer]).push(childNode);
             parent[childContainer][childNode.name.toLowerCase()] = childNode;
-            this.nameHash[parent.name.toLocaleLowerCase() + '.' + childNode.name.toLocaleLowerCase()] = parent[childContainer][childNode.name.toLowerCase()];
+
+            //var namespacePre = (parent.memberof ? parent.memberof : parent.name).toLocaleLowerCase();
+            var namespacePre = childNode.memberof.toLocaleLowerCase();
+
+            this.nameHash[namespacePre + '.' + childNode.name.toLocaleLowerCase()] = parent[childContainer][childNode.name.toLowerCase()];
             
             //var parentKind = parentNode.kind;
             //switch (parentKind) {
