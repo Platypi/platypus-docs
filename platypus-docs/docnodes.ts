@@ -29,11 +29,16 @@ export interface IHaveOverride {
 
 export interface INameSpaceNode extends INode {
     parent?: INameSpaceNode;
-    classes?: Array<IClassNode>;
-    namespaces?: Array<INameSpaceNode>;
-    interfaces?: Array<IInterfaceNode>;
-    methods?: Array<IMethodNode>;
-    properties?: Array<IPropertyNode>;
+    //classes?: Array<IClassNode>;
+    classes?: {};
+    namespaces?: {};
+    interfaces?: {};
+    methods?: {};
+    properties?: {};
+    //namespaces?: Array<INameSpaceNode>;
+    //interfaces?: Array<IInterfaceNode>;
+    //methods?: Array<IMethodNode>;
+    //properties?: Array<IPropertyNode>;
 }
 
 export interface IEvent extends INode {
@@ -46,16 +51,19 @@ export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
     namespace?: INameSpaceNode;
     exported?: boolean;
     remarks?: string;
-    methods?: Array<IMethodNode>;
+    //methods?: Array<IMethodNode>;
+    methods?: {};
     static?: boolean;
-    interfaces?: Array<IInterfaceNode>;
+    //interfaces?: Array<IInterfaceNode>;
+    interfaces?: {};
 }
 
 export interface IInterfaceNode extends INode, IRegisteredNode {
     namespace?: INameSpaceNode;
     remarks?: string;
     exported?: boolean;
-    methods?: Array<IMethodNode>;
+    //methods?: Array<IMethodNode>;
+    methods?: {};
 }
 
 export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
@@ -65,7 +73,8 @@ export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     remarks?: string;
     visibility?: string;
     static?: boolean;
-    typeparamaters?: Array<IParameterNode>;
+    //typeparamaters?: Array<IParameterNode>;
+    typeparameters?: {};
     returntype?: string;
     returntypedesc?: string;
     returntypemethod?: IMethodNode;
@@ -73,7 +82,8 @@ export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     returnttypeclass?: IClassNode;
     returntypenamespace?: INameSpaceNode;
     optional?: boolean;
-    parameters?: Array<IParameterNode>;
+    //parameters?: Array<IParameterNode>;
+    parameters?: {};
 }
 
 export interface IParameterNode extends INode, IHaveTypeNode {
