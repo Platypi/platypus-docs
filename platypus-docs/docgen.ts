@@ -18,7 +18,7 @@ export module DocGen {
                 if (!err) {
                     this.__grabTags(data, (tags: Array<Array<ITag>>) => {
                         this.__treeGen(data, (tree: any) => {
-                            //console.log(JSON.stringify(tree, censor(tree), 4));
+                            console.log(JSON.stringify(tree, censor(tree), 4));
                         });
                     });
                 } else {
@@ -65,8 +65,6 @@ export module DocGen {
                     return callback(this.nameHash[node.memberof]);
                 } else {
                     // can't go any deeper
-                    //console.log('error: ' + JSON.stringify(tree));
-                    //return callback(node);
                     console.log(JSON.stringify(this.nameHash,censor(this.nameHash),4));
                     throw new Error(node.name + '\'s parent cannot be found, looked for: ' + node.memberof);
                 }
@@ -190,9 +188,6 @@ export module DocGen {
                             
                             break;
                         case 'property':
-                            if (!tmpObj.description) {
-                                console.log(tmpObj);
-                            }
                             var newProperty: DocNodeTypes.IPropertyNode = {
                                 name: tmpObj.name.name,
                                 description: tmpObj.description.description,
@@ -237,7 +232,6 @@ export module DocGen {
                                             kind: 'interface'
                                         };
                                     newClass.interfaces[newInterface.name] = newInterface;
-                                    //newClass.interfaces.push(newInterface);
                                 }
                             }
 
@@ -324,6 +318,11 @@ export module DocGen {
 
                         this.__findNode(currentClass, tree, (node) => {
                             parent = node;
+
+                            for (var i in currentClass.interfaces) {
+                                currentClass.interfaces[i] = this.nameHash[currentClass.interfaces[i].name] || currentClass.interfaces[i];
+                            }
+
                             this.__appendChild(currentClass, parent);
                         });
                     }
