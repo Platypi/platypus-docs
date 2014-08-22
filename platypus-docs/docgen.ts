@@ -74,15 +74,15 @@ export module DocGen {
                 [index: string]: DocNodeTypes.INameSpaceNode
             } = {};
 
-            tree['plat'] = {
-                name: 'plat',
-                kind: 'namespace',
-                namespaces: [],
-                interfaces: [],
-                classes: [],
-                methods: [],
-                properties: []
-            };
+            //tree['plat'] = {
+            //    name: 'plat',
+            //    kind: 'namespace',
+            //    namespaces: [],
+            //    interfaces: [],
+            //    classes: [],
+            //    methods: [],
+            //    properties: []
+            //};
 
             /*
              * First run through will generate a flat 
@@ -288,11 +288,71 @@ export module DocGen {
                             
                             break;
                     }
+
+                    // start building the tree with namespaces
+                    for (var namespace in flat.namespaces) {
+                        var currentNamespace = flat.namespaces[namespace],
+                            parent = null;
+
+                        if (currentNamespace.memberof) {
+                            this.__findNode(currentNamespace.memberof, tree, (node) => {
+                                parent = node;
+                                currentNamespace.parent = parent;
+                                (<DocNodeTypes.INameSpaceNode>parent).namespaces.push(currentNamespace);
+                            });
+                        } else {
+                            tree[currentNamespace.name] = currentNamespace;
+                        }
+                    }
+
+                    //interfaces
+                    for (var interfaceNode in flat.interfaces) {
+                        var currentInterface = flat.interfaces[interfaceNode],
+                            parent = null;
+
+                        this.__findNode(currentInterface.memberof, tree, (node) => {
+                            parent = node;
+                            
+                        });
+                        
+                    }
+
+                    //classes
+
+                    //methods
+
+                    //events
+
+                    //properties
                 }
             }
 
             callback(flat);
         };
+
+        private __appendChild = (childNode: DocNodeTypes.INode, parentNode: DocNodeTypes.INode): DocNodeTypes.INode => {
+            var parentKind = parentNode.kind,
+                childKind = parentNode.kind;
+
+            switch (parentKind) {
+                case 'namespace':
+                    break;
+                case 'interface':
+                    break;
+                case 'class': 
+                    break;
+                case 'function': 
+                    break;
+                case 'method':
+                    break;
+                case 'property':
+                    break;
+                case 'event':
+                    break;
+            }
+
+        };
+
     }
 
     export interface ITag {
