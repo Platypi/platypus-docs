@@ -222,9 +222,7 @@ export module DocGen {
                                 published: (!tmpObj.published ? true : tmpObj.published),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
                                 exported: (!tmpObj.exported ? true : tmpObj.exported),
-                                //parent (extends)
                                 parent: (tmpObj['extends'] ? tmpObj['extends'].type : ''),
-                                //namespace (memberof)
                                 namespace: (tmpObj.namespace ? tmpObj.namespace.type : ''),
                                 interfaces: {},
                                 memberof: memberof
@@ -258,7 +256,7 @@ export module DocGen {
                                 memberof: memberof
                             };
                             flat.interfaces[newInterface.name] = newInterface;
-                            //flat.interfaces.push(newInterface);
+                            
                             break;
                         case 'event':
                             var newEvent: DocNodeTypes.IEvent = {
@@ -443,16 +441,3 @@ function censor(censor) {
         return value;
     };
 }
-
-
-// for future function to determine what kind to push new node to
-//switch (member.kind) {
-//    case 'class':
-//        break;
-//    case 'interface':
-//        break;
-//    case 'namespace':
-//        newMethod.namespaceNode = member;
-//        member.methods.push(newMethod);
-//        break;
-//}
