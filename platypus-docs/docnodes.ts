@@ -44,12 +44,15 @@ export interface INameSpaceNode extends INode {
 
 export interface IEvent extends INode {
     class?: IClassNode;
+    classNameString?: string;
     remarks?: string;
 }
 
 export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
     parent?: IClassNode;
+    parentString?: string;
     namespace?: INameSpaceNode;
+    namespaceString?: string;
     exported?: boolean;
     remarks?: string;
     //methods?: Array<IMethodNode>;
