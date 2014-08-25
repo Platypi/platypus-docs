@@ -5,6 +5,7 @@
     published?: boolean;
     exported?: boolean;
     memberof?: string;
+    visibility?: string;
 }
 
 export interface IHaveExampleNode {
@@ -71,7 +72,6 @@ export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     namespaceNode?: INameSpaceNode;
     classNode?: IClassNode;
     remarks?: string;
-    visibility?: string;
     static?: boolean;
     //typeparamaters?: Array<IParameterNode>;
     typeparameters?: {};
@@ -100,7 +100,6 @@ export interface IPropertyNode extends INode, IHaveTypeNode, IHaveOverride {
     class?: IClassNode;
     type?: string;
     remarks?: string;
-    visibility?: string;
     static?: boolean;
     readonly?: boolean;
     returntypedesc?: string;
