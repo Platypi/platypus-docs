@@ -48,6 +48,7 @@ export module DocGen {
                     return callback(this.nameHash[node.memberof]);
                 } else {
                     // can't go any deeper
+                    console.trace();
                     throw new Error(node.name + '\'s parent cannot be found, looked for: ' + node.memberof);
                 }
             }
@@ -103,7 +104,6 @@ export module DocGen {
                     switch (kind) {
                         case 'function':
                             // if name is blank, the method is an interface
-                            //var member = tree[memberof];
                             var newMethod: DocNodeTypes.IMethodNode = {
                                 name: (parsedDocTags.name ? parsedDocTags.name.name : ''),
                                 description: parsedDocTags.description.description,
@@ -448,7 +448,7 @@ function censor(censor) {
             key === 'namespaceNode' ||
             key === 'classNode' ||
             key === 'method') {
-            return '[Circular] ' + value.name;
+            return '[Circular] ' + (value ? value.name : '');
         }
 
         return value;
