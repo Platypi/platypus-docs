@@ -93,70 +93,46 @@ export module DocGen {
             for (var k in tags) {
 
                 // tmpObj stores the tags in an object so they can be referenced by name.
-                var tmpObj: any = {};
+                var parsedDocTags: ParsedDocNode = this.__buildTags(tags[k]);
 
-                for (var l in tags[k].tags) {
-                    var t = tags[k].tags[l];
 
-                    // There can be multiple params for a given comment.
-                    if (t.tag !== 'param') {
-                        tmpObj[t.tag] = t;
-                    } else {
-                        if (tmpObj.params) {
-                            (<Array<ITag>> tmpObj.params).push(t);
-                        } else {
-                            tmpObj.params = new Array<ITag>();
-                            tmpObj.params.push(t);
-                        }
-                    }
-
-                    // There can be multiple interfaces that a class implements
-                    if (t.tag !== 'implements') {
-                        tmpObj[t.tag] = t;
-                    } else {
-                        tmpObj.implements = new Array<ITag>();
-                        tmpObj.implements.push(t);
-                    }
-                }
-
-                if (tmpObj.kind) {
-                    var kind: string = (<string>tmpObj.kind.name).trim().toLowerCase(),
-                        memberof: string = (tmpObj.memberof ? (<string>tmpObj.memberof.name).trim().toLowerCase() : '');
+                if (parsedDocTags.kind) {
+                    var kind: string = (<string>parsedDocTags.kind.name).trim().toLowerCase(),
+                        memberof: string = (parsedDocTags.memberof ? (<string>parsedDocTags.memberof.name).trim().toLowerCase() : '');
 
                     switch (kind) {
                         case 'function':
                             // if name is blank, the method is an interface
                             //var member = tree[memberof];
                             var newMethod: DocNodeTypes.IMethodNode = {
-                                name: (tmpObj.name ? tmpObj.name.name : ''),
-                                description: tmpObj.description.description,
-                                kind: tmpObj.kind.name,
-                                overrides: (tmpObj.variation ? true : false),
-                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
-                                static: (tmpObj.static ? true : false),
-                                remarks: tmpObj.remarks,
-                                exported: (!tmpObj.exported ? true : false),
-                                typeparamaters: (tmpObj.typeparam ? tmpObj.typeparam.name : ''),
-                                returntype: (tmpObj.returns ? tmpObj.returns.type : ''),
-                                returntypedesc: (tmpObj.returns ? tmpObj.returns.name + ' ' + tmpObj.returns.description : ''),
-                                optional: (tmpObj.optional ? true : false),
+                                name: (parsedDocTags.name ? parsedDocTags.name.name : ''),
+                                description: parsedDocTags.description.description,
+                                kind: parsedDocTags.kind.name,
+                                overrides: (parsedDocTags.variation ? true : false),
+                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
+                                static: (parsedDocTags.static ? true : false),
+                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
+                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
+                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                typeparamaters: (parsedDocTags.typeparam ? parsedDocTags.typeparam.name : ''),
+                                returntype: (parsedDocTags.returns ? parsedDocTags.returns.type : ''),
+                                returntypedesc: (parsedDocTags.returns ? parsedDocTags.returns.name + ' ' + parsedDocTags.returns.description : ''),
+                                optional: (parsedDocTags.optional ? true : false),
                                 parameters: {},
-                                published: true,
                                 memberof: memberof
                             };
 
                             // push the params onto the tmpObj
-                            if (tmpObj.params) {
-                                for (var z = 0; z < tmpObj.params.length; z++) {
+                            if (parsedDocTags.params) {
+                                for (var z = 0; z < parsedDocTags.params.length; z++) {
                                     var newParameter: DocNodeTypes.IParameterNode = {
-                                        name: tmpObj.params[z].name,
-                                        kind: tmpObj.params[z].kind,
-                                        description: tmpObj.params[z].description,
+                                        name: parsedDocTags.params[z].name,
+                                        kind: parsedDocTags.params[z].kind,
+                                        description: parsedDocTags.params[z].description,
                                         published: true,
-                                        exported: (!tmpObj.exported ? true : false),
+                                        exported: (!parsedDocTags.exported ? true : false),
                                     };
                                     newMethod.parameters[newParameter.name] = newParameter;
-                                    //newMethod.parameters.push(newParameter);
                                 }
                             }
 
@@ -171,20 +147,17 @@ export module DocGen {
                             break;
                         case 'property':
                             var newProperty: DocNodeTypes.IPropertyNode = {
-                                name: tmpObj.name.name,
-                                description: tmpObj.description.description,
-                                kind: tmpObj.kind.name,
-                                published: (!tmpObj.published ? true : tmpObj.published),
-                                exported: (!tmpObj.exported ? true : tmpObj.exported),
-                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
-                                //interface
-                                //namespace
-                                //class
-                                type: tmpObj.type.type,
-                                remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
-                                static: (tmpObj.static ? true : false),
-                                readonly: (tmpObj.readonly ? true : false),
-                                optional: (tmpObj.optional ? true : false),
+                                name: parsedDocTags.name.name,
+                                description: parsedDocTags.description.description,
+                                kind: parsedDocTags.kind.name,
+                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
+                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
+                                type: parsedDocTags.type.type,
+                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
+                                static: (parsedDocTags.static ? true : false),
+                                readonly: (parsedDocTags.readonly ? true : false),
+                                optional: (parsedDocTags.optional ? true : false),
                                 memberof: memberof
                             };
 
@@ -193,23 +166,23 @@ export module DocGen {
                             break;
                         case 'class':
                             var newClass: DocNodeTypes.IClassNode = {
-                                name: tmpObj.name.name,
-                                description: tmpObj.description.description,
-                                kind: tmpObj.kind.name,
-                                published: (!tmpObj.published ? true : tmpObj.published),
-                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
-                                remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
-                                exported: (!tmpObj.exported ? true : tmpObj.exported),
-                                parent: (tmpObj['extends'] ? tmpObj['extends'].type : ''),
-                                namespace: (tmpObj.namespace ? tmpObj.namespace.type : ''),
+                                name: parsedDocTags.name.name,
+                                description: parsedDocTags.description.description,
+                                kind: parsedDocTags.kind.name,
+                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
+                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
+                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
+                                parentString: (parsedDocTags.extends ? parsedDocTags.extends.type : ''),
+                                namespaceString: (parsedDocTags.namespace ? parsedDocTags.namespace.type : ''),
                                 interfaces: {},
                                 memberof: memberof
                             };
 
                             //interfaces (implements) treat like params
-                            if (tmpObj.implements) {
-                                for (var k in tmpObj.implements) {
-                                    var tag = tmpObj.implements[k],
+                            if (parsedDocTags.implements) {
+                                for (var k in parsedDocTags.implements) {
+                                    var tag = parsedDocTags.implements[k],
                                         newInterface: DocNodeTypes.IInterfaceNode = {
                                             name: tag.type,
                                             kind: 'interface'
@@ -223,13 +196,13 @@ export module DocGen {
                             break;
                         case 'interface':
                             var newInterface: DocNodeTypes.IInterfaceNode = {
-                                name: tmpObj.name.name,
-                                kind: tmpObj.kind.name,
-                                description: tmpObj.description.description,
-                                published: (!tmpObj.published ? true : tmpObj.published),
-                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
-                                exported: (!tmpObj.exported ? true : tmpObj.exported.name !== 'false'),
-                                remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
+                                name: parsedDocTags.name.name,
+                                kind: parsedDocTags.kind.name,
+                                description: parsedDocTags.description.description,
+                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
+                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
+                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 //methods,
                                 memberof: memberof
                             };
@@ -238,15 +211,14 @@ export module DocGen {
                             break;
                         case 'event':
                             var newEvent: DocNodeTypes.IEvent = {
-                                name: tmpObj.name.name,
-                                kind: tmpObj.kind.name,
-                                description: tmpObj.description.description,
-                                published: (!tmpObj.published ? true : tmpObj.published),
-                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
-                                exported: (!tmpObj.exported ? true : tmpObj.exported),
-                                remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
-                                //class @class
-                                class: tmpObj.class.name,
+                                name: parsedDocTags.name.name,
+                                kind: parsedDocTags.kind.name,
+                                description: parsedDocTags.description.description,
+                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
+                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
+                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
+                                classNameString: parsedDocTags.class.name,
                                 memberof: memberof
                             };
 
@@ -255,13 +227,13 @@ export module DocGen {
                             break;
                         case 'namespace':
                             var newNamespace: DocNodeTypes.INameSpaceNode = {
-                                name: tmpObj.name.name,
-                                kind: tmpObj.kind.name,
-                                description: tmpObj.description.description,
-                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
-                                published: (!tmpObj.published ? true : tmpObj.published),
-                                exported: (!tmpObj.exported ? true : tmpObj.exported),
-                                remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
+                                name: parsedDocTags.name.name,
+                                kind: parsedDocTags.kind.name,
+                                description: parsedDocTags.description.description,
+                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
+                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
+                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 memberof: memberof
                             };
 
@@ -301,6 +273,8 @@ export module DocGen {
                     for (var classNode in flat.classes) {
                         var currentClass = flat.classes[classNode],
                             parent = null;
+
+                        currentClass.namespace = this.nameHash[currentClass.namespaceString];
 
                         this.__findNode(currentClass, tree, (node) => {
                             parent = node;
@@ -368,6 +342,36 @@ export module DocGen {
             this.nameHash[namespacePre + '.' + childNode.name.toLocaleLowerCase()] = parent[childContainer][childNode.name.toLowerCase()];
         };
 
+        private __buildTags = (tag: any): ParsedDocNode => {
+            var tmpObj: any = {};
+
+            for (var l in tag.tags) {
+                var t = tag.tags[l];
+
+                // There can be multiple params for a given comment.
+                if (t.tag !== 'param') {
+                    tmpObj[t.tag] = t;
+                } else {
+                    if (tmpObj.params) {
+                        (<Array<ITag>> tmpObj.params).push(t);
+                    } else {
+                        tmpObj.params = new Array<ITag>();
+                        tmpObj.params.push(t);
+                    }
+                }
+
+                // There can be multiple interfaces that a class implements
+                if (t.tag !== 'implements') {
+                    tmpObj[t.tag] = t;
+                } else {
+                    tmpObj.implements = new Array<ITag>();
+                    tmpObj.implements.push(t);
+                }
+            }
+
+            return tmpObj;
+        };
+
         private __nodeContainer = (node: DocNodeTypes.INode) => {
             var containerString = '';
 
@@ -405,6 +409,30 @@ export module DocGen {
         name: string;
         type: string;
         description: string;
+    }
+
+    export interface ParsedDocNode {
+        name?: ITag;
+        kind?: ITag;
+        memberof?: ITag;
+        description?: ITag;
+        variation: ITag;
+        access?: ITag;
+        static?: ITag;
+        remarks?: ITag;
+        published?: ITag;
+        exported?: ITag;
+        typeparm?: ITag;
+        returns?: ITag;
+        optional?: ITag;
+        params?: Array<any>;
+        typeparam?: ITag;
+        implements?: Array<any>;
+        type?: ITag;
+        readonly?: ITag;
+        namespace?: ITag;
+        extends?: ITag;
+        class?: ITag;
     }
 }
 
