@@ -1,0 +1,10 @@
+* src (filename)
+* implements references
+* param parsing of fully qualified name & references
+* namespace reference on classes
+* break out tree code into separate methods
+
+* strip questionmark from param make optional if exist
+
+* return type needs to be referenced
+
