@@ -48,7 +48,6 @@ export module DocGen {
                     return callback(this.nameHash[node.memberof]);
                 } else {
                     // can't go any deeper
-                    //console.log(JSON.stringify(this.nameHash,censor(this.nameHash),4));
                     throw new Error(node.name + '\'s parent cannot be found, looked for: ' + node.memberof);
                 }
             }
@@ -130,7 +129,7 @@ export module DocGen {
                             //var member = tree[memberof];
                             var newMethod: DocNodeTypes.IMethodNode = {
                                 name: (tmpObj.name ? tmpObj.name.name : ''),
-                                description: tmpObj.description.descrption,
+                                description: tmpObj.description.description,
                                 kind: tmpObj.kind.name,
                                 overrides: (tmpObj.variation ? true : false),
                                 visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
