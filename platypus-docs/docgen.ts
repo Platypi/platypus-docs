@@ -14,37 +14,20 @@ export module DocGen {
         nameHash = {};
 
         fromFile = (filename: string) => {
-            parser.file(filename, (err: any, data: any) => {
-                if (!err) {
-                    this.__grabTags(data, (tags: Array<Array<ITag>>) => {
-                        this.__treeGen(data, (tree: any) => {
-                            console.log(JSON.stringify(tree, censor(tree), 4));
-                        });
-                    });
-                } else {
-                    console.log(new Error(err));
-                }
-            });
+            parser.file(filename, this.parsedCommentsHandler);
         };
 
-        /**
-         * Populate the tags from comments into an array.
-         */
-        private __grabTags = (data: Array<any>, callback: (tags: Array<Array<ITag>>) => void) => {
-            var tags: Array<Array<ITag>> = [],
-                unmatchedTags = [];
-
-            for (var i = 0; i < data.length; i++) {
-                if (!tags[i]) {
-                    tags[i] = new Array<ITag>();
-                }
-
-                for (var j = 0; j < data[i].tags.length; j++) {
-                    var currentTag: ITag = (<any>data[i]).tags[j];
-                    tags[i].push(currentTag);
-                }
+        parsedCommentsHandler = (err: any, data: any) => {
+            if (!err) {
+                this.__treeGen(data, this.treeHandler);
+            } else {
+                console.log(new Error(err));
             }
-            callback(tags);
+        };
+
+
+        treeHandler = (tree: any) => {
+            console.log(JSON.stringify(tree, censor(tree), 4));
         };
 
         /**
@@ -65,7 +48,7 @@ export module DocGen {
                     return callback(this.nameHash[node.memberof]);
                 } else {
                     // can't go any deeper
-                    console.log(JSON.stringify(this.nameHash,censor(this.nameHash),4));
+                    //console.log(JSON.stringify(this.nameHash,censor(this.nameHash),4));
                     throw new Error(node.name + '\'s parent cannot be found, looked for: ' + node.memberof);
                 }
             }
@@ -150,7 +133,7 @@ export module DocGen {
                                 description: tmpObj.description.descrption,
                                 kind: tmpObj.kind.name,
                                 overrides: (tmpObj.variation ? true : false),
-                                visibility: tmpObj.access.name,
+                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
                                 static: (tmpObj.static ? true : false),
                                 remarks: tmpObj.remarks,
                                 exported: (!tmpObj.exported ? true : false),
@@ -194,12 +177,12 @@ export module DocGen {
                                 kind: tmpObj.kind.name,
                                 published: (!tmpObj.published ? true : tmpObj.published),
                                 exported: (!tmpObj.exported ? true : tmpObj.exported),
+                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
                                 //interface
                                 //namespace
                                 //class
                                 type: tmpObj.type.type,
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
-                                visibility: tmpObj.access.name,
                                 static: (tmpObj.static ? true : false),
                                 readonly: (tmpObj.readonly ? true : false),
                                 optional: (tmpObj.optional ? true : false),
@@ -215,6 +198,7 @@ export module DocGen {
                                 description: tmpObj.description.description,
                                 kind: tmpObj.kind.name,
                                 published: (!tmpObj.published ? true : tmpObj.published),
+                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
                                 exported: (!tmpObj.exported ? true : tmpObj.exported),
                                 parent: (tmpObj['extends'] ? tmpObj['extends'].type : ''),
@@ -244,6 +228,7 @@ export module DocGen {
                                 kind: tmpObj.kind.name,
                                 description: tmpObj.description.description,
                                 published: (!tmpObj.published ? true : tmpObj.published),
+                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
                                 exported: (!tmpObj.exported ? true : tmpObj.exported.name !== 'false'),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
                                 //methods,
@@ -258,6 +243,7 @@ export module DocGen {
                                 kind: tmpObj.kind.name,
                                 description: tmpObj.description.description,
                                 published: (!tmpObj.published ? true : tmpObj.published),
+                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
                                 exported: (!tmpObj.exported ? true : tmpObj.exported),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
                                 //class @class
@@ -273,6 +259,7 @@ export module DocGen {
                                 name: tmpObj.name.name,
                                 kind: tmpObj.kind.name,
                                 description: tmpObj.description.description,
+                                visibility: (tmpObj.access ? tmpObj.access.name : 'public'),
                                 published: (!tmpObj.published ? true : tmpObj.published),
                                 exported: (!tmpObj.exported ? true : tmpObj.exported),
                                 remarks: (tmpObj.remarks ? tmpObj.remarks.description : ''),
