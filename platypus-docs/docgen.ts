@@ -13,21 +13,35 @@ export module DocGen {
 
         nameHash = {};
 
-        fromFile = (filename: string) => {
-            parser.file(filename, this.parsedCommentsHandler);
+        callback = (tree) => { };
+
+        debug = false;
+
+        buildTreeFromFile = (src: string, callback: (tree) => void, debug: boolean = false) => {
+            parser.file(src, this.__parsedCommentsHandler);
+            this.debug = debug;
+            if (callback) {
+                this.callback = callback;
+            }
         };
 
-        parsedCommentsHandler = (err: any, data: any) => {
+        private __parsedCommentsHandler = (err: any, data: any) => {
             if (!err) {
-                this.__treeGen(data, this.treeHandler);
+                this.__treeGen(data, this.__treeHandler);
             } else {
                 console.log(new Error(err));
             }
         };
 
 
-        treeHandler = (tree: any) => {
-            console.log(JSON.stringify(tree, censor(tree), 4));
+        private __treeHandler = (tree: any) => {
+            if (this.debug) {
+                console.log(JSON.stringify(tree, censor(tree), 4));
+            }
+
+            if (this.callback) {
+                this.callback(tree);
+            }
         };
 
         /**
