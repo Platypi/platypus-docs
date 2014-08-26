@@ -127,6 +127,7 @@ export module DocGen {
                                 for (var z = 0; z < parsedDocTags.params.length; z++) {
                                     var newParameter: DocNodeTypes.IParameterNode = {
                                         name: parsedDocTags.params[z].name,
+                                        memberof: parsedDocTags.params[z].memberof,
                                         kind: parsedDocTags.params[z].kind,
                                         description: parsedDocTags.params[z].description,
                                         published: true,
@@ -293,8 +294,15 @@ export module DocGen {
                             var currentMethod = flat.methods[methodArrayNode][methodNode],
                                 parent = null;
 
+                            
+
                             this.__findNode(currentMethod, tree, (node) => {
                                 parent = node;
+
+                                for (var j in currentMethod.parameters) {
+                                    currentMethod.parameters[j] = this.nameHash[currentMethod.parameters[j].memberof + '.' + currentMethod.parameters[j].name] || currentMethod.parameters[j];
+                                }
+
                                 this.__appendChild(currentMethod, parent);
                             });
                         }
