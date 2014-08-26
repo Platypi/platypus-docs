@@ -18,11 +18,11 @@ export module DocGen {
         debug = false;
 
         buildTreeFromFile = (src: string, callback: (tree) => void, debug: boolean = false) => {
-            parser.file(src, this.__parsedCommentsHandler);
             this.debug = debug;
             if (callback) {
                 this.callback = callback;
             }
+            parser.file(src, this.__parsedCommentsHandler);
         };
 
         private __parsedCommentsHandler = (err: any, data: any) => {
