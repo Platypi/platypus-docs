@@ -62,7 +62,6 @@ export module DocGen {
                     return callback(this.nameHash[node.memberof]);
                 } else {
                     // can't go any deeper
-                    console.trace();
                     throw new Error(node.name + '\'s parent cannot be found, looked for: ' + node.memberof);
                 }
             }
