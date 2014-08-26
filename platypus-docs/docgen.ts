@@ -292,9 +292,10 @@ export module DocGen {
                     for (var methodArrayNode in flat.methods) {
                         for (var methodNode in flat.methods[methodArrayNode]) {
                             var currentMethod = flat.methods[methodArrayNode][methodNode],
-                                parent = null;
+                                parent = null,
+                                returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype.toLowerCase() : '');
 
-                            
+                            currentMethod.returntype = (returnTypeName !== '' ? this.nameHash[returnTypeName] : currentMethod.returntype);
 
                             this.__findNode(currentMethod, tree, (node) => {
                                 parent = node;
@@ -455,8 +456,13 @@ function censor(censor) {
             key === 'interfaceNode' ||
             key === 'namespaceNode' ||
             key === 'classNode' ||
+            key === 'returntype' ||
             key === 'method') {
-            return '[Circular] ' + (value ? value.name : '');
+            if (value && value.name && value.name !== '') {
+                return '[Circular] ' + (value ? value.name : '');
+            } else {
+                return '[Circular] ' + (value ? value.type : '');
+            }
         }
 
         return value;
