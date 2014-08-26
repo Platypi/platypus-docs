@@ -301,7 +301,7 @@ export module DocGen {
                                 parent = node;
 
                                 for (var j in currentMethod.parameters) {
-                                    currentMethod.parameters[j] = this.nameHash[currentMethod.parameters[j].memberof + '.' + currentMethod.parameters[j].name] || currentMethod.parameters[j];
+                                    currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name).toLowerCase()] || currentMethod.parameters[j];
                                 }
 
                                 this.__appendChild(currentMethod, parent);
