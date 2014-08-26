@@ -7,7 +7,7 @@ var filename = process.argv[2] || './test-data/sample.ts',
     gen = new DocGen.DocGen.DocGenerator();
 
 gen.buildTreeFromFile(filename, (tree: any) => {
-    console.log(tree, censor(tree), 4);
+    console.log(JSON.stringify(tree, censor(tree), 4));
 });
 
 
