@@ -5,6 +5,7 @@
     "main": "docgen.js",
     "dependencies": {
         "mysql":  "latest",
+        "es6-promise":  "latest",
         "comment-parser": "git+https://github.com/pwdonald/comment-parser.git"
     }
 }
