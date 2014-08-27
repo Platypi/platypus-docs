@@ -177,3 +177,4 @@ server/iisnode
 output.txt
 output.json
 *.log
+dbconnection.json
