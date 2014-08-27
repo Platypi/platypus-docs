@@ -6,12 +6,20 @@ var cfg = require('../../../dbconnection.json') || {};
 var connection = mysql.createConnection({
     host: cfg.database.host,
     user: cfg.database.user,
-    password: cfg.database.pass,
-    database: cfg.database.db
+    password: cfg.database.password,
+    database: cfg.database.dbName
 });
 
-connection.connect();
+console.log('connecting to: ' + cfg.database.host);
 
-console.log('connected');
+connection.connect(() => {
+    console.log('connected');
+    connection.end();
+});
 
-connection.end();
+connection.on('error', (err: mysql.IError) => {
+    if (err) {
+        console.log(err);
+        connection.destroy();
+    }
+});
