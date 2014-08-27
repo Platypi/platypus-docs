@@ -4,6 +4,7 @@
     "author": "Donald Jones <donald@getplatypi.com",
     "main": "docgen.js",
     "dependencies": {
+        "mysql":  "latest",
         "comment-parser": "git+https://github.com/pwdonald/comment-parser.git"
     }
 }

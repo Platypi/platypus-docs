@@ -7,6 +7,9 @@
   "installed": {
     "node/node.d.ts": {
       "commit": "17f8e5aca2392978baf15a142410e3eedcc335cc"
+    },
+    "mysql/mysql.d.ts": {
+      "commit": "9d2478b8a80febe1d89a5d35cdf6051d121f5437"
     }
   }
 }
