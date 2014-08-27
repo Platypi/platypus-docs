@@ -14,7 +14,6 @@ console.log('connecting to: ' + cfg.database.host);
 
 connection.connect(() => {
     console.log('connected');
-    connection.end();
 });
 
 connection.on('error', (err: mysql.IError) => {
@@ -23,3 +22,5 @@ connection.on('error', (err: mysql.IError) => {
         connection.destroy();
     }
 });
+
+export = connection;
