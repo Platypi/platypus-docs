@@ -3,7 +3,7 @@
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import model = require('/../../models/parameter.model');
+import model = require('../models/parameter.model');
 
 class ParameterProcedures extends base.ApiProcedures<any> {
     constructor() {
