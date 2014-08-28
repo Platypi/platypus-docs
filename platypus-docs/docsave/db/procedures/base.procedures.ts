@@ -4,6 +4,7 @@
 import utils = require('../../../utils/utils');
 import PromiseStatic = require('es6-promise');
 import base = require('../models/base.model');
+import connection = require('../connection');
 import pool = require('../connection');
 
 var Promise = PromiseStatic.Promise;
@@ -14,7 +15,26 @@ class BaseProcedures<T extends base.IBaseModel> {
     static query(sql: string, values?: Array<any>): Thenable<any>;
     static query(sql: string, values?: Array<any>): Thenable<any> {
         return new Promise((resolve, reject) => {
-            
+            connection((err: any, connection: any) => {
+                if (utils.isObject(err)) {
+                    return reject(err);
+                } else if (utils.isArray(values)) {
+                    sql = connection.format(sql, values);
+                }
+
+                connection.query(sql, (err: any, response: Array<any>) => {
+                    connection.release();
+                    if (utils.isObject(err)) {
+                        return reject(err);
+                    }
+
+                    if (utils.isArray(response)) {
+                        response.pop();
+                    }
+
+                    resolve(response);
+                });
+            });
         });
     }
 
