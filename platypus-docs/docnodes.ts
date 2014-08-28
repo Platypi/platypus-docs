@@ -5,6 +5,7 @@
     published?: boolean;
     exported?: boolean;
     memberof?: string;
+    parent?: INode;
     visibility?: string;
 }
 
