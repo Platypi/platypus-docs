@@ -10,17 +10,20 @@ var connection = mysql.createConnection({
     database: cfg.database.dbName
 });
 
-console.log('connecting to: ' + cfg.database.host);
+var getConnection = (cb: (err: any, connection: mysql.IConnection) => void) => {
+    console.log('connecting to: ' + cfg.database.host);
 
-connection.connect(() => {
-    console.log('connected');
-});
+    connection.connect(() => {
+        console.log('connected');
+        cb(null, connection);
+    });
 
-connection.on('error', (err: mysql.IError) => {
-    if (err) {
-        console.log(err);
-        connection.destroy();
-    }
-});
+    connection.on('error', (err: mysql.IError) => {
+        if (err) {
+            connection.destroy();
+            cb(err, null);
+        }
+    });
+};
 
-export = connection;
+export = getConnection;
