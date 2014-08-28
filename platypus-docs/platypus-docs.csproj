@@ -20,10 +20,13 @@
     <TypeScriptCompile Include="docgen.ts" />
     <TypeScriptCompile Include="docnodes.ts" />
     <TypeScriptCompile Include="docsave\db\connection.ts" />
+    <TypeScriptCompile Include="docsave\db\models\base.model.ts" />
+    <TypeScriptCompile Include="docsave\db\procedures\base.procedures.ts" />
     <TypeScriptCompile Include="test.ts" />
-    <TypeScriptCompile Include="typings\db.d.ts" />
+    <TypeScriptCompile Include="docsave\db\db.d.ts" />
     <TypeScriptCompile Include="typings\node\node.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
+    <TypeScriptCompile Include="utils\utils.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
