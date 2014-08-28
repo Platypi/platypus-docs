@@ -49,24 +49,7 @@ export module DocGen {
          * If a node is not found the deepest node found will be returned.
          */
         private __findNode = (node: DocNodeTypes.INode, tree: any, callback: (node: any) => void) => {
-            var names = node.memberof.toLowerCase().split('.'),
-                current = names.shift(),
-                deepest = tree,
-                container = null;
-
-            while (!!current) {
-                if (deepest[current]) {
-                    deepest = deepest[current];
-                    current = names.shift();
-                } else if (this.nameHash[node.memberof]) {
-                    return callback(this.nameHash[node.memberof]);
-                } else {
-                    // can't go any deeper
-                    throw new Error(node.name + '\'s parent cannot be found, looked for: ' + node.memberof);
-                }
-            }
-
-            callback(deepest);
+            callback(this.nameHash[node.memberof]);
         };
 
         /**
@@ -265,9 +248,15 @@ export module DocGen {
                             this.__findNode(currentNamespace, tree, (node) => {
                                 parent = node;
                                 currentNamespace.parent = parent;
+
+                                if (!parent) {
+                                    return;
+                                }
+
                                 this.__appendChild(currentNamespace, parent);
                             });
                         } else {
+                            this.nameHash[currentNamespace.name] = currentNamespace;
                             tree[currentNamespace.name] = currentNamespace;
                         }
                     }
@@ -361,7 +350,7 @@ export module DocGen {
 
             var namespacePre = childNode.memberof.toLocaleLowerCase();
 
-            this.nameHash[namespacePre + '.' + childNode.name.toLocaleLowerCase()] = parent[childContainer][childNode.name.toLowerCase()];
+            this.nameHash[namespacePre + '.' + childNode.name.toLocaleLowerCase()] = childNode;
         };
 
         private __buildTags = (tag: any): ParsedDocNode => {
