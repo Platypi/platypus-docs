@@ -2,7 +2,7 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 
 
-import base = require('./api.procedure');
+import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
 import model = require('../models/class.model');
 
