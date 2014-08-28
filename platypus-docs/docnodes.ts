@@ -30,7 +30,6 @@ export interface IHaveOverride {
 }
 
 export interface INameSpaceNode extends INode {
-    parent?: INameSpaceNode;
     //classes?: Array<IClassNode>;
     classes?: {};
     namespaces?: {};
