@@ -1,5 +1,5 @@
 ﻿export interface INode {
-    name: string;
+    name_: string;
     description?: string;
     kind: string;
     published?: boolean;
@@ -31,16 +31,16 @@ export interface IHaveOverride {
 }
 
 export interface INameSpaceNode extends INode {
-    //classes?: Array<IClassNode>;
+    //classes: Array<IClassNode>;
     classes?: {};
     namespaces?: {};
     interfaces?: {};
     methods?: {};
     properties?: {};
-    //namespaces?: Array<INameSpaceNode>;
-    //interfaces?: Array<IInterfaceNode>;
-    //methods?: Array<IMethodNode>;
-    //properties?: Array<IPropertyNode>;
+    //namespaces: Array<INameSpaceNode>;
+    //interfaces: Array<IInterfaceNode>;
+    //methods: Array<IMethodNode>;
+    //properties: Array<IPropertyNode>;
 }
 
 export interface IEvent extends INode {
@@ -50,13 +50,12 @@ export interface IEvent extends INode {
 }
 
 export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
-    parent?: IClassNode;
     parentString?: string;
     namespace?: INameSpaceNode;
     namespaceString?: string;
     exported?: boolean;
-    remarks?: string;
-    //methods?: Array<IMethodNode>;
+    remarks: string;
+    //methods: Array<IMethodNode>;
     methods?: {};
     static?: boolean;
     //interfaces?: Array<IInterfaceNode>;
