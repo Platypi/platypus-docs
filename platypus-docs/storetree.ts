@@ -20,7 +20,7 @@ import typeParameterProcedures = require('./docsave/db/procedures/type.parameter
 
 
 var saveDocTree = (tree: any) => {
-    if (utils.isObject(tree) {
+    if (utils.isObject(tree)) {
         saveAndTraverse(tree);
     } else {
         throw new Error('Invalid Doc Tree: ' + tree);
