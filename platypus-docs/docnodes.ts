@@ -7,7 +7,7 @@
     memberof?: string;
     parent?: INode;
     visibility?: string;
-    dbId?: number;
+    id?: number;
 }
 
 export interface IHaveExampleNode {
