@@ -103,7 +103,8 @@ export module DocGen {
                             var newMethod: DocNodeTypes.IMethodNode = {
                                 name: (parsedDocTags.name ? parsedDocTags.name.name : ''),
                                 description: parsedDocTags.description.description,
-                                kind: parsedDocTags.kind.name,
+                                //kind: parsedDocTags.kind.name,
+                                kind: 'method',
                                 overrides: (parsedDocTags.variation ? true : false),
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
                                 static: (parsedDocTags.static ? true : false),
