@@ -35,7 +35,7 @@ var saveDocTree = (tree: any) => {
 
 var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> => {
     // save node
-    console.log('saving node: ' + node.name);
+    console.log('saving node: ' + node.name_);
     return submitNode(node).then<void>(() => {
         // process children
         if (node[kind]) {
