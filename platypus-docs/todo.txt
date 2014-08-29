@@ -7,6 +7,5 @@
 
 
 ADDING TO DATABASE
-* go back to tree method
-* remove arrays make direct key references to children
 * test children for 'kind' to determine if they should be traversed
+* strip '__' from names and keys before entering into database.
