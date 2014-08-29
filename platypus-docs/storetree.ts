@@ -7,17 +7,27 @@ import connection = require('./docsave/db/connection');
 
 var saveDocTree = (tree: any) => {
     if (utils.isObject(tree) {
-        for (var key in tree) {
-            var currentNode: DocNodeTypes.INode = tree[key];
-            traverseNodeAndSave(currentNode);
-        }
+        traverseNodeAndSave(tree);
     } else {
         throw new Error('Invalid Doc Tree: ' + tree);
     }
 };
 
 var traverseNodeAndSave = (node: DocNodeTypes.INode) => {
+    if (node['namespaces']) {
+    }
 
+    if (node['classes']) {
+    }
+
+    if (node['methods']) {
+    }
+
+    if (node['interfaces']) {
+    }
+
+    if (node['property']) {
+    }
 };
 
 export = saveDocTree;
