@@ -2,12 +2,15 @@
 /// <reference path="docgen.ts" />
 
 import DocGen = require('./docgen');
+import store = require('./storetree');
 
 var filename = process.argv[2] || './test-data/sample.ts',
     gen = new DocGen.DocGen.DocGenerator();
 
+console.log('generating tree');
 gen.buildTreeFromFile(filename, (tree: any) => {
-    console.log(JSON.stringify(tree, censor(tree), 4));
+    console.log('storing tree');
+    store(tree);
 });
 
 
