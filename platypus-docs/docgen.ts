@@ -101,7 +101,7 @@ export module DocGen {
                         case 'function':
                             // if name is blank, the method is an interface
                             var newMethod: DocNodeTypes.IMethodNode = {
-                                name: (parsedDocTags.name ? parsedDocTags.name.name : ''),
+                                name_: (parsedDocTags.name ? parsedDocTags.name.name : ''),
                                 description: parsedDocTags.description.description,
                                 //kind: parsedDocTags.kind.name,
                                 kind: 'method',
@@ -123,18 +123,18 @@ export module DocGen {
                             if (parsedDocTags.params) {
                                 for (var z = 0; z < parsedDocTags.params.length; z++) {
                                     var newParameter: DocNodeTypes.IParameterNode = {
-                                        name: parsedDocTags.params[z].name,
+                                        name_: parsedDocTags.params[z].name + '_',
                                         memberof: parsedDocTags.params[z].memberof,
                                         kind: parsedDocTags.params[z].kind,
                                         description: parsedDocTags.params[z].description,
                                         published: true,
                                         exported: (!parsedDocTags.exported ? true : false),
                                     };
-                                    newMethod.parameters[newParameter.name] = newParameter;
+                                    newMethod.parameters[newParameter.name_ + '_'] = newParameter;
                                 }
                             }
 
-                            var methodName = (newMethod.name !== '') ? newMethod.name : '()';
+                            var methodName = (newMethod.name_ !== '') ? newMethod.name_ : '()';
 
                             if (!(flat.methods[methodName] instanceof Array)) {
                                 flat.methods[methodName] = [];
@@ -145,7 +145,7 @@ export module DocGen {
                             break;
                         case 'property':
                             var newProperty: DocNodeTypes.IPropertyNode = {
-                                name: parsedDocTags.name.name,
+                                name_: parsedDocTags.name.name,
                                 description: parsedDocTags.description.description,
                                 kind: parsedDocTags.kind.name,
                                 published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
@@ -159,12 +159,12 @@ export module DocGen {
                                 memberof: memberof
                             };
 
-                            flat.properties[newProperty.name] = newProperty;
+                            flat.properties[newProperty.name_] = newProperty;
 
                             break;
                         case 'class':
                             var newClass: DocNodeTypes.IClassNode = {
-                                name: parsedDocTags.name.name,
+                                name_: parsedDocTags.name.name,
                                 description: parsedDocTags.description.description,
                                 kind: parsedDocTags.kind.name,
                                 published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
@@ -182,19 +182,19 @@ export module DocGen {
                                 for (var k in parsedDocTags.implements) {
                                     var tag = parsedDocTags.implements[k],
                                         newInterface: DocNodeTypes.IInterfaceNode = {
-                                            name: tag.type,
+                                            name_: tag.type,
                                             kind: 'interface'
                                         };
-                                    newClass.interfaces[newInterface.name] = newInterface;
+                                    newClass.interfaces[newInterface.name_] = newInterface;
                                 }
                             }
 
-                            flat.classes[newClass.name] = newClass;
+                            flat.classes[newClass.name_] = newClass;
                             
                             break;
                         case 'interface':
                             var newInterface: DocNodeTypes.IInterfaceNode = {
-                                name: parsedDocTags.name.name,
+                                name_: parsedDocTags.name.name,
                                 kind: parsedDocTags.kind.name,
                                 description: parsedDocTags.description.description,
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
@@ -204,12 +204,12 @@ export module DocGen {
                                 //methods,
                                 memberof: memberof
                             };
-                            flat.interfaces[newInterface.name] = newInterface;
+                            flat.interfaces[newInterface.name_] = newInterface;
                             
                             break;
                         case 'event':
                             var newEvent: DocNodeTypes.IEvent = {
-                                name: parsedDocTags.name.name,
+                                name_: parsedDocTags.name.name,
                                 kind: parsedDocTags.kind.name,
                                 description: parsedDocTags.description.description,
                                 published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
@@ -220,12 +220,12 @@ export module DocGen {
                                 memberof: memberof
                             };
 
-                            flat.events[newEvent.name] = newEvent;
+                            flat.events[newEvent.name_] = newEvent;
                             
                             break;
                         case 'namespace':
                             var newNamespace: DocNodeTypes.INameSpaceNode = {
-                                name: parsedDocTags.name.name,
+                                name_: parsedDocTags.name.name,
                                 kind: parsedDocTags.kind.name,
                                 description: parsedDocTags.description.description,
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
@@ -235,7 +235,7 @@ export module DocGen {
                                 memberof: memberof
                             };
 
-                            flat.namespaces[newNamespace.name] = newNamespace;
+                            flat.namespaces[newNamespace.name_] = newNamespace;
                             
                             break;
                     }
@@ -257,8 +257,8 @@ export module DocGen {
                                 this.__appendChild(currentNamespace, parent);
                             });
                         } else {
-                            this.nameHash[currentNamespace.name] = currentNamespace;
-                            tree[currentNamespace.name] = currentNamespace;
+                            this.nameHash[currentNamespace.name_] = currentNamespace;
+                            tree[currentNamespace.name_] = currentNamespace;
                         }
                     }
 
@@ -304,7 +304,7 @@ export module DocGen {
                                 parent = node;
 
                                 for (var j in currentMethod.parameters) {
-                                    currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name).toLowerCase()] || currentMethod.parameters[j];
+                                    currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name_).toLowerCase()] || currentMethod.parameters[j];
                                 }
 
                                 this.__appendChild(currentMethod, parent);
@@ -343,15 +343,15 @@ export module DocGen {
             var childContainer = this.__nodeContainer(childNode),
                 parent = parentNode;
 
-            if (!parentNode[childContainer]) {
-                parentNode[childContainer] = {};
-            }
+            //if (!parentNode[childContainer]) {
+            //    parentNode[childContainer] = {};
+            //}
 
-            parent[childContainer][childNode.name.toLowerCase()] = childNode;
+            parent[childNode.name_.toLowerCase()] = childNode;
 
-            var namespacePre = childNode.memberof.toLocaleLowerCase();
+            var namespacePre = childNode.memberof.toLowerCase();
 
-            this.nameHash[namespacePre + '.' + childNode.name.toLocaleLowerCase()] = childNode;
+            this.nameHash[namespacePre + '.' + childNode.name_.toLowerCase()] = childNode;
         };
 
         private __buildTags = (tag: any): ParsedDocNode => {
