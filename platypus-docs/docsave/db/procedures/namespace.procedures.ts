@@ -4,21 +4,24 @@
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
 import model = require('../models/namespace.model');
+import DocNodeTypes = require('../../../docnodes');
 
 class NamespaceProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('Namespace');
     }
 
-    getArgs(namespace: model.INamespace): Array<any> {
+    getArgs(namespace: DocNodeTypes.INameSpaceNode): Array<any> {
         if (!utils.isObject(namespace)) {
             return [];
         }
 
         return [
-            namespace.parentid,
+            (namespace.parent ? namespace.parent.id : null),
             namespace.name,
-            namespace.description
+            namespace.description,
+            false,
+            '0.1'
         ];
     }
 
