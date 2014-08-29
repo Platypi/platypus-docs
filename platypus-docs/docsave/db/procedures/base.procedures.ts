@@ -23,7 +23,7 @@ class BaseProcedures<T extends base.IBaseModel> {
                 }
 
                 connection.query(sql, (err: any, response: Array<any>) => {
-                    connection.release();
+                    (<mysql.IConnection>connection).end();
                     if (utils.isObject(err)) {
                         return reject(err);
                     }
