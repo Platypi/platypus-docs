@@ -9,10 +9,16 @@ var connection = mysql.createConnection({
     password: cfg.database.password,
     database: cfg.database.dbName
 });
+var connected = false;
 
 var getConnection = (cb: (err: any, connection: mysql.IConnection) => void) => {
-    console.log('connecting to: ' + cfg.database.host);
+    //console.log('connecting to: ' + cfg.database.host);
 
+    if (connected) {
+        return cb(null, connection);
+    }
+
+    connected = true;
     connection.connect(() => {
         console.log('connected');
         cb(null, connection);
