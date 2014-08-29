@@ -24,7 +24,9 @@ var Promise = PromiseStatic.Promise;
 var saveDocTree = (tree: any) => {
     if (utils.isObject(tree)) {
         saveAndTraverse(tree['plat'], 'namespaces').then(null, (err) => {
-            console.log(err);
+            if (err) {
+                console.log(err);
+            }
         });
     } else {
         throw new Error('Invalid Doc Tree: ' + tree);
