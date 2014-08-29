@@ -18,112 +18,99 @@ import classInterfaceProcedures = require('./docsave/db/procedures/class.interfa
 import interfaceInterfaceProcedures = require('./docsave/db/procedures/interface.interface.procedures');
 import typeParameterProcedures = require('./docsave/db/procedures/type.parameter.procedures');
 
+var Promise = PromiseStatic.Promise;
+
 
 var saveDocTree = (tree: any) => {
     if (utils.isObject(tree)) {
-        saveAndTraverse(tree);
+        saveAndTraverse(tree['plat'], 'namespaces').then(null, (err) => {
+            console.log(err);
+        });
     } else {
         throw new Error('Invalid Doc Tree: ' + tree);
     }
 };
 
-var saveAndTraverse = (node: DocNodeTypes.INode) => {
+var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> => {
     // save node
-    submitNode(node);
+    console.log('saving node: ' + node.name);
+    return submitNode(node).then<void>(() => {
+        // process children
+        if (node[kind]) {
+            var kinds = node[kind],
+                promises = [];
 
-    // process children
-    if (node['namespaces']) {
-        var namespaces = node['namespaces'];
-        for (var n in namespaces) {
-            saveAndTraverse(namespaces[n]);
+            utils.forEach(kinds, (value: DocNodeTypes.INode) => {
+                promises.push(saveAndTraverse(value, kind));
+            });
+            console.log(promises.length);
+            return Promise.all(promises);
+        } else {
+            return <any>node;
         }
-    }
-
-    if (node['classes']) {
-        var classes = node['classes'];
-        for (var c in classes) {
-            saveAndTraverse(classes[c]);
-        }
-    }
-
-    if (node['methods']) {
-        var methods = node['methods'];
-        for (var m in methods) {
-            saveAndTraverse(methods[m]);
-        }
-    }
-
-    if (node['interfaces']) {
-        var interfaces = node['interfaces'];
-        for (var i in interfaces) {
-            saveAndTraverse(interfaces[i]);
-        }
-    }
-
-    if (node['properties']) {
-        var properties = node['properties'];
-        for (var p in properties) {
-            saveAndTraverse(properties[p]);
-        }
-    }
-
-    if (node['events']) {
-        var events = node['events'];
-        for (var e in events) {
-            saveAndTraverse(events[e]);
-        }
-    }
+    });
 };
 
-var submitNode = (node: DocNodeTypes.INode) => {
-    var procedures: any = null;
-    switch (node.kind) {
-        case 'namespace':
-            procedures = new namespaceProcedure();
-            procedures.create(node).then((id) => {
-                node.dbId = id;
-            });
-            break;
-        case 'interface':
-            procedures = new interfaceProcedure();
-            procedures.create(node).then((id) => {
-                node.dbId = id;
-            });
-            break;
-        case 'class':
-            procedures = new classProcedures();
-            procedures.create(node).then((id) => {
-                node.dbId = id;
-            });
-            break;
-        case 'method':
-            procedures = new methodProcedures();
-            procedures.create(node).then((id) => {
-                node.dbId = id;
-            });
-            break;
-        case 'property':
-            procedures = new propertyProcedures();
-            procedures.create(node).then((id) => {
-                node.dbId = id;
-            });
-            break;
-        case 'event':
-            procedures = new eventProcedures();
-            procedures.create(node).then((id) => {
-                node.dbId = id;
-            });
-            break;
-        case 'parameter':
-            procedures = new parameterProcedures();
-            procedures.create(node).then((id) => {
-                node.dbId = id;
-            });
-            break;
-        default:
-            throw new Error('unknown node type');
-            break;
+var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
+    if (node.kind) {
+        var procedures: apiprocedures.ApiProcedures<any> = null;
+        switch (node.kind) {
+            case 'namespace':
+                procedures = new namespaceProcedure();
+                break;
+            case 'interface':
+                procedures = new interfaceProcedure();
+                break;
+            case 'class':
+                procedures = new classProcedures();
+                break;
+            case 'method':
+                procedures = new methodProcedures();
+                break;
+            case 'property':
+                procedures = new propertyProcedures();
+                break;
+            case 'event':
+                procedures = new eventProcedures();
+                break;
+            case 'parameter':
+                procedures = new parameterProcedures();
+                break;
+            default:
+                console.log(JSON.stringify(node, censor(node), 4));
+                throw new Error('unknown node type: ' + node.kind);
+                break;
+        }
+
+        if (procedures) {
+            return procedures.create(node);
+        }
     }
 };
 
 export = saveDocTree;
+
+
+function censor(censor) {
+    var i = 0;
+
+    return function (key, value) {
+        if (key === 'parent' ||
+            key === 'namespace' ||
+            key === 'class' ||
+            key === 'interface' ||
+            key === 'interfaceNode' ||
+            key === 'namespaceNode' ||
+            key === 'classNode' ||
+            key === 'returntype' ||
+            key === 'method') {
+            if (value && value.name && value.name !== '') {
+                return '[Circular] ' + (value ? value.name : '');
+            } else {
+                return '[Circular] ' + (value ? value.type : '');
+            }
+        }
+
+        return value;
+    };
+}
