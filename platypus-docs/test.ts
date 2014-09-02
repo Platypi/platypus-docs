@@ -9,6 +9,7 @@ var filename = process.argv[2] || './test-data/sample.ts',
 
 console.log('generating tree');
 gen.buildTreeFromFile(filename, (tree: any) => {
+    //console.log(tree);
     console.log('storing tree');
     store(tree);
 });

@@ -20,10 +20,27 @@ class PropertyProcedures extends base.ApiProcedures<any> {
             return [];
         }
 
+        var parent = property.parent,
+            namespaceid: number = null,
+            classid: number = null,
+            interfaceid: number = null;
+
+        switch (parent.kind) {
+            case 'namespace':
+                namespaceid = parent.id;
+                break;
+            case 'class':
+                classid = parent.id;
+                break;
+            case 'interface':
+                interfaceid = parent.id;
+                break;
+        }
+
         return [
-            property.namespace.id,
-            property.class.id,
-            property.interface.id,
+            namespaceid,
+            classid,
+            interfaceid,
             property.name_,
             property.type,
             property.classtype.id,

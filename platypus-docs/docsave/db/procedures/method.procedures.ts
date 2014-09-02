@@ -15,11 +15,30 @@ class MethodProcedures extends base.ApiProcedures<any> {
         if (!utils.isObject(method)) {
             return [];
         }
-        
+
+        var parent = method.parent,
+            namespaceid: number = null,
+            classid: number = null,
+            interfaceid: number = null;
+
+        //console.log('erroneous method name: ' + method.name_);
+
+        switch (parent.kind) {
+            case 'namespace':
+                namespaceid = parent.id;
+                break;
+            case 'class':
+                classid = parent.id;
+                break;
+            case 'interface':
+                interfaceid = parent.id;
+                break;
+        }
+
         return [
-            (method.namespaceNode ? method.namespaceNode.id : null),
-            (method.classNode ? method.classNode.id : null),
-            (method.interfaceNode ? method.interfaceNode.id : null),
+            namespaceid,
+            classid,
+            interfaceid,
             method.name_,
             method.description,
             method.example,
