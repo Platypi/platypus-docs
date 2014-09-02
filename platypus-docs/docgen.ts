@@ -309,6 +309,7 @@ export module DocGen {
 
                                 for (var j in currentMethod.parameters) {
                                     currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name_).toLowerCase()] || currentMethod.parameters[j];
+                                    currentMethod.parameters[j].method = currentMethod;
                                 }
 
                                 this.__appendChild(currentMethod, parent);
