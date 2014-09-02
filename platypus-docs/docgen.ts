@@ -354,6 +354,10 @@ export module DocGen {
             //    parentNode[childContainer] = {};
             //}
 
+            if (!parent) {
+                console.log(childNode.memberof);
+            }
+
             parent[childNode.name_.toLowerCase()] = childNode;
 
             var namespacePre = childNode.memberof.toLowerCase();
