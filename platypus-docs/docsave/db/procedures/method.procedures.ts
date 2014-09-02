@@ -45,7 +45,7 @@ class MethodProcedures extends base.ApiProcedures<any> {
             method.exampleurl,
             method.remarks,
             method.visibility,
-            method.static,
+            false, //method.static,
             null, //method.returntype,
             method.returntypedesc,
             (method.returntypemethod ? method.returntypemethod.id : null),

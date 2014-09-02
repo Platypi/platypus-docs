@@ -7,14 +7,14 @@
  * http://opensource.org/licenses/GPL-3.0 
  * 
  */
-
- /**
-  * @name plat
-  * @kind namespace
-  * 
-  * @description
-  * The entry point into the platypus library.
-  */
+    /**
+     * @name plat
+     * @kind namespace
+     * @access public
+     * 
+     * @description
+     * The entry point into the platypus library.
+     */
 module plat {
     /* tslint:disable:no-unused-variable */
     /*
@@ -873,6 +873,10 @@ module plat {
     }
     
     function addClass(element: HTMLElement, className: string): void {
+        if (!isString(className) || className === '') {
+            return;
+        }
+    
         if (isUndefined(element.classList)) {
             if (isEmpty(element.className)) {
                 element.className = className;
@@ -887,6 +891,10 @@ module plat {
     }
     
     function removeClass(element: HTMLElement, className: string): void {
+        if (!isString(className) || className === '') {
+            return;
+        }
+    
         if (isUndefined(element.classList)) {
             if (element.className === className) {
                 element.className = '';
@@ -902,6 +910,10 @@ module plat {
     }
     
     function toggleClass(element: HTMLElement, className: string): void {
+        if (!isString(className) || className === '') {
+            return;
+        }
+    
         if (isUndefined(element.classList)) {
             var name = element.className;
             if (name === '') {
@@ -925,6 +937,10 @@ module plat {
     }
     
     function hasClass(element: HTMLElement, className: string): boolean {
+        if (!isString(className) || className === '') {
+            return;
+        }
+    
         if (isUndefined(element.classList)) {
             var name = element.className;
             if (name === '') {
@@ -941,52 +957,37 @@ module plat {
     /* tslint:enable:no-unused-variable */
     
     /**
-     * An IInjectorObject of plat.IControls. Contains all the registered
-     * controls for an application.
+     * @name register
+     * @memberof plat
+     * @kind namespace
+     * @access public
+     * 
+     * @description
+     * Holds all the classes and interfaces related to registering components for platypus.
      */
-    var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
-    
-    /**
-     * An IInjectorObject of plat.ui.IBaseViewControls. Contains all the registered
-     * view controls for an application.
-     */
-    var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseViewControl> = {};
-    
-    /**
-     * An IInjectorObject of objects. Contains all the registered
-     * injectables for an application.
-     */
-    var injectableInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
-    
-    /**
-     * An IInjectorObject of static objects. Contains all the registered
-     * static injectables for an application.
-     */
-    var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
-    
-    /**
-     * An IInjectorObject of animations. Can be either CSS or JS implementations.
-     */
-    var animationInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseAnimation> = {};
-    
-    /**
-     * An IInjectorObject of animations. Should only contain JS implementations.
-     */
-    var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseAnimation> = {};
-    
     export module register {
         /**
-         * Generic function for creating an Injector and adding it to an IInjectorObject.
+         * @name add
+         * @memberof plat.register
+         * @kind function
+         * @access private
+         * @exported false
          * 
-         * @param obj The IInjectorObject to which to add an Injector.
-         * @param name The name used to set/get the Injector from the IInjectorObject.
-         * @param Type The constructor or function definition for the Injector.
-         * @param dependencies An array of strings representing the dependencies needed for the
-         * injector.
-         * @param injectableType The injectable type.
-         * @param isStatic The injectable type is a static type.
+         * @description
+         * Generic function for creating an {@link plat.dependency.Injector|Injector} and 
+         * adding it to an {@link plat.dependency.IInjectorObject|IInjectorObject}.
          * 
-         * @returns {register} The object that contains the register methods (for method chaining).
+         * @param {plat.dependency.IInjectorObject<any>} obj The {@link plat.dependency.IInjectorObject|IInjectorObject} 
+         * to which to add an {@link plat.dependency.Injector|Injector}.
+         * @param {string} name The name used to set/get the {@link plat.dependency.Injector|Injector} from the 
+         * {@link plat.dependency.IInjectorObject|IInjectorObject}.
+         * @param {any} Type The constructor or function definition for the {@link plat.dependency.Injector|Injector}.
+         * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the
+         * {@link plat.dependency.Injector|Injector}.
+         * @param {string} injectableType? The injectable type.
+         * @param {boolean} isStatic The injectable type is a static type.
+         * 
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
         function add(obj: dependency.IInjectorObject<any>, name: string, Type: any, dependencies?: Array<any>,
             injectableType?: string, isStatic?: boolean): typeof register {
@@ -998,15 +999,23 @@ module plat {
 
             return register;
         }
-
+    
         /**
-         * Registers the IApp with the framework. The framework will instantiate the IApp when needed, and wire up
-         * the Application Lifecycle events. The dependencies array corresponds to injectables that will be 
+         * @name app
+         * @memberof plat.register
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Registers the {@link plat.IApp|IApp} with the framework. The framework will instantiate the {@link plat.IApp|IApp} 
+         * when needed, and wire up the Application Lifecycle events. The dependencies array corresponds to injectables that will be 
          * passed into the Constructor of the app.
          * 
-         * @param name The name of your app.
-         * @param Type The constructor for the IApp.
-         * @param dependencies An array of strings representing the dependencies needed for the app injector.
+         * @param {string} name The name of your app.
+         * @param {new (...args: any[]) => plat.IApp} Type The constructor for the {@link plat.IApp|IApp}.
+         * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the app injector.
+         * 
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
         export function app(name: string, Type: new (...args: any[]) => IApp, dependencies?: Array<any>): typeof register {
             var app = new dependency.Injector<IApp>(name, Type, dependencies),
@@ -1015,16 +1024,26 @@ module plat {
             $appStatic.registerApp(app);
             return register;
         }
-
+    
         /**
-         * Registers an IControl with the framework. The framework will instantiate the IControl when needed. The 
-         * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
+         * @name control
+         * @memberof plat.register
+         * @kind function
+         * @access public
          * 
-         * @param name The control type, corresponding to the HTML notation for creating a new IControl (e.g. 'plat-foreach').
-         * @param Type The constructor for the IControl.
-         * @param dependencies An array of strings representing the dependencies needed for the IControl injector.
+         * @description
+         * Registers an {@link plat.IControl|IControl} with the framework. The framework will instantiate the 
+         * {@link plat.IControl|IControl} when needed. The dependencies array corresponds to injectables that 
+         * will be passed into the Constructor of the control.
+         * 
+         * @param {string} name The control type, corresponding to the HTML notation for creating a new IControl (e.g. 'plat-foreach').
+         * @param {new (...args: any[]) => plat.IControl} Type The constructor for the {@link plat.IControl|IControl}.
+         * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the {@link plat.IControl|IControl} 
+         * injector.
          * 
          * @example plat.register.control('my-tap', MyTap, [plat.expressions.IParser]);
+         * 
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
         export function control(name: string, Type: new (...args: any[]) => IControl, dependencies?: Array<any>): typeof register {
             if (isString(name)) {
@@ -1035,31 +1054,53 @@ module plat {
 
             return add(controlInjectors, name, Type, dependencies);
         }
-
+    
         /**
-         * Registers a ViewControl with the framework. The framework will instantiate the control when needed. The 
-         * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
+         * @name viewControl
+         * @memberof plat.register
+         * @kind function
+         * @access public
+         * @variation 0
          * 
-         * @param name The control type, corresponding to the HTML notation for creating a new IViewControl. Used for navigation 
-         * to the specified ViewControl.
-         * @param Type The constructor for the IViewControl.
-         * @param dependencies An optional array of strings representing the dependencies needed for the IViewControl injector.
+         * @description
+         * Registers an {@link plat.ui.IViewControl|IViewControl} with the framework. The framework will 
+         * instantiate the control when needed. The dependencies array corresponds to injectables that will be 
+         * passed into the Constructor of the control.
+         * 
+         * @param {string} name The control type, corresponding to the HTML notation for creating a new 
+         * {@link plat.ui.IViewControl|IViewControl}. Used for navigation to the specified {@link plat.ui.IViewControl|IViewControl}.
+         * @param {new (...args: any[]) => plat.ui.IViewControl} Type The constructor for the {@link plat.ui.IViewControl|IViewControl}.
+         * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the 
+         * {@link plat.ui.IViewControl|IViewControl} injector.
          * 
          * @example plat.register.viewControl('my-view-control', MyViewControl);
+         * 
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
         export function viewControl(name: string, Type: new (...args: any[]) => ui.IViewControl,
             dependencies?: Array<any>): typeof register;
         /**
-         * Registers a WebViewControl with the framework. The framework will instantiate the control when needed. The 
-         * dependencies array corresponds to injectables that will be passed into the Constructor of the control.
+         * @name viewControl
+         * @memberof plat.register
+         * @kind function
+         * @access public
+         * @variation 1
          * 
-         * @param name The control type, corresponding to the HTML notation for creating a new IWebViewControl. Used for navigation 
-         * to the specified WebViewControl.
-         * @param Type The constructor for the IWebViewControl.
-         * @param dependencies An optional array of strings representing the dependencies needed for the IWebViewControl injector.
-         * @param routes Optional route strings (or regular expressions) used for matching a URL to the registered IWebViewControl.
+         * @description
+         * Registers an {@link plat.ui.IWebViewControl|WebViewControl} with the framework. The framework will instantiate the 
+         * control when needed. The dependencies array corresponds to injectables that will be passed into the Constructor of the control.
+         * 
+         * @param {string} name The control type, corresponding to the HTML notation for creating a new 
+         * {@link plat.ui.IWebViewControl|WebViewControl}. Used for navigation to the specified {@link plat.ui.IWebViewControl|WebViewControl}.
+         * @param {new (...args: any[]) => ui.IWebViewControl} Type The constructor for the {@link plat.ui.IWebViewControl|WebViewControl}.
+         * @param {Array<any>} dependencies? An optional array of strings representing the dependencies needed for the 
+         * {@link plat.ui.IWebViewControl|WebViewControl} injector.
+         * @param {Array<any>} routes? Optional route strings (or regular expressions) used for matching a URL to the 
+         * registered {@link plat.ui.IWebViewControl|WebViewControl}.
          * 
          * @example plat.register.viewControl('my-view-control', MyViewControl, null, ['customers/:customer(/:ordernumber)']);
+         * 
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
         export function viewControl(name: string, Type: new (...args: any[]) => ui.IWebViewControl,
             dependencies: Array<any>, routes: Array<any>): typeof register;
@@ -1080,41 +1121,60 @@ module plat {
 
             return ret;
         }
-
+    
         /**
+         * @name injectable
+         * @memberof plat.register
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
          * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
          * 
-         * @param name The name of the injector, used when another component is specifying dependencies.
-         * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
-         * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
-         * lifetime.
-         * @param injectableType Specifies the type of injectable, either plat.register.injectable.SINGLETON, 
-         * plat.register.injectable.STATIC, plat.register.injectable.INSTANCE, plat.register.injectable.FACTORY, 
-         * plat.register.injectable.CLASS (defaults to plat.register.injectable.SINGLETON).
+         * @param {string} name The name of the injector, used when another component is specifying dependencies.
+         * @param {new (...args: any[]) => any} Type The constructor for the injectable. The injectable will only be 
+         * instantiated once during the application lifetime.
+         * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the injectable's injector.
+         * @param {string} injectableType? Specifies the type of injectable, either {@link plat.register.injectable.SINGLETON|SINGLETON}, 
+         * {@link plat.register.injectable.STATIC|STATIC}, {@link plat.register.injectable.INSTANCE|INSTANCE}, 
+         * {@link plat.register.injectable.FACTORY|FACTORY}, {@link plat.register.injectable.CLASS|CLASS} 
+         * (defaults to {@link plat.register.injectable.SINGLETON|SINGLETON}).
          * 
-         * @example plat.register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
-         * @example plat.register.injectable('database', MyDatabase, null, register.injectable.INSTANCE);
+         * @example
+         * plat.register.injectable('$CacheFactory', [plat.expressions.IParser], Cache);
+         * plat.register.injectable('database', MyDatabase, null, plat.register.injectable.INSTANCE);
+         * 
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
         export function injectable(name: string, Type: new (...args: any[]) => any,
             dependencies?: Array<any>, injectableType?: string): typeof register;
         /**
+         * @name injectable
+         * @memberof plat.register
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
          * Registers an injectable with the framework. Injectables are objects that can be used for dependency injection into other objects.
-         * The dependencies array corresponds to injectables that will be passed into the injectable method.
+         * The dependencies array corresponds to injectables that will be passed into the Constructor of the injectable.
          * 
-         * @param name The name of the injector, used when another component is specifying dependencies.
-         * @param dependencies An array of strings representing the dependencies needed for the injectable's injector.
-         * @param Type The constructor for the injectable. The injectable will only be instantiated once during the application
-         * lifetime.
-         * @param injectableType Specifies the type of injectable, either plat.register.injectable.SINGLETON, 
-         * plat.register.injectable.STATIC, plat.register.injectable.INSTANCE, plat.register.injectable.FACTORY, 
-         * plat.register.injectable.CLASS (defaults to plat.register.injectable.SINGLETON).
+         * @param {string} name The name of the injector, used when another component is specifying dependencies.
+         * @param {(...args: any[]) => any} method A method that returns the injectable.
+         * @param {Array<any>} dependencies? An array of strings representing the dependencies needed for the injectable's injector.
+         * @param {string} injectableType? Specifies the type of injectable, either {@link plat.register.injectable.SINGLETON|SINGLETON}, 
+         * {@link plat.register.injectable.STATIC|STATIC}, {@link plat.register.injectable.INSTANCE|INSTANCE}, 
+         * {@link plat.register.injectable.FACTORY|FACTORY}, {@link plat.register.injectable.CLASS|CLASS} 
+         * (defaults to {@link plat.register.injectable.SINGLETON|SINGLETON}).
          * 
-         * @returns {register} The object that contains the register methods (for method chaining).
+         * @example
+         * plat.register.injectable('$CacheFactory', [plat.expressions.IParser], 
+         *     function(parser: plat.expressions.IParser) { return { ... }; });
+         * plat.register.injectable('database', function() { return new Database(); }, null, register.injectable.INSTANCE);
          * 
-         * @example plat.register.injectable('$CacheFactory', [plat.expressions.IParser], 
-         *  function(parser: plat.expressions.IParser) { return { ... }; });
-         * @example plat.register.injectable('database', function() { return new Database(); }, null, register.injectable.INSTANCE);
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
         export function injectable(name: string, method: (...args: any[]) => any,
             dependencies?: Array<any>, injectableType?: string): typeof register;
@@ -1132,94 +1192,145 @@ module plat {
 
             return add(injectableInjectors, name, Type, dependencies, injectableType, false);
         }
-
+ 
         /**
-         * A function for registering an injectable that also contains constants for injectable type.
+         * @name injectable
+         * @memberof plat.register
+         * @kind namespace
+         * @access public
+         * 
+         * @description
+         * Contains constants for injectable type.
          */
 
         export module injectable {
                 /**
+                 * @name STATIC
+                 * @memberof plat.register.injectable
+                 * @kind property
+                 * @access public
+                 * @static
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * Static injectables will be injected before the application loads. This provides a way to create 
                  * a static constructor and load dependencies into static class properties.
                  */
                 export var STATIC = __STATIC;
-
+        
                 /**
+                 * @name SINGLETON
+                 * @memberof plat.register.injectable
+                 * @kind property
+                 * @access public
+                 * @static
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * Singleton injectables will contain a constructor. A Singleton injectable will be instantiated once and 
                  * used throughout the application lifetime. It will be instantiated when another component is injected 
                  * and lists it as a dependency.
                  */
                 export var SINGLETON = __SINGLETON;
-
+        
                 /**
+                 * @name INSTANCE
+                 * @memberof plat.register.injectable
+                 * @kind property
+                 * @access public
+                 * @static
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * Instance injectables will contain a constructor. An Instance injectable will be instantiated multiple times 
                  * throughout the application lifetime. It will be instantiated whenever another component is injected 
                  * and lists it as a dependency.
                  */
                 export var INSTANCE = __INSTANCE;
-
+        
                 /**
+                 * @name FACTORY
+                 * @memberof plat.register.injectable
+                 * @kind property
+                 * @access public
+                 * @static
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * Factory injectables will not contain a constructor but will instead contain a method for obtaining an 
                  * instance, such as getInstance() or create(). It will be injected before the application loads, similar to a Static 
                  * injectable.
                  */
                 export var FACTORY = __FACTORY;
-
+        
                 /**
+                 * @name CLASS
+                 * @memberof plat.register.injectable
+                 * @kind property
+                 * @access public
+                 * @static
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * Class injectables are essentially a direct reference to a class's constructor. It may contain both 
                  * static and instance methods as well as a constructor for creating a new instance.
                  */
                 export var CLASS = __CLASS;
         }
         /**
+         * @name animation
+         * @memberof plat.register
+         * @kind function
+         * @access public
+         * @variation 0
+         * 
+         * @description
          * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a 
          * JS implementation as well.
          * 
-         * @param name The unique idenitifer of the animation.
-         * @param Type The constructor for the custom animation.
-         * @param dependencies Any dependencies that need to be injected into the animation at 
+         * @param {string} name The unique idenitifer of the animation.
+         * @param {new (...args: any[]) => plat.ui.animations.ICssAnimation} Type The constructor for the custom animation.
+         * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at 
          * instantiation.
-         * @param animationType The type of animation. Both the intended type and default value are plat.register.animation.CSS.
+         * @param {string} animationType The type of animation. Both the intended type and default value are 
+         * {@link plat.register.animation.CSS|CSS}.
+         * 
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
-        export function animation(name: string, Type: new (...args: any[]) => ui.ICssAnimation,
+        export function animation(name: string, Type: new (...args: any[]) => ui.animations.ICssAnimation,
             dependencies?: Array<any>, animationType?: 'css'): typeof register;
-        /**
-         * Adds a CSS animation denoted by its name. If you wish to also support legacy browsers, make sure to register a 
-         * JS implementation as well.
-         * 
-         * @param name The unique idenitifer of the animation.
-         * @param Type The constructor for the custom animation.
-         * @param dependencies Any dependencies that need to be injected into the animation at 
-         * instantiation.
-         * @param animationType The type of animation. Both the intended type and default value are plat.register.animation.CSS.
-         */
-        export function animation(name: string, Type: new (...args: any[]) => ui.ICssAnimation,
+        export function animation(name: string, Type: new (...args: any[]) => ui.animations.ICssAnimation,
             dependencies?: Array<any>, animationType?: string): typeof register;
         /**
+         * @name animation
+         * @memberof plat.register
+         * @kind function
+         * @access public
+         * @variation 1
+         * 
+         * @description
          * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers 
          * is desired.
          * 
-         * @param name The unique idenitifer of the animation.
-         * @param Type The constructor for the custom animation.
-         * @param dependencies Any dependencies that need to be injected into the animation at 
+         * @param {string} name The unique idenitifer of the animation.
+         * @param {new (...args: any[]) => plat.ui.animations.IJsAnimation} Type The constructor for the custom animation.
+         * @param {Array<any>} dependencies? Any dependencies that need to be injected into the animation at 
          * instantiation.
-         * @param animationType The type of animation. The intended type is plat.register.animation.JS.
+         * @param {string} animationType The type of animation. Both the intended type and default value are 
+         * {@link plat.register.animation.JS|JS}.
+         * 
+         * @returns {plat.register} The object that contains the register methods (for method chaining).
          */
-        export function animation(name: string, Type: new (...args: any[]) => ui.IJsAnimation,
+        export function animation(name: string, Type: new (...args: any[]) => ui.animations.IJsAnimation,
             dependencies: Array<any>, animationType: 'js'): typeof register;
-        /**
-         * Adds a JS animation denoted by its name. If  Intended to be used when JS animation implementations for legacy browsers 
-         * is desired.
-         * 
-         * @param name The unique idenitifer of the animation.
-         * @param Type The constructor for the custom animation.
-         * @param dependencies Any dependencies that need to be injected into the animation at 
-         * instantiation.
-         * @param animationType The type of animation. The intended type is plat.register.animation.JS.
-         */
-        export function animation(name: string, Type: new (...args: any[]) => ui.IJsAnimation,
+        export function animation(name: string, Type: new (...args: any[]) => ui.animations.IJsAnimation,
             dependencies: Array<any>, animationType: string): typeof register;
-        export function animation(name: string, Type: new (...args: any[]) => ui.IBaseAnimation,
+        export function animation(name: string, Type: new (...args: any[]) => ui.animations.IBaseAnimation,
             dependencies?: Array<any>, animationType?: string): typeof register {
             if (!isString(animationType)) {
                 animationType = __CSS;
@@ -1233,31 +1344,149 @@ module plat {
             return add((animationType === __JS ? jsAnimationInjectors : animationInjectors),
                 name, Type, dependencies, register.injectable.INSTANCE);
         }
-
+    
         /**
-         * A function for registering animations that also contains constants for animation type.
+         * @name animation
+         * @memberof plat.register
+         * @kind namespace
+         * @access public
+         * 
+         * @description
+         * Contains constants for animation type.
          */
 
         export module animation {
                 /**
+                 * @name CSS
+                 * @memberof plat.register.animation
+                 * @kind property
+                 * @access public
+                 * @static
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * A CSS animation.
                  */
                 export var CSS = __CSS;
-
+        
                 /**
+                 * @name CSS
+                 * @memberof plat.register.animation
+                 * @kind property
+                 * @access public
+                 * @static
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * A JavaScript animation.
                  */
                 export var JS = __JS;
         }
     }
+    /**
+     * @name controlInjectors
+     * @memberof plat.register
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {plat.dependency.IInjectorObject<plat.IControl>}
+     * 
+     * @description
+     * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.IControl|IControls}. 
+     * Contains all the registered controls for an application.
+     */
+    var controlInjectors: plat.dependency.IInjectorObject<plat.IControl> = {};
+    
+    /**
+     * @name viewControlInjectors
+     * @memberof plat.register
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {plat.dependency.IInjectorObject<plat.ui.IBaseViewControl>}
+     * 
+     * @description
+     * An {@link plat.dependency.IInjectorObject|IInjectorObject} of {@link plat.ui.IBaseViewControl|IBaseViewControls}. 
+     * Contains all the registered view controls for an application.
+     */
+    var viewControlInjectors: plat.dependency.IInjectorObject<plat.ui.IBaseViewControl> = {};
+    
+    /**
+     * @name injectableInjectors
+     * @memberof plat.register
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
+     * 
+     * @description
+     * An {@link plat.dependency.IInjectorObject|IInjectorObject} of objects. Contains all the registered 
+     * injectables for an application.
+     */
+    var injectableInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
+    
+    /**
+     * @name staticInjectors
+     * @memberof plat.register
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {plat.dependency.IInjectorObject<plat.dependency.IInjector<any>>}
+     * 
+     * @description
+     * An {@link plat.dependency.IInjectorObject|IInjectorObject} of static objects. Contains all the registered 
+     * static injectables for an application.
+     */
+    var staticInjectors: plat.dependency.IInjectorObject<plat.dependency.IInjector<any>> = {};
+    
+    /**
+     * @name animationInjectors
+     * @memberof plat.register
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
+     * 
+     * @description
+     * An {@link plat.dependency.IInjectorObject|IInjectorObject} of animations. Can be either CSS or JS implementations.
+     */
+    var animationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
+    
+    /**
+     * @name jsAnimationInjectors
+     * @memberof plat.register
+     * @kind property
+     * @access private
+     * @static
+     * @exported false
+     * 
+     * @type {plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation>}
+     * 
+     * @description
+     * An IInjectorObject of animations. Should only contain JS implementations.
+     */
+    var jsAnimationInjectors: plat.dependency.IInjectorObject<plat.ui.animations.IBaseAnimation> = {};
     
     /**
      * @name dependency
      * @memberof plat
      * @kind namespace
-     * 
+     * @access public
+     *  
      * @description
-     * Holds classes and interfaces related to dependency injection.
+     * Holds classes and interfaces related to dependency injection components in platypus.
      */
     export module dependency {
         /**
@@ -1971,34 +2200,67 @@ module plat {
     }
 
     /**
+     * @name Exception
+     * @memberof plat
+     * @kind class
+     * @access public
+     * 
+     * @description
      * Manages the throwing and consuming of errors and warnings.
      */
     export class Exception {
         /**
+         * @name warn
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Method for sending a warning to all listeners. Will 
          * not throw an error.
          * 
-         * @param message The message to be sent to the listeners.
-         * @param type Denotes the type of fatal exception.
+         * @param {string} message The message to be sent to the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         * 
+         * @returns {void}
          */
         static warn(message: string, type?: number): void {
             raise(message, type, false);
         }
 
         /**
+         * @name fatal
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Method for sending a fatal error to all listeners. Will
          * throw an error.
          * 
-         * @param error The Error to be sent to all the listeners.
-         * @param type Denotes the type of fatal exception. 
+         * @param {Error} error The Error to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception. 
+         * 
+         * @returns {void}
          */
         static fatal(error: Error, type?: number): void;
         /**
+         * @name fatal
+         * @memberof plat.Exception
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
          * 
-         * @param message The message to be sent to all the listeners.
-         * @param type Denotes the type of fatal exception.
+         * @param {string} message The message to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception. 
+         * 
+         * @returns {void}
          */
         static fatal(message: string, type?: number): void;
         static fatal(message: any, type?: number) {
@@ -2006,55 +2268,197 @@ module plat {
         }
 
         /**
-         * Exception Type
+         * @name PARSE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for parsing exceptions
          */
         static PARSE = 0;
+
         /**
-         * Exception Type
+         * @name COMPILE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for compiling exceptions
          */
         static COMPILE = 1;
+
         /**
-         * Exception Type
+         * @name BIND
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for binding exceptions
          */
         static BIND = 2;
+
         /**
-         * Exception Type
+         * @name NAME
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for name exceptions
          */
         static NAME = 3;
+
         /**
-         * Exception Type
+         * @name NAVIGATION
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for navigation exceptions
          */
         static NAVIGATION = 4;
+
         /**
-         * Exception Type
+         * @name TEMPLATE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for template exceptions
          */
         static TEMPLATE = 5;
+
         /**
-         * Exception Type
+         * @name AJAX
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for ajax exceptions
          */
         static AJAX = 6;
+
         /**
-         * Exception Type
+         * @name CONTEXT
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for context exceptions
          */
         static CONTEXT = 7;
+
         /**
-         * Exception Type
+         * @name EVENT
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for event exceptions
          */
         static EVENT = 8;
+
         /**
-         * Exception Type
+         * @name INJECTABLE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for injectable exceptions
          */
         static INJECTABLE = 9;
+
         /**
-         * Exception Type
+         * @name COMPAT
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for compat exceptions
          */
         static COMPAT = 10;
+
         /**
-         * Exception Type
+         * @name PROMISE
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for promise exceptions
          */
         static PROMISE = 11;
+
         /**
-         * Animation Type
+         * @name ANIMATION
+         * @memberof plat.Exception
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for animation exceptions
          */
         static ANIMATION = 12;
     }
@@ -2069,106 +2473,374 @@ module plat {
     register.injectable(__ExceptionStatic, IExceptionStatic, null, __STATIC);
 
     /**
-     * The intended external interface for the '$ExceptionStatic' injectable.
+     * @name IExceptionStatic
+     * @memberof plat
+     * @kind interface
+     * @access public
+     * 
+     * @description
+     * Manages the throwing and consuming of errors and warnings.
      */
     export interface IExceptionStatic {
         /**
-         * Method for sending a warning to all listeners. Will
+         * @name warn
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         * 
+         * @description
+         * Method for sending a warning to all listeners. Will 
          * not throw an error.
          * 
-         * @param message The message to be sent to the listeners.
-         * @param type Denotes the type of fatal exception.
+         * @param {string} message The message to be sent to the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         * 
+         * @returns {void}
          */
         warn(message: string, type?: number): void;
 
         /**
+         * @name fatal
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
          * Method for sending a fatal error to all listeners. Will
          * throw an error.
-         * 
-         * @param error The Error to be sent to all the listeners.
-         * @param type Denotes the type of fatal exception.
+         *
+         * @param {Error} error The Error to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         *
+         * @returns {void}
          */
         fatal(error: Error, type?: number): void;
         /**
+         * @name fatal
+         * @memberof plat.IExceptionStatic
+         * @kind function
+         * @access public
+         * @static
+         *
+         * @description
          * Method for sending a fatal message to all listeners. Will
          * throw an error.
-         * 
-         * @param message The message to be sent to all the listeners.
-         * @param type Denotes the type of fatal exception.
+         *
+         * @param {string} message The message to be sent to all the listeners.
+         * @param {number} type? Denotes the type of fatal exception.
+         *
+         * @returns {void}
          */
         fatal(message: string, type?: number): void;
 
         /**
-         * Exception Type
+         * @name PARSE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         * 
+         * @type {number}
+         * 
+         * @description
+         * Exception Type for parsing exceptions
          */
         PARSE: number;
+
         /**
-         * Exception Type
+         * @name COMPILE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for compiling exceptions
          */
         COMPILE: number;
+
         /**
-         * Exception Type
+         * @name BIND
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for binding exceptions
          */
         BIND: number;
+
         /**
-         * Exception Type
+         * @name NAME
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for name exceptions
          */
         NAME: number;
+
         /**
-         * Exception Type
+         * @name NAVIGATION
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for navigation exceptions
          */
         NAVIGATION: number;
+
         /**
-         * Exception Type
+         * @name TEMPLATE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for template exceptions
          */
         TEMPLATE: number;
+
         /**
-         * Exception Type
+         * @name AJAX
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for ajax exceptions
          */
         AJAX: number;
+
         /**
-         * Exception Type
+         * @name CONTEXT
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for context exceptions
          */
         CONTEXT: number;
+
         /**
-         * Exception Type
+         * @name EVENT
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for event exceptions
          */
         EVENT: number;
+
         /**
-         * Exception Type
+         * @name INJECTABLE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for injectable exceptions
          */
         INJECTABLE: number;
+
         /**
-         * Exception Type
+         * @name COMPAT
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for compat exceptions
          */
         COMPAT: number;
+
         /**
-         * Exception Type
+         * @name PROMISE
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for promise exceptions
          */
         PROMISE: number;
+
         /**
-         * Animation Type
+         * @name ANIMATION
+         * @memberof plat.IExceptionStatic
+         * @kind property
+         * @access public
+         * @static
+         * @readonly
+         *
+         * @type {number}
+         *
+         * @description
+         * Exception Type for animation exceptions
          */
         ANIMATION: number;
     }
 
-    class PlatException {
+    /**
+     * @name PlatException
+     * @memberof plat
+     * @kind class
+     * @exported false
+     * @access private
+     * 
+     * @implements {Error}
+     * 
+     * @description
+     * A class for exceptions with platypus-specific names
+     */
+    class PlatException implements Error {
+        /**
+         * @name constructor
+         * @memberof plat.PlatException
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Creates a new {@link plat.PlatException|PlatException}
+         * 
+         * @param {string} message The message for the exception
+         * @param {string} name The name of the exception
+         * 
+         * @returns {PlatException} The new exception object.
+         */
         constructor(public message: string, public name: string) { }
     }
 
-    class PlatError {
-        message: string;
+    /**
+     * @name PlatError
+     * @memberof plat
+     * @kind class
+     * @exported false
+     * @access private
+     * 
+     * @implements {Error}
+     * 
+     * @description
+     * A class for errors with platypus-specific names
+     */
+    class PlatError implements Error {
+        /**
+         * @name name
+         * @memberof plat.PlatError
+         * @kind property
+         * @access public
+         * 
+         * @type {string}
+         * 
+         * @description
+         * The name of the error.
+         */
         name = 'PlatError';
-        constructor(message?: string) {
+
+        /**
+         * @name constructor
+         * @memberof plat.PlatError
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Creates a new {@link plat.PlatError|PlatError}
+         * 
+         * @param {string} message? The message for the exception
+         * 
+         * @returns {PlatError} The new error object.
+         */
+        constructor(public message?: string) {
             this.message = message || '';
         }
     }
 
-    function setPrototypes(platError?: any): void {
+    /**
+     * @name setPrototypes
+     * @memberof plat
+     * @kind function
+     * @access private
+     * @exported false
+     * 
+     * @description
+     * Sets the {@link plat.PlatException|PlatException} and {@link plat.PlatError|PlatError} prototypes to the passed in Error type
+     * 
+     * @typeparam {Error} T The type of platError.
+     * 
+     * @param {T} platError The prototype of the Error.
+     * 
+     * @returns {void}
+     */
+    function setPrototypes<T extends Error>(platError?: T): void {
         PlatError.prototype = platError || Error.prototype;
         PlatException.prototype = new PlatError();
     }
 
+    /**
+     * @name raise
+     * @memberof plat
+     * @kind function
+     * @access private
+     * @exported false
+     * 
+     * @description
+     * Dispatches error events, and throws an Error if it is fatal.
+     * 
+     * @param {any} message Either a string or error to raise.
+     * @param {boolean} isFatal? Whether or not the error is fatal.
+     * 
+     * @returns {void}
+     */
     function raise(message: any, type: number, isFatal?: boolean): void {
         var error: Error;
 
@@ -4604,6 +5276,15 @@ module plat {
 
     register.injectable(__Document, Document, [__Window]);
 
+    /**
+     * @name expressions
+     * @memberof plat
+     * @kind namespace
+     * @access public
+     * 
+     * @description
+     * Holds classes and interfaces related to expression handling in platypus.
+     */
     export module expressions {
         /**
          * A class for keeping track of commonly used regular expressions.
@@ -4758,7 +5439,7 @@ module plat {
             initialUrlRegex: RegExp;
 
             /**
-             * Finds a protocol delimeter in a string (i.e. ://)
+             * Finds a protocol delimeter in a string (e.g. ://)
              */
             protocolRegex: RegExp;
 
@@ -5307,7 +5988,7 @@ module plat {
             /**
              * Looks ahead in the expression until it comes to the ending 
              * character to try and complete a particular sequence 
-             * (i.e. - a string literal).
+             * (e.g. - a string literal).
              * 
              * @param char The starting character
              * @param endChar The ending character
@@ -6197,14 +6878,14 @@ module plat {
             oneTime?: boolean;
         }
     }
-    
     /**
      * @name web
      * @memberof plat
      * @kind namespace
+     * @access public
      * 
      * @description
-     * Holds classes and interfaces related to event management.
+     * Holds classes and interfaces related to web components in platypus.
      */
     export module web {
         /**
@@ -8424,14 +9105,14 @@ module plat {
             query?: any;
         }
     }
-    
     /**
      * @name async
      * @memberof plat
      * @kind namespace
+     * @access public
      * 
      * @description
-     * Holds all the async members.
+     * Holds all classes and interfaces related to async components in platypus.
      */
     export module async {
         /**
@@ -9252,7 +9933,7 @@ module plat {
              * 
              * @param {(success: R) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
              * onFulfilled method in the promise chain will be called.
-             * @param {(error: any) => plat.async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
+             * @param {(error: any) => plat.async.IThenable<U>} onRejected? A method called when/if the promise rejects. If undefined the next
              * onRejected method in the promise chain will be called.
              * 
              * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
@@ -9272,7 +9953,7 @@ module plat {
              * 
              * @param {(success: R) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulills. If undefined the next
              * onFulfilled method in the promise chain will be called.
-             * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+             * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
              * onRejected method in the promise chain will be called.
              * 
              * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
@@ -9292,7 +9973,7 @@ module plat {
              * 
              * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
              * onFulfilled method in the promise chain will be called.
-             * @param {(error: any) => plat.async.IThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
+             * @param {(error: any) => plat.async.IThenable<U>} onRejected? A method called when/if the promise rejects. If undefined the next
              * onRejected method in the promise chain will be called.
              * 
              * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
@@ -9312,7 +9993,7 @@ module plat {
              * 
              * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. If undefined the next
              * onFulfilled method in the promise chain will be called.
-             * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+             * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. If undefined the next
              * onRejected method in the promise chain will be called.
              * 
              * @returns {plat.async.IThenable<U>} A promise that resolves with the input type parameter U.
@@ -11077,7 +11758,7 @@ module plat {
              * The constructor method for the {@link plat.async.AjaxPromise}.
              * 
              * @param {plat.async.IAjaxResolveFunction} resolveFunction The promise resolve function.
-             * @param promise The promise object to allow for cancelling the {@link plat.async.AjaxPromise}.
+             * @param {any} promise The promise object to allow for cancelling the {@link plat.async.AjaxPromise}.
              * 
              * @returns {plat.async.AjaxPromise}
              */
@@ -11137,6 +11818,8 @@ module plat {
              * If undefined the next onFulfilled method in the promise chain will be called.
              * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
              * If undefined the next onRejected method in the promise chain will be called.
+             * 
+             * @returns {plat.async.IAjaxThenable<U>}
              */
             then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
                 onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
@@ -11157,6 +11840,8 @@ module plat {
              * If undefined the next onFulfilled method in the promise chain will be called.
              * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
              * If undefined the next onRejected method in the promise chain will be called.
+             * 
+             * @returns {plat.async.IAjaxThenable<U>}
              */
             then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
                 onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
@@ -11177,6 +11862,8 @@ module plat {
              * If undefined the next onFulfilled method in the promise chain will be called.
              * @param {(error: plat.async.IAjaxError) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. 
              * If undefined the next onRejected method in the promise chain will be called.
+             * 
+             * @returns {plat.async.IAjaxThenable<U>}
              */
             then<U>(onFulfilled: (success: IAjaxResponse<R>) => IThenable<U>,
                 onRejected?: (error: IAjaxError) => any): IAjaxThenable<U>;
@@ -11197,6 +11884,8 @@ module plat {
              * If undefined the next onFulfilled method in the promise chain will be called.
              * @param {(error: plat.async.IAjaxError) => U} onRejected A method called when/if the promise rejects. 
              * If undefined the next onRejected method in the promise chain will be called.
+             * 
+             * @returns {plat.async.IAjaxThenable<U>}
              */
             then<U>(onFulfilled: (success: IAjaxResponse<R>) => U,
                 onRejected?: (error: IAjaxError) => IThenable<U>): IAjaxThenable<U>;
@@ -11205,7 +11894,41 @@ module plat {
                 return <IAjaxThenable<U>><any>super.then<U>(onFulfilled, onRejected);
             }
 
+            /**
+             * @name catch
+             * @memberof plat.async.AjaxPromise
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+             * 
+             * @typeparam {any} U The return type of the returned promise.
+             * 
+             * @param {(error: any) => plat.async.IAjaxThenable<U>} onRejected A method called when/if the promise rejects. If undefined the next
+             * onRejected method in the promise chain will be called.
+             * 
+             * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
+             */
             catch<U>(onRejected: (error: any) => IAjaxThenable<U>): IAjaxThenable<U>;
+            /**
+             * @name catch
+             * @memberof plat.async.AjaxPromise
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+             * 
+             * @typeparam {any} U The return type of the returned promise.
+             * 
+             * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+             * onRejected method in the promise chain will be called.
+             * 
+             * @returns {plat.async.IAjaxThenable<U>} A promise that resolves with the input type parameter U.
+             */
             catch<U>(onRejected: (error: any) => U): IAjaxThenable<U>;
             catch<U>(onRejected: (error: any) => any): IAjaxThenable<U> {
                 return <IAjaxThenable<U>><any>super.catch<U>(onRejected);
@@ -11942,24 +12665,79 @@ module plat {
 
         register.injectable(__HttpConfig, IHttpConfig);
     }
+    /**
+     * @name storage
+     * @memberof plat
+     * @kind namespace
+     * @access public
+     * 
+     * @description
+     * Holds classes and interfaces related to storage in platypus.
+     */
     export module storage {
+        /**
+         * @name caches
+         * @memberof plat.storage
+         * @kind property
+         * @access private
+         * @static
+         * @exported false
+         * 
+         * @type {plat.IObject<plat.storage.Cache<any>>}
+         * 
+         * @description
+         * The keyed collection of all created {@link plat.storage.ICache|ICaches} in the 
+         * {@link plat.storage.ICacheFactory|ICacheFactory}.
+         */
         var caches: IObject<Cache<any>> = {};
+        /**
+         * @name internalCaches
+         * @memberof plat.storage
+         * @kind property
+         * @access private
+         * @static
+         * @exported false
+         * 
+         * @type {any}
+         * 
+         * @description
+         * Internal storage for all the items stored in each {@link plat.storage.ICache|ICache}.
+         */
         var internalCaches: any = {};
 
         /**
-         * A Cache class, for use with the $CacheFactory injectable. Used for storing objects.
-         * Takes in a generic type corresponding to the type of objects it contains.
+         * @name Cache
+         * @memberof plat.storage
+         * @kind class
          * 
+         * @implements {plat.storage.ICache<T>}
+         * 
+         * @description
+         * A Cache class, for use with the {@link plat.storage.ICacheFactory|ICacheFactory} injectable. 
+         * Used for storing objects. Takes in a generic type corresponding to the type of objects it contains.
+         * 
+         * @typeparam {any} T The type of objects stored in the cache.
          */
         export class Cache<T> implements ICache<T> {
             /**
-             * Method for creating a new Cache. Takes a generic type to denote the
-             * type of objects stored in the new Cache.  If the Cache already exists
-             * in the $CacheFactory, a new Cache will not be created.
-             * 
+             * @name create
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
              * @static
-             * @param id The id of the new Cache.
-             * @param options ICacheOptions for customizing the Cache.
+             * 
+             * @description
+             * Method for creating a new cache object. Takes a generic type to denote the
+             * type of objects stored in the new cache.  If a cache with the same ID already exists
+             * in the {@link plat.storage.ICacheFactory|ICacheFactory}, a new cache will not be created.
+             * 
+             * @param {string} id The ID of the new Cache.
+             * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions} 
+             * for customizing the Cache.
+             * 
+             * @typeparam {any} T Denotes the type of objects stored in the new Cache.
+             * 
+             * @returns {plat.storage.ICache<T>} The new cache.
              */
             static create<T>(id: string, options?: ICacheOptions): ICache<T> {
                 var cache: ICache<T> = caches[id];
@@ -11972,21 +12750,36 @@ module plat {
             }
 
             /**
-             * Gets a cache out of the $CacheFactory if it exists.
-             * 
+             * @name fetch
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
              * @static
-             * @param id The identifier used to search for the cache.
              * 
-             * @returns {Cache<T>|undefined}
+             * @description
+             * Gets a cache out of the {@link plat.storage.ICacheFactory|ICacheFactory} if it exists.
+             * 
+             * @param {string} id The identifier used to search for the cache.
+             * 
+             * @typeparam {any} T Denotes the type of objects stored in the new Cache.
+             * 
+             * @returns {plat.storage.ICache<T>} The cache with the input ID or undefined if it does not exist.
              */
             static fetch<T>(id: string): ICache<T> {
                 return caches[id];
             }
-
+        
             /**
-             * Clears the CacheFactory and all of its caches.
-             * 
+             * @name clear
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
              * @static
+             * 
+             * @description
+             * Clears the {@link plat.storage.ICacheFactory|ICacheFactory} and all of its caches.
+             * 
+             * @returns {void}
              */
             static clear(): void {
                 var keys = Object.keys(caches),
@@ -11999,13 +12792,56 @@ module plat {
                 caches = <IObject<Cache<any>>>{};
             }
 
+            /**
+             * @name __size
+             * @memberof plat.storage.Cache
+             * @kind property
+             * @access private
+             * 
+             * @type {number}
+             * 
+             * @description
+             * The size of this cache specified by its ID.
+             */
             private __size: number;
+            /**
+             * @name __id
+             * @memberof plat.storage.Cache
+             * @kind property
+             * @access private
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The ID of this cache.
+             */
             private __id: string;
+            /**
+             * @name __options
+             * @memberof plat.storage.Cache
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.storage.ICacheOptions}
+             * 
+             * @description
+             * The options for this cache.
+             */
             private __options: ICacheOptions;
 
             /**
-             * @param id The id to use to retrieve the cache from the CacheFactory.
-             * @param options The ICacheOptions for customizing the cache.
+             * @name constructor
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * The constructor for a {@link plat.storage.Cache|Cache}.
+             * 
+             * @param {string} id The id to use to retrieve the cache from the {@link plat.storage.ICacheFactory|ICacheFactory}.
+             * @param {plat.storage.ICacheOptions} options The {@link plat.storage.ICacheOptions|ICacheOptions} for customizing the cache.
+             * 
+             * @returns {plat.storage.Cache} A new {@link plat.storage.Cache|Cache} instance specified by the ID.
              */
             constructor(id: string, options?: ICacheOptions) {
                 this.__id = id;
@@ -12021,6 +12857,18 @@ module plat {
                 internalCaches[id] = {};
             }
 
+            /**
+             * @name info
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Retrieves the {@link plat.storage.ICacheInfo|ICacheInfo} about this cache 
+             * (i.e. ID, size, options)
+             * 
+             * @returns {plat.storage.ICacheInfo} The information about this cache.
+             */
             info(): ICacheInfo {
                 return {
                     id: this.__id,
@@ -12028,7 +12876,21 @@ module plat {
                     options: this.__options
                 };
             }
-
+        
+            /**
+             * @name put
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Method for inserting an object into an {@link plat.storage.ICache|ICache}.
+             * 
+             * @param {string} key The key to use for storage/retrieval of the object.
+             * @param {T} value The value to store with the associated key.
+             * 
+             * @returns {T} The value inserted into an {@link plat.storage.ICache|ICache}.
+             */
             put(key: string, value: T): T {
                 var val = internalCaches[this.__id][key];
                 internalCaches[this.__id][key] = value;
@@ -12045,21 +12907,69 @@ module plat {
 
                 return value;
             }
-
+        
+            /**
+             * @name read
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Method for retrieving an object from an {@link plat.storage.ICache|ICache}.
+             * 
+             * @param key The key to search for in an {@link plat.storage.ICache|ICache}.
+             * 
+             * @returns {T} The value found at the associated key. Returns undefined for a cache miss.
+             */
             read(key: string): T {
                 return internalCaches[this.__id][key];
             }
-
+        
+            /**
+             * @name remove
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Method for removing an object from an {@link plat.storage.ICache|ICache}.
+             * 
+             * @param {string} key The key to remove from the {@link plat.storage.ICache|ICache}.
+             * 
+             * @returns {void}
+             */
             remove(key: string): void {
                 deleteProperty(internalCaches[this.__id], key);
                 this.__size--;
             }
-
+        
+            /**
+             * @name clear
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Method for clearing an {@link plat.storage.ICache|ICache}, removing all of its keys.
+             * 
+             * @returns {void}
+             */
             clear(): void {
                 internalCaches[this.__id] = {};
                 this.__size = 0;
             }
-
+        
+            /**
+             * @name dispose
+             * @memberof plat.storage.Cache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Method for removing an {@link plat.storage.ICache|ICache} from the {@link plat.storage.ICacheFactory|ICacheFactory}.
+             * 
+             * @returns {void}
+             */
             dispose(): void {
                 this.clear();
                 deleteProperty(caches, this.__id);
@@ -12074,82 +12984,166 @@ module plat {
         }
 
         register.injectable(__CacheFactory, ICacheFactory, null, __FACTORY);
-
+    
         /**
+         * @name ICacheFactory
+         * @memberof plat.storage
+         * @kind interface
+         * 
+         * @description
          * Used to manage all the defined caches for the current application session.
          */
         export interface ICacheFactory {
             /**
-             * Method for creating a new ICache. Takes a generic type to denote the
-             * type of objects stored in the new ICache.  If the ICache already exists
-             * in the ICacheStatic, a new ICache will not be created.
+             * @name create
+             * @memberof plat.storage.ICacheFactory
+             * @kind function
+             * @access public
+             * @static
              * 
-             * @param id The id of the new ICache.
-             * @param options ICacheOptions for customizing the ICache.
+             * @description
+             * Method for creating a new cache object. Takes a generic type to denote the
+             * type of objects stored in the new cache.  If a cache with the same ID already exists
+             * in the {@link plat.storage.ICacheFactory|ICacheFactory}, a new cache will not be created.
              * 
-             * @returns {ICache} The newly created ICache object.
+             * @param {string} id The ID of the new Cache.
+             * @param {plat.storage.ICacheOptions} options {@link plat.storage.ICacheOptions|ICacheOptions} 
+             * for customizing the Cache.
+             * 
+             * @typeparam {any} T Denotes the type of objects stored in the new Cache.
+             * 
+             * @returns {plat.storage.ICache<T>} The new cache.
              */
             create<T>(id: string, options?: ICacheOptions): ICache<T>;
 
             /**
-             * Gets a cache out of the ICacheStatic if it exists.
+             * @name fetch
+             * @memberof plat.storage.ICacheFactory
+             * @kind function
+             * @access public
+             * @static
              * 
-             * @param id The identifier used to search for the cache.
+             * @description
+             * Gets a cache out of the {@link plat.storage.ICacheFactory|ICacheFactory} if it exists.
              * 
-             * @returns {ICache|undefined}
+             * @param {string} id The identifier used to search for the cache.
+             * 
+             * @typeparam {any} T Denotes the type of objects stored in the new Cache.
+             * 
+             * @returns {plat.storage.ICache<T>} The cache with the input ID or undefined if it does not exist.
              */
             fetch<T>(id: string): ICache<T>;
 
             /**
-             * Clears the ICacheStatic and all of its caches.
+             * @name clear
+             * @memberof plat.storage.ICacheFactory
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Clears the {@link plat.storage.ICacheFactory|ICacheFactory} and all of its caches.
+             * 
+             * @returns {void}
              */
             clear(): void;
         }
-
+    
         /**
-         * The ICache interface describing a cache. Takes in a generic type
+         * @name ICache
+         * @memberof plat.storage
+         * @kind interface
+         * 
+         * @description
+         * Describes a cache. Takes in a generic type
          * corresponding to the type of objects stored in the cache.
+         * 
+         * @typeparam {any} T The type of objects stored in this cache.
          */
         export interface ICache<T> {
             /**
-             * Method for accessing information about an ICache.
+             * @name info
+             * @memberof plat.storage.ICache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Retrieves the {@link plat.storage.ICacheInfo|ICacheInfo} about this cache 
+             * (i.e. ID, size, options)
+             * 
+             * @returns {plat.storage.ICacheInfo} The information about this cache.
              */
             info(): ICacheInfo;
 
             /**
-             * Method for inserting an object into an ICache.
+             * @name put
+             * @memberof plat.storage.ICache
+             * @kind function
+             * @access public
              * 
-             * @param key The key to use for storage/retrieval of the object.
-             * @param value The value to store with the associated key.
+             * @description
+             * Method for inserting an object into an {@link plat.storage.ICache|ICache}.
              * 
-             * @returns {T} The value inserted into an ICache.
+             * @param {string} key The key to use for storage/retrieval of the object.
+             * @param {T} value The value to store with the associated key.
+             * 
+             * @returns {T} The value inserted into an {@link plat.storage.ICache|ICache}.
              */
             put(key: string, value: T): T;
 
             /**
-             * Method for retrieving an object from an ICache.
+             * @name read
+             * @memberof plat.storage.ICache
+             * @kind function
+             * @access public
              * 
-             * @param key The key to search for in an ICache.
+             * @description
+             * Method for retrieving an object from an {@link plat.storage.ICache|ICache}.
              * 
-             * @returns {T|undefined} The value found at the associated key. 
-             * Returns undefined for an ICache miss.
+             * @param key The key to search for in an {@link plat.storage.ICache|ICache}.
+             * 
+             * @returns {T} The value found at the associated key. Returns undefined for a cache miss.
              */
             read(key: string): T;
 
             /**
-             * Method for removing an object from an ICache.
+             * @name remove
+             * @memberof plat.storage.ICache
+             * @kind function
+             * @access public
              * 
-             * @param key The key to remove from an ICache.
+             * @description
+             * Method for removing an object from an {@link plat.storage.ICache|ICache}.
+             * 
+             * @param {string} key The key to remove from the {@link plat.storage.ICache|ICache}.
+             * 
+             * @returns {void}
              */
             remove(key: string): void;
 
             /**
-             * Method for clearing an ICache, removing all of its keys.
+             * @name clear
+             * @memberof plat.storage.ICache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Method for clearing an {@link plat.storage.ICache|ICache}, removing all of its keys.
+             * 
+             * @returns {void}
              */
             clear(): void;
 
             /**
-             * Method for removing an ICache from the $CacheFactory.
+             * @name dispose
+             * @memberof plat.storage.ICache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Method for removing an {@link plat.storage.ICache|ICache} from the {@link plat.storage.ICacheFactory|ICacheFactory}.
+             * 
+             * @returns {void}
              */
             dispose(): void;
         }
@@ -12167,12 +13161,25 @@ module plat {
         }
 
         register.injectable(__ManagerCache, IManagerCache);
-
+    
         /**
+         * @name ICacheOptions
+         * @memberof plat.storage
+         * @kind interface
+         * 
+         * @description
          * Options for a cache.
          */
         export interface ICacheOptions {
             /**
+             * @name timeout
+             * @memberof plat.storage.ICacheOptions
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * Specifies a timeout for a cache value. When a value 
              * is put in the cache, it will be valid for the given
              * period of time (in milliseconds). After the timeout 
@@ -12181,45 +13188,139 @@ module plat {
              */
             timeout?: number;
         }
-
+    
         /**
-         * Contains information about an ICache.
+         * @name ICacheInfo
+         * @memberof plat.storage
+         * @kind interface
+         * 
+         * @description
+         * Contains information about an {@link plat.storage.ICache|ICache}.
          */
         export interface ICacheInfo {
             /**
-             * A unique id for the ICache object, used to 
-             * retrieve the ICache out of the $CacheFactory.
+             * @name id
+             * @memberof plat.storage.ICacheInfo
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * A unique id for the {@link plat.storage.ICache|ICache} object, used to 
+             * retrieve the {@link plat.storage.ICache|ICache} out of the {@link plat.storage.ICacheFactory|ICacheFactory}.
              */
             id: string;
-
+        
             /**
-             * Represents the number of items in the ICache.
+             * @name size
+             * @memberof plat.storage.ICacheInfo
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
+             * Represents the number of items in the {@link plat.storage.ICache|ICache}.
              */
             size: number;
-
+        
             /**
-             * Represents the ICacheOptions that the ICache is
-             * using.
+             * @name options
+             * @memberof plat.storage.ICacheInfo
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.storage.ICacheOptions}
+             * 
+             * @description
+             * Represents the {@link plat.storage.ICacheOptions|ICacheOptions} that the 
+             * {@link plat.storage.ICache|ICache} is using.
              */
             options: ICacheOptions;
         }
 
         /**
+         * @name TemplateCache
+         * @memberof plat.storage
+         * @kind class
+         * 
+         * @extends {plat.storage.Cache<any>}
+         * @implements {plat.storage.ITemplateCache}
+         * 
+         * @description
          * Used for caching compiled nodes. This class will
          * clone a template when you put it in the cache. It will
          * also clone the template when you retrieve it.
          */
-        export class TemplateCache extends Cache<any> implements ITemplateCache {
+        export class TemplateCache extends Cache<async.IThenable<DocumentFragment>> implements ITemplateCache {
+            /**
+             * @name $Promise
+             * @memberof plat.storage.TemplateCache
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.async.IPromise}
+             * 
+             * @description
+             * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+             */
             $Promise: async.IPromise = acquire(__Promise);
-
+        
+            /**
+             * @name constructor
+             * @memberof plat.storage.TemplateCache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * The constructor for a {@link plat.storage.TemplateCache|TemplateCache}. Creates a new {@link plat.storage.ICache|ICache}  
+             * with the ID "__templateCache".
+             * 
+             * @returns {plat.storage.TemplateCache}
+             */
             constructor() {
                 super('__templateCache');
             }
-
+        
+            /**
+             * @name put
+             * @memberof plat.storage.TemplateCache
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Stores a Node in the cache as a DocumentFragment.
+             * 
+             * @param {string} key The key to use for storage/retrieval of the object.
+             * @param {Node} value The Node.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a 
+             * DocumentFragment containing the input Node.
+             */
             put(key: string, value: Node): async.IThenable<DocumentFragment>;
+            /**
+             * @name put
+             * @memberof plat.storage.TemplateCache
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Stores a {@link plat.async.IPromise|IPromise} in the cache.
+             * 
+             * @param {string} key The key to use for storage/retrieval of the object.
+             * @param {plat.async.IThenable<Node>} value {@link plat.async.Promise|Promise} that 
+             * should resolve with a Node.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A {@link plat.async.Promise|Promise} that resolves when 
+             * the input {@link plat.async.Promise|Promise} resolves.
+             */
             put(key: string, value: async.IThenable<Node>): async.IThenable<DocumentFragment>;
             put(key: string, value: any): async.IThenable<DocumentFragment> {
-                super.put(key, this.$Promise.resolve<DocumentFragment>(value));
+                var Promise = this.$Promise;
+                super.put(key, Promise.resolve<DocumentFragment>(value));
 
                 if (isDocumentFragment(value)) {
                     value = value.cloneNode(true);
@@ -12229,9 +13330,24 @@ module plat {
                     value = fragment;
                 }
 
-                return this.$Promise.resolve<DocumentFragment>(value);
+                return Promise.resolve<DocumentFragment>(value);
             }
-
+        
+            /**
+             * @name read
+             * @memberof plat.storage.TemplateCache
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Method for retrieving a Node from this cache. The DocumentFragment that resolves from the returned 
+             * {@link plat.async.Promise|Promise} will be cloned to avoid manipulating the cached template.
+             * 
+             * @param {string} key The key to search for in this cache.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} The {@link plat.async.Promise|Promise} found at the associated key. 
+             * Returns undefined for a cache miss.
+             */
             read(key: string): async.IThenable<DocumentFragment> {
                 var promise: async.IThenable<DocumentFragment> = super.read(key);
 
@@ -12257,126 +13373,335 @@ module plat {
         }
 
         register.injectable(__TemplateCache, ITemplateCache);
-
+    
         /**
-         * Interface for TemplateCache, used to manage all templates. Returns a unique template 
+         * @name ITemplateCache
+         * @memberof plat.storage
+         * @kind interface
+         * 
+         * @extends {plat.storage.ICache<plat.async.IThenable<DocumentFragment>>}
+         * 
+         * @description
+         * Used to manage all templates. Returns a unique template 
          * for every read, to avoid having to call cloneNode.
          */
         export interface ITemplateCache extends ICache<async.IThenable<DocumentFragment>> {
             /**
+             * @name put
+             * @memberof plat.storage.ITemplateCache
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
              * Stores a Node in the cache as a DocumentFragment.
              * 
-             * @param key The key used to store the value.
-             * @param value The Node.
+             * @param {string} key The key to use for storage/retrieval of the object.
+             * @param {Node} value The Node.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves with a 
+             * DocumentFragment containing the input Node.
              */
             put(key: string, value: Node): async.IThenable<DocumentFragment>;
             /**
-             * Stores a Promise in the cache.
+             * @name put
+             * @memberof plat.storage.ITemplateCache
+             * @kind function
+             * @access public
+             * @variation 1
              * 
-             * @param key The key used to store the value.
-             * @param value The Promise.
+             * @description
+             * Stores a {@link plat.async.IPromise|IPromise} in the cache.
+             * 
+             * @param {string} key The key to use for storage/retrieval of the object.
+             * @param {plat.async.IThenable<Node>} value {@link plat.async.Promise|Promise} that 
+             * should resolve with a Node.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A {@link plat.async.Promise|Promise} that resolves when 
+             * the input {@link plat.async.Promise|Promise} resolves.
              */
             put(key: string, value: async.IThenable<Node>): async.IThenable<DocumentFragment>;
-
+        
             /**
-             * Method for retrieving a Node from an ITemplateCache. The returned DocumentFragment will be 
-             * cloned to avoid manipulating the cached template. 
+             * @name read
+             * @memberof plat.storage.ITemplateCache
+             * @kind function
+             * @access public
              * 
-             * @param key The key to search for in an ITemplateCache.
+             * @description
+             * Method for retrieving a Node from this cache. The DocumentFragment that resolves from the returned 
+             * {@link plat.async.Promise|Promise} will be cloned to avoid manipulating the cached template.
+             * 
+             * @param {string} key The key to search for in this cache.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} The {@link plat.async.Promise|Promise} found at the associated key. 
+             * Returns undefined for a cache miss.
              */
             read(key: string): async.IThenable<DocumentFragment>;
         }
 
         /**
+         * @name BaseStorage
+         * @memberof plat.storage
+         * @kind class
+         * 
+         * @implements {plat.storage.IBaseStorage}
+         * 
+         * @description
          * A base class for storing data with a designated storage type.
          */
         export class BaseStorage implements IBaseStorage {
+            /**
+             * @name constructor
+             * @memberof plat.storage.BaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * The constructor for a {@link plat.storage.BaseStorage|BaseStorage}.
+             * 
+             * @returns {plat.storage.BaseStorage}
+             */
             constructor() {
                 forEach((<Storage>(<any>this).__storage), (value, key) => {
                     (<any>this)[key] = value;
                 });
             }
 
+            /**
+             * @name length
+             * @memberof plat.storage.BaseStorage
+             * @kind property
+             * @access public
+             * @readonly
+             * 
+             * @type {number}
+             * 
+             * @description
+             * Returns the number of items in storage.
+             */
             get length(): number {
                 return (<Storage>(<any>this).__storage).length;
             }
-
-            clear() {
+        
+            /**
+             * @name clear
+             * @memberof plat.storage.BaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Clears storage, deleting all of its keys.
+             * 
+             * @returns {void}
+             */
+            clear(): void {
                 (<Storage>(<any>this).__storage).clear();
             }
-
+        
+            /**
+             * @name getItem
+             * @memberof plat.storage.BaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Gets an item out of storage with the assigned key.
+             * 
+             * @param {string} key The key of the item to retrieve from storage.
+             * 
+             * @typeparam {any} T The type of item being retrieved.
+             * 
+             * @returns {T} The item retrieved from storage.
+             */
             getItem<T>(key: string): T {
                 return (<Storage>(<any>this).__storage).getItem(key);
             }
-
+        
+            /**
+             * @name key
+             * @memberof plat.storage.BaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Allows for iterating over storage keys with an index. When
+             * called with an index, it will return the key at that index in 
+             * storage.
+             * 
+             * @param {number} index The index used to retrieve the associated key.
+             * 
+             * @returns {string} The key at the given index.
+             */
             key(index: number): string {
                 return (<Storage>(<any>this).__storage).key(index);
             }
-
+        
+            /**
+             * @name removeItem
+             * @memberof plat.storage.BaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Searches in storage for an item and removes it if it 
+             * exists.
+             * 
+             * @param {string} key The key of the item to remove from storage.
+             * 
+             * @returns {void}
+             */
             removeItem(key: string): void {
                 (<Storage>(<any>this).__storage).removeItem(key);
             }
-
+        
+            /**
+             * @name setItem
+             * @memberof plat.storage.BaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Adds data to storage with the designated key.
+             * 
+             * @param {string} key The key of the item to store in storage.
+             * @param {any} data The data to store in storage with the key.
+             * 
+             * @returns {void}
+             */
             setItem(key: string, data: any): void {
                 (<Storage>(<any>this).__storage).setItem(key, data);
                 (<any>this)[key] = this.getItem(key);
             }
         }
-
+    
         /**
+         * @name IBaseStorage
+         * @memberof plat.storage
+         * @kind interface
+         * 
+         * @description
          * An object designed for storing data with a designated storage type.
          */
         export interface IBaseStorage {
             /**
+             * @name length
+             * @memberof plat.storage.IBaseStorage
+             * @kind property
+             * @access public
+             * @readonly
+             * 
+             * @type {number}
+             * 
+             * @description
              * Returns the number of items in storage.
              */
             length: number;
 
             /**
+             * @name clear
+             * @memberof plat.storage.IBaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Clears storage, deleting all of its keys.
+             * 
+             * @returns {void}
              */
             clear(): void;
-
+        
             /**
+             * @name getItem
+             * @memberof plat.storage.IBaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Gets an item out of storage with the assigned key.
              * 
-             * @param key The key of the item to retrieve from storage.
+             * @param {string} key The key of the item to retrieve from storage.
+             * 
+             * @typeparam {any} T The type of item being retrieved.
+             * 
              * @returns {T} The item retrieved from storage.
              */
             getItem<T>(key: string): T;
-
+        
             /**
+             * @name key
+             * @memberof plat.storage.IBaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Allows for iterating over storage keys with an index. When
              * called with an index, it will return the key at that index in 
              * storage.
              * 
-             * @param index The index used to retrieve the associated key.
+             * @param {number} index The index used to retrieve the associated key.
+             * 
              * @returns {string} The key at the given index.
              */
             key(index: number): string;
-
+        
             /**
+             * @name removeItem
+             * @memberof plat.storage.IBaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Searches in storage for an item and removes it if it 
              * exists.
              * 
-             * @param key the Key of the item to remove from storage.
+             * @param {string} key The key of the item to remove from storage.
+             * 
+             * @returns {void}
              */
             removeItem(key: string): void;
-
+        
             /**
+             * @name setItem
+             * @memberof plat.storage.IBaseStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Adds data to storage with the designated key.
              * 
-             * @param key The key of the item to store in storage.
-             * @param data The data to store in storage with the key.
+             * @param {string} key The key of the item to store in storage.
+             * @param {any} data The data to store in storage with the key.
+             * 
+             * @returns {void}
              */
             setItem(key: string, data: any): void;
         }
 
         /**
-         * A class used to wrap local storage into an injectable.
+         * @name LocalStorage
+         * @memberof plat.storage
+         * @kind class
+         * 
+         * @extends {plat.storage.BaseStorage}
+         * @implements {plat.storage.ILocalStorage}
+         * 
+         * @description
+         * A class used to wrap HTML5 localStorage into an injectable.
          */
         export class LocalStorage extends BaseStorage implements ILocalStorage {
             /* tslint:disable:no-unused-variable */
+            /**
+             * @name __storage
+             * @memberof plat.storage.LocalStorage
+             * @kind property
+             * @access private
+             * 
+             * @type {Storage}
+             * 
+             * @description
+             * Reference to HTML5 localStorage.
+             */
             private __storage: Storage = (<Window>acquire(__Window)).localStorage;
             /* tslint:enable:no-unused-variable */
         }
@@ -12389,61 +13714,134 @@ module plat {
         }
 
         register.injectable(__LocalStorage, ILocalStorage);
-
+    
         /**
+         * @name ILocalStorage
+         * @memberof plat.storage
+         * @kind interface
+         * 
+         * @description
          * Describes an object used to wrap local storage into an injectable.
          */
         export interface ILocalStorage {
             /**
+             * @name length
+             * @memberof plat.storage.ILocalStorage
+             * @kind property
+             * @access public
+             * @readonly
+             * 
+             * @type {number}
+             * 
+             * @description
              * Returns the number of items in localStorage.
              */
             length: number;
-
+        
             /**
+             * @name clear
+             * @memberof plat.storage.ILocalStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Clears localStorage, deleting all of its keys.
+             * 
+             * @returns {void}
              */
             clear(): void;
-
+        
             /**
-             * Gets an item out of local storage with the assigned key.
+             * @name getItem
+             * @memberof plat.storage.ILocalStorage
+             * @kind function
+             * @access public
              * 
-             * @param key The key of the item to retrieve from localStorage.
-             * @returns {T} The item retrieved from localStorage.
+             * @description
+             * Gets an item out of localStorage with the assigned key.
+             * 
+             * @param {string} key The key of the item to retrieve from localStorage.
+             * 
+             * @typeparam {any} T The type of item being retrieved.
+             * 
+             * @returns {T} The item retrieved from storage.
              */
             getItem<T>(key: string): T;
-
+        
             /**
+             * @name key
+             * @memberof plat.storage.ILocalStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Allows for iterating over localStorage keys with an index. When
              * called with an index, it will return the key at that index in 
              * localStorage.
              * 
-             * @param index The index used to retrieve the associated key.
+             * @param {number} index The index used to retrieve the associated key.
+             * 
              * @returns {string} The key at the given index.
              */
             key(index: number): string;
-
+        
             /**
+             * @name removeItem
+             * @memberof plat.storage.ILocalStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Searches in localStorage for an item and removes it if it 
              * exists.
              * 
-             * @param key the Key of the item to remove from localStorage.
+             * @param {string} key The key of the item to remove from storage.
+             * 
+             * @returns {void}
              */
             removeItem(key: string): void;
-
+        
             /**
+             * @name setItem
+             * @memberof plat.storage.ILocalStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Adds data to localStorage with the designated key.
              * 
-             * @param key The key of the item to store in localStorage.
-             * @param data The data to store in localStorage with the key.
+             * @param {string} key The key of the item to store in localStorage.
+             * @param {any} data The data to store in localStorage with the key.
+             * 
+             * @returns {void}
              */
             setItem(key: string, data: any): void;
         }
 
         /**
+         * @name SessionStorage
+         * @memberof plat.storage
+         * @kind class
+         * 
+         * @extends {plat.storage.BaseStorage}
+         * @implements {plat.storage.ISessionStorage}
+         * 
+         * @description
          * A class for wrapping SessionStorage as an injectable.
          */
         export class SessionStorage extends BaseStorage implements ISessionStorage {
             /* tslint:disable:no-unused-variable */
+            /**
+             * @name __storage
+             * @memberof plat.storage.LocalStorage
+             * @kind property
+             * @access private
+             * 
+             * @type {Storage}
+             * 
+             * @description
+             * Reference to HTML5 sessionStorage.
+             */
             private __storage: Storage = (<Window>acquire(__Window)).sessionStorage;
             /* tslint:enable:no-unused-variable */
         }
@@ -12456,59 +13854,124 @@ module plat {
         }
 
         register.injectable(__SessionStorage, ISessionStorage);
-
+    
         /**
+         * @name ISessionStorage
+         * @memberof plat.storage
+         * @kind interface
+         * 
+         * @description
          * Describes an object used to wrap session storage into an injectable.
          */
         export interface ISessionStorage {
             /**
+             * @name length
+             * @memberof plat.storage.ISessionStorage
+             * @kind property
+             * @access public
+             * @readonly
+             * 
+             * @type {number}
+             * 
+             * @description
              * Returns the number of items in sessionStorage.
              */
             length: number;
-
+        
             /**
+             * @name clear
+             * @memberof plat.storage.ISessionStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Clears sessionStorage, deleting all of its keys.
+             * 
+             * @returns {void}
              */
             clear(): void;
-
+        
             /**
-             * Gets an item out of session storage with the assigned key.
+             * @name getItem
+             * @memberof plat.storage.ISessionStorage
+             * @kind function
+             * @access public
              * 
-             * @param key The key of the item to retrieve from sessionStorage.
-             * @returns {T} The item retrieved from sessionStorage.
+             * @description
+             * Gets an item out of sessionStorage with the assigned key.
+             * 
+             * @param {string} key The key of the item to retrieve from sessionStorage.
+             * 
+             * @typeparam {any} T The type of item being retrieved.
+             * 
+             * @returns {T} The item retrieved from storage.
              */
             getItem<T>(key: string): T;
-
+        
             /**
+             * @name key
+             * @memberof plat.storage.ISessionStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Allows for iterating over sessionStorage keys with an index. When
              * called with an index, it will return the key at that index in 
              * sessionStorage.
              * 
-             * @param index The index used to retrieve the associated key.
+             * @param {number} index The index used to retrieve the associated key.
+             * 
              * @returns {string} The key at the given index.
              */
             key(index: number): string;
-
+        
             /**
+             * @name removeItem
+             * @memberof plat.storage.ISessionStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Searches in sessionStorage for an item and removes it if it 
              * exists.
              * 
-             * @param key the Key of the item to remove from sessionStorage.
+             * @param {string} key The key of the item to remove from storage.
+             * 
+             * @returns {void}
              */
             removeItem(key: string): void;
-
+        
             /**
+             * @name setItem
+             * @memberof plat.storage.ISessionStorage
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Adds data to sessionStorage with the designated key.
              * 
-             * @param key The key of the item to store in sessionStorage.
-             * @param data The data to store in sessionStorage with the key.
+             * @param {string} key The key of the item to store in sessionStorage.
+             * @param {any} data The data to store in sessionStorage with the key.
+             * 
+             * @returns {void}
              */
             setItem(key: string, data: any): void;
         }
     }
     /* tslint:disable:no-unused-variable */
     /**
-     * An object used to create ITokenDetails for every operator.
+     * @name OPERATORS
+     * @memberof plat.expressions
+     * @kind property
+     * @access private
+     * @static
+     * @readonly
+     * @exported false
+     * 
+     * @type {plat.IObject<plat.expressions.ITokenDetails>}
+     * 
+     * @description
+     * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every operator.
      */
     var OPERATORS: plat.IObject<plat.expressions.ITokenDetails> = {
         'u+': {
@@ -12736,7 +14199,18 @@ module plat {
     };
     
     /**
-     * An object used to create ITokenDetails for every accessor.
+     * @name ACCESSORS
+     * @memberof plat.expressions
+     * @kind property
+     * @access private
+     * @static
+     * @readonly
+     * @exported false
+     * 
+     * @type {plat.IObject<plat.expressions.ITokenDetails>}
+     * 
+     * @description
+     * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every accessor.
      */
     var ACCESSORS: plat.IObject<plat.expressions.ITokenDetails> = {
         '()': { precedence: 2, associativity: null, fn: null },
@@ -12746,7 +14220,18 @@ module plat {
     };
     
     /**
-     * An object used to create ITokenDetails for every delimiter.
+     * @name DELIMITERS
+     * @memberof plat.expressions
+     * @kind property
+     * @access private
+     * @static
+     * @readonly
+     * @exported false
+     * 
+     * @type {plat.IObject<plat.expressions.ITokenDetails>}
+     * 
+     * @description
+     * An object used to create {@link plat.expressions.ITokenDetails|ITokenDetails} for every delimiter.
      */
     var DELIMITERS: plat.IObject<plat.expressions.ITokenDetails> = {
         '{': { precedence: 1, associativity: null, fn: null },
@@ -12762,6 +14247,17 @@ module plat {
     };
     
     /**
+     * @name KEYWORDS
+     * @memberof plat.expressions
+     * @kind property
+     * @access private
+     * @static
+     * @readonly
+     * @exported false
+     * 
+     * @type {plat.IObject<plat.expressions.ITokenDetails>}
+     * 
+     * @description
      * An object used to get literal values from string values of false, true, and undefined
      */
     var KEYWORDS: plat.IObject<any> = {
@@ -12772,40 +14268,76 @@ module plat {
     };
     
     /**
-     * Checks if a string is in the DELIMITERS array.
+     * @name isDelimiter
+     * @memberof plat.expressions
+     * @kind function
+     * @access private
+     * @static
+     * @exported false
      * 
-     * @param key The string to index into the DELIMITERS array.
-     * @returns {Boolean}
+     * @description
+     * Checks if a string is in the {@link plat.expressions.DELIMITERS|DELIMITERS} array.
+     * 
+     * @param {string} key The string to index into the DELIMITERS array.
+     * 
+     * @returns {boolean} Whether or not the key is a delimiter.
      */
     function isDelimiter(key: string): boolean {
         return !isNull(DELIMITERS[key]);
     }
     
     /**
-     * Checks if a string is in the ACCESSORS array.
+     * @name isAccessor
+     * @memberof plat.expressions
+     * @kind function
+     * @access private
+     * @static
+     * @exported false
      * 
-     * @param key The string to index into the ACCESSORS array.
-     * @returns {Boolean}
+     * @description
+     * Checks if a string is in the {@link plat.expressions.ACCESSORS|ACCESSORS} array.
+     * 
+     * @param {string} key The string to index into the ACCESSORS array.
+     * 
+     * @returns {boolean} Whether or not the key is a accessor.
      */
     function isAccessor(key: string): boolean {
         return !isNull(ACCESSORS[key]);
     }
     
     /**
-     * Checks if a string is in the OPERATORS array.
+     * @name isOperator
+     * @memberof plat.expressions
+     * @kind function
+     * @access private
+     * @static
+     * @exported false
      * 
-     * @param key The string to index into the OPERATORS array.
-     * @returns {Boolean}
+     * @description
+     * Checks if a string is in the {@link plat.expressions.OPERATORS|OPERATORS} array.
+     * 
+     * @param {string} key The string to index into the OPERATORS array.
+     * 
+     * @returns {boolean} Whether or not the key is a operator.
      */
     function isOperator(key: string): boolean {
         return !isNull(OPERATORS[key]);
     }
     
     /**
-     * Checks if a string is in the KEYWORDS array.
+     * @name isKeyword
+     * @memberof plat.expressions
+     * @kind function
+     * @access private
+     * @static
+     * @exported false
      * 
-     * @param key The string to index into the KEYWORDS array.
-     * @returns {Boolean}
+     * @description
+     * Checks if a string is in the {@link plat.expressions.KEYWORDS|KEYWORDS} array.
+     * 
+     * @param {string} key The string to index into the KEYWORDS array.
+     * 
+     * @returns {boolean} Whether or not the key is a keyword.
      */
     function isKeyword(key: string): boolean {
         return !isUndefined(KEYWORDS[key]);
@@ -12816,9 +14348,10 @@ module plat {
      * @name observable
      * @memberof plat
      * @kind namespace
+     * @access public
      * 
      * @description
-     * Holds all observable interfaces and classes.
+     * Holds all classes and interfaces related to observable components in platypus.
      */
     export module observable {
         var arrayMethods = ['push', 'pop', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
@@ -14039,14 +15572,14 @@ module plat {
                 observe(listener: (newValue: T, oldValue: T) => void): IRemoveListener;
             }
     }
-    
     /**
      * @name events
      * @memberof plat
      * @kind namespace
+     * @access public
      * 
      * @description
-     * Holds classes and interfaces related to event management.
+     * Holds classes and interfaces related to event management components in platypus.
      */
     export module events {
         /**
@@ -14482,11 +16015,7 @@ module plat {
          * @access public
          * 
          * @description
-         * Event object for a control dispatch event. Contains information about the type of event.
-         * Propagation of the event always starts at the sender, allowing a control to both 
-         * initialize and consume an event. If a consumer of an event throws an error while 
-         * handling the event it will be logged to the app using exception.warn. Errors will 
-         * not stop propagation of the event.
+         * Manages dispatching events, handling all propagating events as well as any error handling.
          */
         export class EventManager {
             /**
@@ -14657,6 +16186,8 @@ module plat {
              * 
              * @description
              * Initializes the {@link plat.events.EventManager|EventManager}, creating the initial ALM event listeners.
+             * 
+             * @returns {void}
              */
             static initialize(): void {
                 if (EventManager.__initialized) {
@@ -14732,25 +16263,41 @@ module plat {
             }
 
             /**
+             * @name dispose
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Removes all event listeners for a given uid. Useful for garbage collection when 
              * certain objects that listen to events go out of scope.
              * 
-             * @static
-             * @param uid The uid for which the event listeners will be removed.
+             * @param {string} uid The uid for which the event listeners will be removed.'
+             * 
+             * @returns {void}
              */
             static dispose(uid: string): void {
                 deleteProperty(EventManager.__eventsListeners, uid);
             }
 
             /**
-             * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is 
+             * @name on
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a {@link plat.events.DispatchEvent|DispatchEvent} is 
              * propagating over the given uid. Any number of listeners can exist for a single event name.
              * 
-             * @static
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName The name of the event to listen to.
-             * @param listener The method called when the DispatchEvent is fired.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName The name of the event to listen to.
+             * @param {(ev: IDispatchEventInstance, ...args: any[]) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             static on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void,
                 context?: any): IRemoveListener {
@@ -14779,57 +16326,81 @@ module plat {
             }
 
             /**
+             * @name dispatch
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Looks for listeners to a given event name, and fires the listeners using the specified
              * event direction.
              * 
-             * @static
-             * @param name The name of the event.
-             * @param sender The object sending the event.
-             * @param direction The direction in which to send the event.
-             * @param args The arguments to send to the listeners.
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
+             * @param {Array<any>} args? The arguments to send to the listeners.
              * 
-             * @see EventManager.direction
-             */
-            static dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
-            /**
-             * Looks for listeners to a given event name, and fires the listeners using the specified
-             * event direction.
-             * 
-             * @static
-             * @param name The name of the event.
-             * @param sender The object sending the event.
-             * @param direction='up' Equivalent to EventManager.direction.UP.
-             * @param args The arguments to send to the listeners.
-             * 
-             * @see EventManager.direction
+             * @returns {void}
              */
             static dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): void;
             /**
+             * @name dispatch
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Looks for listeners to a given event name, and fires the listeners using the specified
              * event direction.
              * 
-             * @static
-             * @param name The name of the event.
-             * @param sender The object sending the event.
-             * @param direction='down' Equivalent to EventManager.direction.DOWN.
-             * @param args The arguments to send to the listeners.
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
+             * @param {Array<any>} args? The arguments to send to the listeners.
              * 
-             * @see EventManager.direction
+             * @returns {void}
              */
             static dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): void;
             /**
+             * @name dispatch
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Looks for listeners to a given event name, and fires the listeners using the specified
              * event direction.
              * 
-             * @static
-             * @param name The name of the event.
-             * @param sender The object sending the event.
-             * @param direction='direct' Equivalent to EventManager.direction.DIRECT.
-             * @param args The arguments to send to the listeners.
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
+             * @param {Array<any>} args? The arguments to send to the listeners.
              * 
-             * @see EventManager.direction
+             * @returns {void}
              */
             static dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
+            /**
+             * @name dispatch
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Looks for listeners to a given event name, and fires the listeners using the specified
+             * event direction.
+             * 
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction The direction in which to send the event.
+             * @param {Array<any>} args? The arguments to send to the listeners.
+             * 
+             * @returns {void}
+             */
+            static dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
             static dispatch(name: string, sender: any, direction: string, args?: Array<any>) {
                 var $dispatchEvent: IDispatchEventInstance = acquire(__DispatchEventInstance);
                 $dispatchEvent.initialize(name, sender, direction);
@@ -14837,9 +16408,18 @@ module plat {
             }
 
             /**
+             * @name hasDirection
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Returns whether or not the given string is a registered direction.
              * 
-             * @param direction The direction of the event
+             * @param {string} direction The direction of the event
+             * 
+             * @returns {boolean} Whether or not the direction is valid.
              */
             static hasDirection(direction: string): boolean {
                 return (direction === EventManager.UP ||
@@ -14848,10 +16428,19 @@ module plat {
             }
 
             /**
+             * @name sendEvent
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Determines the appropriate direction and dispatches the event accordingly.
              * 
-             * @param event The IDispatchEvent to send
-             * @param args The arguments associated with the event
+             * @param {plat.events.IDispatchEventInstance} event The {@link plat.events.DispatchEvent|DispatchEvent} to send
+             * @param {Array<any>} args The arguments associated with the event
+             * 
+             * @returns {void}
              */
             static sendEvent(event: IDispatchEventInstance, args?: Array<any>): void {
                 var name = event.name,
@@ -14878,10 +16467,19 @@ module plat {
             }
 
             /**
+             * @name _dispatchUp
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access protected
+             * @static
+             * 
+             * @description
              * Dispatches the event up the control chain.
              * 
-             * @param event The event being dispatched.
-             * @param args The arguments associated with the event.
+             * @param {plat.events.IDispatchEventInstance} event The event being dispatched.
+             * @param {Array<any>} args The arguments associated with the event.
+             * 
+             * @returns {void}
              */
             static _dispatchUp(event: IDispatchEventInstance, args: Array<any>): void {
                 var name = event.name,
@@ -14897,10 +16495,19 @@ module plat {
             }
 
             /**
+             * @name _dispatchDown
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access protected
+             * @static
+             * 
+             * @description
              * Dispatches the event down the control chain.
              * 
-             * @param event The event being dispatched.
-             * @param args The arguments associated with the event.
+             * @param {plat.events.IDispatchEventInstance} event The event being dispatched.
+             * @param {Array<any>} args The arguments associated with the event.
+             * 
+             * @returns {void}
              */
             static _dispatchDown(event: IDispatchEventInstance, args: Array<any>): void {
                 var controls: Array<IControl> = [],
@@ -14927,10 +16534,19 @@ module plat {
             }
 
             /**
-             * Dispatches the event directly to all control's listening.
+             * @name _dispatchDirect
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access protected
+             * @static
              * 
-             * @param event The event being dispatched.
-             * @param args The arguments associated with the event.
+             * @description
+             * Dispatches the event directly to all listeners.
+             * 
+             * @param {plat.events.IDispatchEventInstance} event The event being dispatched.
+             * @param {Array<any>} args The arguments associated with the event.
+             * 
+             * @returns {void}
              */
             static _dispatchDirect(event: IDispatchEventInstance, args: Array<any>): void {
                 var uids = Object.keys(EventManager.__eventsListeners),
@@ -14953,6 +16569,22 @@ module plat {
                 }
             }
 
+            /**
+             * @name __executeEvent
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access private
+             * @static
+             * 
+             * @description
+             * Dispatches the event to the listeners for the given uid.
+             * 
+             * @param {string} uid The uid used to find the event listeners.
+             * @param {plat.events.IDispatchEventInstance} The event.
+             * @param {Array<any>} args The arguments to send to the listeners.
+             * 
+             * @returns {void}
+             */
             private static __executeEvent(uid: string, ev: IDispatchEventInstance, args: Array<any>): void {
                 var eventsListener = EventManager.__eventsListeners[uid];
 
@@ -14969,6 +16601,23 @@ module plat {
                 EventManager.__callListeners(context, ev, listeners, args);
             }
 
+            /**
+             * @name __callListeners
+             * @memberof plat.events.EventManager
+             * @kind function
+             * @access private
+             * @static
+             * 
+             * @description
+             * Calls event listeners with the given context, event, and arguments.
+             * 
+             * @param {any} context The context with which to call the listeners.
+             * @param {plat.events.IDispatchEventInstance} The event.
+             * @param {Array<(ev: IDispatchEventInstance, ...args: any[]) => void>} The event listeners.
+             * @param {Array<any>} args The arguments to send to the listeners.
+             * 
+             * @returns {void}
+             */
             private static __callListeners(context: any, ev: IDispatchEventInstance,
                 listeners: Array<(ev: IDispatchEventInstance, ...args: any[]) => void>, args: Array<any>): void {
                 var name = ev.name,
@@ -15011,283 +16660,587 @@ module plat {
         ], __STATIC);
 
         /**
-         * Event object for a control dispatch event. Contains information about the type of event.
-         * Propagation of the event always starts at the sender, allowing a control to both 
-         * initialize and consume an event. If a consumer of an event throws an error while 
-         * handling the event it will be logged to the app using exception.warn. Errors will 
-         * not stop propagation of the event.
+         * @name IEventManagerStatic
+         * @memberof plat.events
+         * @kind interface
+         * @access public
+         * 
+         * @description
+         * Manages dispatching events, handling all propagating events as well as any error handling.
          */
         export interface IEventManagerStatic {
             /**
-             * An upward-moving event will start at the sender and move 
+             * @name $Compat
+             * @memberof plat.events.IEventManagerStatic
+             * @kind property
+             * @access public
+             * @static
+             *
+             * @type {plat.ICompat}
+             *
+             * @description
+             * Reference to the {@link plat.ICompat|ICompat} injectable.
+             */
+            $Compat: ICompat;
+
+            /**
+             * @name $Document
+             * @memberof plat.events.IEventManagerStatic
+             * @kind property
+             * @access public
+             * @static
+             *
+             * @type {Document}
+             *
+             * @description
+             * Reference to the {@link plat.Document|Document} injectable.
+             */
+            $Document: Document;
+
+            /**
+             * @name $Window
+             * @memberof plat.events.IEventManagerStatic
+             * @kind property
+             * @access public
+             * @static
+             *
+             * @type {Window}
+             *
+             * @description
+             * Reference to the {@link plat.Window|Window} injectable.
+             */
+            $Window: Window;
+
+            /**
+             * @name $Dom
+             * @memberof plat.events.IEventManagerStatic
+             * @kind property
+             * @access public
+             * @static
+             *
+             * @type {plat.ui.IDom}
+             *
+             * @description
+             * Reference to the {@link plat.ui.IDom|IDom} injectable.
+             */
+            $Dom: ui.IDom;
+
+            /**
+             * @name UP
+             * @memberof plat.events.IEventManagerStatic
+             * @kind property
+             * @access public
+             * @static
+             * @readonly
+             *
+             * @type {string}
+             *
+             * @description
+             * An upward-moving event will start at the sender and move
              * up the parent chain.
              */
             UP: string;
 
             /**
+             * @name DOWN
+             * @memberof plat.events.IEventManagerStatic
+             * @kind property
+             * @access public
+             * @static
+             * @readonly
+             *
+             * @type {string}
+             *
+             * @description
              * A downward-moving event will start at the sender and move
              * to its children and beyond.
              */
             DOWN: string;
 
             /**
+             * @name DIRECT
+             * @memberof plat.events.IEventManagerStatic
+             * @kind property
+             * @access public
+             * @static
+             * @readonly
+             *
+             * @type {string}
+             *
+             * @description
              * Goes through all listeners for an event name, ignoring order.
              */
             DIRECT: string;
 
             /**
+             * @name propagatingEvents
+             * @memberof plat.events.IEventManagerStatic
+             * @kind property
+             * @access public
+             * @static
+             *
+             * @type {plat.IObject<boolean>}
+             *
+             * @description
              * Keeps track of which events are currently propagating.
              */
-            propagatingEvents: {};
+            propagatingEvents: IObject<boolean>;
 
             /**
-             * Initializes the EventManager, creating the initial ALM event listeners.
+             * @name initialize
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Initializes the {@link plat.events.EventManager|EventManager}, creating the initial ALM event listeners.
+             * 
+             * @returns {void}
              */
             initialize(): void;
 
             /**
-             * Removes all event listeners for a given uid. Useful for garbage collection when
+             * @name dispose
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Removes all event listeners for a given uid. Useful for garbage collection when 
              * certain objects that listen to events go out of scope.
              * 
-             * @param uid The uid for which the event listeners will be removed.
+             * @param {string} uid The uid for which the event listeners will be removed.'
+             * 
+             * @returns {void}
              */
             dispose(uid: string): void;
 
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 0
+             * 
+             * @description
              * Registers a listener for the beforeNavigate Event. The listener will be called when the beforeNavigate 
              * event is propagating over the given uid. Any number of listeners can exist for a single event name. The 
              * listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further 
              * calls to event listeners.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName='beforeNavigate' Specifies that this is a listener for the beforeNavigate event.
-             * @param listener The method called when the beforeNavigate event is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName='beforeNavigate' The name of the event to listen to.
+             * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'beforeNavigate',
                 listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 1
+             * 
+             * @description
              * Registers a listener for the navigating Event. The listener will be called when the navigating 
              * event is propagating over the given uid. Any number of listeners can exist for a single event name.
              * The listener can chose to cancel the event using ev.cancel(), preventing any navigation as well as further 
              * calls to event listeners.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName='navigating' Specifies that this is a listener for the navigating event.
-             * @param listener The method called when the navigating event is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName='navigating' Specifies that this is a listener for the navigating event.
+             * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'navigating',
                 listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 2
+             * 
+             * @description
              * Registers a listener for the navigated Event. The listener will be called when the navigated 
              * event is propagating over the given uid. Any number of listeners can exist for a single event name.
              * The listener cannot cancel the event.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName='navigated' Specifies that this is a listener for the navigated event.
-             * @param listener The method called when the navigated event is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName='navigated' Specifies that this is a listener for the navigated event.
+             * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'navigated',
                 listener: (ev: INavigationEvent<any>) => void, context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 3
+             * 
+             * @description
              * Registers a listener for a NavigationEvent. The listener will be called when a NavigationEvent is
              * propagating over the given uid. Any number of listeners can exist for a single event name.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName The name of the event to listen to.
-             * @param listener The method called when the NavigationEvent is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName The name of the event to listen to.
+             * @param {(ev: plat.events.INavigationEvent<any>) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: string, listener: (ev: INavigationEvent<any>) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 4
+             * 
+             * @description
              * Registers a listener for the ready AlmEvent. The ready event will be called when the app 
              * is ready to start.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName='ready' Specifies that the listener is for the ready event.
-             * @param listener The method called when the app is ready to start.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName='ready' Specifies that the listener is for the ready event.
+             * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'ready', listener: (ev: ILifecycleEvent) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 5
+             * 
+             * @description
              * Registers a listener for the suspend AlmEvent. The listener will be called when an app 
              * is being suspended.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName='suspend' Specifies the listener is for the suspend event.
-             * @param listener The method called when the suspend event is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName='suspend' Specifies the listener is for the suspend event.
+             * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'suspend', listener: (ev: ILifecycleEvent) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 6
+             * 
+             * @description
              * Registers a listener for the resume AlmEvent. The listener will be called when an app 
              * is being resumeed.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName='suspend' Specifies the listener is for the resume event.
-             * @param listener The method called when the resume event is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName='suspend' Specifies the listener is for the resume event.
+             * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'resume', listener: (ev: ILifecycleEvent) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 7
+             * 
+             * @description
              * Registers a listener for the online AlmEvent. This event fires when the app's network 
              * connection changes to be online.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName='online' Specifies the listener is for the online event.
-             * @param listener The method called when the online event is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName='online' Specifies the listener is for the online event.
+             * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'online', listener: (ev: ILifecycleEvent) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 8
+             * 
+             * @description
              * Registers a listener for the offline AlmEvent. This event fires when the app's network 
              * connection changes to be offline.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName='offline' Specifies the listener is for the offline event.
-             * @param listener The method called when the offline is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName='offline' Specifies the listener is for the offline event.
+             * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'offline', listener: (ev: ILifecycleEvent) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 9
+             * 
+             * @description
              * Registers a listener for an AlmEvent. The listener will be called when an AlmEvent is
              * propagating over the given uid. Any number of listeners can exist for a single event name.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName The name of the event to listen to.
-             * @param listener The method called when the AlmEvent is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName The name of the event to listen to.
+             * @param {(ev: plat.events.ILifecycleEvent) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: string, listener: (ev: ILifecycleEvent) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 10
+             * 
+             * @description
              * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
              * propagating over the given uid. Any number of listeners can exist for a single event name.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName The name of the event to listen to.
-             * @param listener The method called when the ErrorEvent is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName The name of the event to listen to.
+             * @param {(ev: plat.events.IErrorEvent<Error>) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: 'error', listener: (ev: IErrorEvent<Error>) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 11
+             * 
+             * @description
              * Registers a listener for a ErrorEvent. The listener will be called when a ErrorEvent is
              * propagating over the given uid. Any number of listeners can exist for a single event name.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName The name of the event to listen to.
-             * @param listener The method called when the ErrorEvent is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName The name of the event to listen to.
+             * @param {(ev: plat.events.IErrorEvent<any>) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: string, listener: (ev: IErrorEvent<any>) => void,
                 context?: any): IRemoveListener;
             /**
+             * @name on
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * @variation 12
+             * 
+             * @description
              * Registers a listener for a DispatchEvent. The listener will be called when a DispatchEvent is
              * propagating over the given uid. Any number of listeners can exist for a single event name.
              * 
-             * @param uid A unique id to associate with the object registering the listener.
-             * @param eventName The name of the event to listen to.
-             * @param listener The method called when the DispatchEvent is fired.
-             * @param context Optional context with which the listener will be bound.
-             * @returns {IRemoveListener} A method for removing the listener.
+             * @param {string} uid A unique id to associate with the object registering the listener.
+             * @param {string} eventName The name of the event to listen to.
+             * @param {(ev: plat.events.IDispatchEventInstance, ...args: any[]) => void} listener The method called when the event is fired.
+             * @param {any} context? The context with which to call the listener method.
+             * 
+             * @returns {plat.IRemoveListener} A method for removing the listener.
              */
             on(uid: string, eventName: string, listener: (ev: IDispatchEventInstance, ...args: any[]) => void,
                 context?: any): IRemoveListener;
 
             /**
+             * @name dispatch
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             *
+             * @description
              * Looks for listeners to a given event name, and fires the listeners using the specified
              * event direction.
-             * 
-             * @static
-             * @param name The name of the event.
-             * @param sender The object sending the event.
-             * @param direction='up' Equivalent to EventManager.direction.UP.
-             * @param args The arguments to send to the listeners.
-             * 
-             * @see EventManager.direction
+             *
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction='up' Equivalent to {@link plat.events.EventManager.UP|EventManager.UP}.
+             * @param {Array<any>} args? The arguments to send to the listeners.
+             *
+             * @returns {void}
              */
             dispatch(name: string, sender: any, direction: 'up', args?: Array<any>): void;
             /**
+             * @name dispatch
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             *
+             * @description
              * Looks for listeners to a given event name, and fires the listeners using the specified
              * event direction.
-             * 
-             * @static
-             * @param name The name of the event.
-             * @param sender The object sending the event.
-             * @param direction='down' Equivalent to EventManager.direction.DOWN.
-             * @param args The arguments to send to the listeners.
-             * 
-             * @see EventManager.direction
+             *
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction='down' Equivalent to {@link plat.events.EventManager.DOWN|EventManager.DOWN}.
+             * @param {Array<any>} args? The arguments to send to the listeners.
+             *
+             * @returns {void}
              */
             dispatch(name: string, sender: any, direction: 'down', args?: Array<any>): void;
             /**
+             * @name dispatch
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             *
+             * @description
              * Looks for listeners to a given event name, and fires the listeners using the specified
              * event direction.
-             * 
-             * @static
-             * @param name The name of the event.
-             * @param sender The object sending the event.
-             * @param direction='direct' Equivalent to EventManager.direction.DIRECT.
-             * @param args The arguments to send to the listeners.
-             * 
-             * @see EventManager.direction
+             *
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction='direct' Equivalent to {@link plat.events.EventManager.DIRECT|EventManager.DIRECT}.
+             * @param {Array<any>} args? The arguments to send to the listeners.
+             *
+             * @returns {void}
              */
             dispatch(name: string, sender: any, direction: 'direct', args?: Array<any>): void;
             /**
+             * @name dispatch
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             *
+             * @description
              * Looks for listeners to a given event name, and fires the listeners using the specified
              * event direction.
-             * 
-             * @static
-             * @param name The name of the event.
-             * @param sender The object sending the event.
-             * @param direction The direction in which to send the event.
-             * @param args The arguments to send to the listeners.
-             * 
-             * @see EventManager.direction
+             *
+             * @param {string} name The name of the event.
+             * @param {any} sender The object sending the event.
+             * @param {string} direction The direction in which to send the event.
+             * @param {Array<any>} args? The arguments to send to the listeners.
+             *
+             * @returns {void}
              */
             dispatch(name: string, sender: any, direction: string, args?: Array<any>): void;
 
             /**
+             * @name hasDirection
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Returns whether or not the given string is a registered direction.
+             * 
+             * @param {string} direction The direction of the event
+             * 
+             * @returns {boolean} Whether or not the direction is valid.
              */
             hasDirection(direction: string): boolean;
 
             /**
+             * @name sendEvent
+             * @memberof plat.events.IEventManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Determines the appropriate direction and dispatches the event accordingly.
+             * 
+             * @param {plat.events.IDispatchEventInstance} event The {@link plat.events.DispatchEvent|DispatchEvent} to send
+             * @param {Array<any>} args The arguments associated with the event
+             * 
+             * @returns {void}
              */
             sendEvent(event: IDispatchEventInstance, args?: Array<any>): void;
         }
 
         /**
-         * Describes an object that contains event listeners.
+         * @name IEventsListener
+         * @memberof plat.events
+         * @kind interface
+         * @access public
+         * 
+         * @description
+         * An object that contains event listeners.
          */
         interface IEventsListener {
             /**
+             * @name listeners
+             * @memberof plat.events.IEventsListener
+             * @kind property
+             * @access public
+             * @static
+             *
+             * @type {plat.IObject<Array<(ev: plat.events.IDispatchEventInstance, ...args: any[]) => void>>}
+             *
+             * @description
              * An IObject of listener arrays, keyed by event name.
              */
             listeners: IObject<Array<(ev: IDispatchEventInstance, ...args: any[]) => void>>;
+        
             /**
+             * @name context
+             * @memberof plat.events.IEventsListener
+             * @kind property
+             * @access public
+             * @static
+             *
+             * @type {any}
+             *
+             * @description
              * The context with which to call each event listener.
              */
             context: any;
@@ -16367,8 +18320,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {string} property The property identifier to watch for changes.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method 
+         * will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
@@ -16388,8 +18341,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {number} property The property identifier to watch for changes.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method 
+         * will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
@@ -16435,8 +18388,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {string} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
@@ -16457,8 +18410,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {number} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
@@ -16790,11 +18743,13 @@ module plat {
          * @access public
          * 
          * @description
-         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a {@link plat.events.DispatchEvent|DispatchEvent} is 
-         * propagating over the control. Any number of listeners can exist for a single event name.
+         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a 
+         * {@link plat.events.DispatchEvent|DispatchEvent} is propagating over the control. Any number of listeners can exist 
+         * for a single event name.
          * 
          * @param {string} name The name of the event, cooinciding with the {@link plat.events.DispatchEvent|DispatchEvent} name.
-         * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when the {@link plat.events.DispatchEvent|DispatchEvent} is fired.
+         * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when the 
+         * {@link plat.events.DispatchEvent|DispatchEvent} is fired.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
@@ -17220,8 +19175,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {string} property The property identifier to watch for changes.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
@@ -17241,8 +19196,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the property.
          * @param {number} property The property identifier to watch for changes.
-         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(value: T, oldValue: T) => void} listener The method called when the property is changed. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the property.
          */
@@ -17264,8 +19219,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {string} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
@@ -17286,8 +19241,8 @@ module plat {
          * 
          * @param {any} context The immediate parent object containing the array as a property.
          * @param {number} property The array property identifier to watch for changes.
-         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. This method will have its 'this'
-         * context set to the control instance.
+         * @param {(ev: plat.observable.IArrayMethodInfo<T>) => void} listener The method called when an array-changing method is called. 
+         * This method will have its 'this' context set to the control instance.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop observing the array.
          */
@@ -17457,11 +19412,13 @@ module plat {
          * @access public
          * 
          * @description
-         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a {@link plat.events.DispatchEvent|DispatchEvent} is 
-         * propagating over the control. Any number of listeners can exist for a single event name.
+         * Registers a listener for a {@link plat.events.DispatchEvent|DispatchEvent}. The listener will be called when a 
+         * {@link plat.events.DispatchEvent|DispatchEvent} is propagating over the control. Any number of listeners can 
+         * exist for a single event name.
          * 
          * @param {string} name The name of the event, cooinciding with the {@link plat.events.DispatchEvent|DispatchEvent} name.
-         * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when the {@link plat.events.DispatchEvent|DispatchEvent} is fired.
+         * @param {(ev: plat.events.IDispatchEventInstance, ...args: Array<any>) => void} listener The method called when the 
+         * {@link plat.events.DispatchEvent|DispatchEvent} is fired.
          * 
          * @returns {plat.IRemoveListener} A function to call in order to stop listening for this event.
          */
@@ -17487,9 +19444,10 @@ module plat {
      * @name controls
      * @memberof plat
      * @kind namespace
+     * @access public
      * 
      * @description
-     * Holds all attribute controls
+     * Holds all classes and interfaces related to attribute control components in platypus.
      */
     export module controls {
         /**
@@ -19226,7 +21184,7 @@ module plat {
          * @extends {plat.controls.KeyCodeEventControl}
          * 
          * @description
-         * Used for filtering keys on keydown event.
+         * Used for filtering keys on keydown events.
          */
         export class KeyDown extends KeyCodeEventControl {
             /**
@@ -21360,14 +23318,14 @@ module plat {
 
         register.control(__Options, Options);
     }
-    
     /**
      * @name ui
      * @memberof plat
      * @kind namespace
+     * @access public
      * 
      * @description
-     * Holds classes and interfaces related to event management.
+     * Holds all the classes and interfaces related to UI components for platypus.
      */
     export module ui {
         /**
@@ -22096,7 +24054,7 @@ module plat {
              * @description
              * Specifies the absolute path from where the context was created to this IControl's context.
              * Used by the {@link plat.observable.ContextManager|ContextManager} for maintaining context parity 
-             * (i.e. 'context.childContextProperty.grandChildContextProperty').
+             * (e.g. 'context.childContextProperty.grandChildContextProperty').
              */
             absoluteContextPath: string = null;
 
@@ -22305,8 +24263,8 @@ module plat {
              * property can be any property that works with document.createElement(). If the control's element had 
              * attributes (as well as attribute IControls), those attributes will be carried to the swapped element. The default 
              * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
-             * element's nodename (i.e. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
-             * is used otherwise (i.e. <tr plat-control="plat-foreach" plat-context="..."></tr>).
+             * element's nodename (e.g. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
+             * is used otherwise (e.g. <tr plat-control="plat-foreach" plat-context="..."></tr>).
              */
             replaceWith = 'any';
 
@@ -22855,7 +24813,7 @@ module plat {
              * @description
              * Specifies the absolute path from where the context was created to this IControl's context.
              * Used by the {@link plat.observable.ContextManager|ContextManager} for maintaining context parity 
-             * (i.e. 'context.childContextProperty.grandChildContextProperty').
+             * (e.g. 'context.childContextProperty.grandChildContextProperty').
              */
             absoluteContextPath?: string;
 
@@ -23064,8 +25022,8 @@ module plat {
              * property can be any property that works with document.createElement(). If the control's element had 
              * attributes (as well as attribute IControls), those attributes will be carried to the swapped element. The default 
              * replaceWith is 'any,' meaning it will default to a 'div' in the case that the control type is used as the 
-             * element's nodename (i.e. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
-             * is used otherwise (i.e. <tr plat-control="plat-foreach" plat-context="..."></tr>).
+             * element's nodename (e.g. <plat-foreach plat-context="..."></plat-foreach>), but will maintain whatever element type 
+             * is used otherwise (e.g. <tr plat-control="plat-foreach" plat-context="..."></tr>).
              */
             replaceWith?: string;
 
@@ -23223,17 +25181,45 @@ module plat {
             evaluateExpression? (expression: expressions.IParsedExpression, context?: any): any;
         }
 
+        /**
+         * @name BindablePropertyControl
+         * @memberof plat.ui
+         * @kind class
+         * 
+         * @extends {plat.ui.TemplateControl}
+         * @implements {plat.ui.IBindablePropertyControl}
+         * 
+         * @description
+         * An extended {@link plat.ui.TemplateControl|TemplateControl} that allows for the binding of a value to 
+         * another listening control (e.g. {@link plat.controls.Bind|plat-bind} control).
+         */
         export class BindablePropertyControl extends TemplateControl implements IBindablePropertyControl {
             /**
+             * @name _listeners
+             * @memberof plat.ui.BindablePropertyControl
+             * @kind property
+             * @access protected
+             * 
+             * @type {Array<plat.IPropertyChangedListener>}
+             * 
+             * @description
              * The set of functions added externally that listens 
              * for property changes.
              */
             _listeners: Array<(newValue: any, oldValue?: any) => void> = [];
 
             /**
+             * @name observeProperty
+             * @memberof plat.ui.BindablePropertyControl
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Adds a listener to be called when the bindable property changes.
              * 
-             * @param listener The function that acts as a listener.
+             * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop listening for property changes.
              */
             observeProperty(listener: (newValue: any, oldValue?: any) => void): IRemoveListener {
                 var listeners = this._listeners,
@@ -23245,22 +25231,38 @@ module plat {
                     listeners.splice(length, 1);
                 };
             }
-
+        
             /**
-             * A function that lets the BindablePropertyControl know when the context's value of the bindable 
+             * @name setProperty
+             * @memberof plat.ui.BindablePropertyControl
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * A function that lets this control know when the context's value of the bindable 
              * property has changed.
              * 
-             * @param newValue The new value of the bindable property.
-             * @param oldValue The old value of the bindable property.
-             * @param firstTime A boolean signifying whether this is the first set of the property.
+             * @param {any} newValue The new value of the bindable property.
+             * @param {any} oldValue? The old value of the bindable property.
+             * @param {boolean} firstTime? A boolean signifying whether this is the first set of the property.
+             * 
+             * @returns {void}
              */
             setProperty(newValue: any, oldValue?: any, firstTime?: boolean): void { }
-
+        
             /**
-             * A function that signifies when BindablePropertyControl's bindable property has changed.
+             * @name propertyChanged
+             * @memberof plat.ui.BindablePropertyControl
+             * @kind function
+             * @access public
              * 
-             * @param newValue The new value of the property after the change.
-             * @param oldValue The old value of the property prior to the change.
+             * @description
+             * A function that signifies when this control's bindable property has changed.
+             * 
+             * @param {any} newValue The new value of the property after the change.
+             * @param {any} oldValue? The old value of the property prior to the change.
+             * 
+             * @returns {void}
              */
             propertyChanged(newValue: any, oldValue?: any): void {
                 if (newValue === oldValue) {
@@ -23274,39 +25276,82 @@ module plat {
                     listeners[i](newValue, oldValue);
                 }
             }
-
+        
             /**
+             * @name dispose
+             * @memberof plat.ui.BindablePropertyControl
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Removes references to the listeners 
              * defined externally.
+             * 
+             * @returns {void}
              */
             dispose(): void {
                 this._listeners = [];
             }
         }
-
+    
+        /**
+         * @name IBindablePropertyControl
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @extends {plat.ui.ITemplateControl}
+         * 
+         * @description
+         * Describes an object that allows for the binding of a value to 
+         * another listening control.
+         */
         export interface IBindablePropertyControl extends ITemplateControl {
             /**
+             * @name observeProperty
+             * @memberof plat.ui.IBindablePropertyControl
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Adds a listener to be called when the bindable property changes.
              * 
-             * @param listener The function that acts as a listener.
+             * @param {plat.IPropertyChangedListener} listener The function that acts as a listener.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop listening for property changes.
              */
             observeProperty(listener: (newValue: any, oldValue?: any) => void): IRemoveListener;
 
             /**
-             * A function that lets the BindablePropertyControl know when the context's value of the bindable 
+             * @name setProperty
+             * @memberof plat.ui.IBindablePropertyControl
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * A function that lets this control know when the context's value of the bindable 
              * property has changed.
              * 
-             * @param newValue The new value of the bindable property.
-             * @param oldValue The old value of the bindable property.
-             * @param firstTime A boolean signifying whether this is the first set of the property.
+             * @param {any} newValue The new value of the bindable property.
+             * @param {any} oldValue? The old value of the bindable property.
+             * @param {boolean} firstTime? A boolean signifying whether this is the first set of the property.
+             * 
+             * @returns {void}
              */
             setProperty(newValue: any, oldValue?: any, firstTime?: boolean): void;
 
             /**
-             * A function that signifies when BindablePropertyControl's bindable property has changed.
+             * @name propertyChanged
+             * @memberof plat.ui.IBindablePropertyControl
+             * @kind function
+             * @access public
              * 
-             * @param newValue The new value of the property after the change.
-             * @param oldValue The old value of the property prior to the change.
+             * @description
+             * A function that signifies when this control's bindable property has changed.
+             * 
+             * @param {any} newValue The new value of the property after the change.
+             * @param {any} oldValue? The old value of the property prior to the change.
+             * 
+             * @returns {void}
              */
             propertyChanged(newValue: any, oldValue?: any): void;
         }
@@ -23718,7 +25763,8 @@ module plat {
                     element = WebViewControl.descriptionElement = <HTMLMetaElement>$document.head.querySelector('meta[name="description"]');
 
                     if (!isNode(element)) {
-                        element = WebViewControl.descriptionElement = <HTMLMetaElement>$document.head.appendChild($document.createElement('meta'));
+                        element = WebViewControl.descriptionElement =
+                            <HTMLMetaElement>$document.head.appendChild($document.createElement('meta'));
                         element.setAttribute('name', 'description');
                     }
                 }
@@ -23920,84 +25966,512 @@ module plat {
         }
 
         /**
+         * @name Dom
+         * @memberof plat.ui
+         * @kind class
+         * 
+         * @implements {plat.ui.IDom}
+         * 
+         * @description
          * An extensible class dealing with the creation, deletion, and modification 
          * of DOM.
          */
         export class Dom implements IDom {
+            /**
+             * @name $DomEvents
+             * @memberof plat.ui.Dom
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.IDomEvents}
+             * 
+             * @description
+             * Reference to the {@link plat.ui.IDomEvents|IDomEvents} injectable.
+             */
             $DomEvents: ui.IDomEvents = acquire(__DomEvents);
 
+            /**
+             * @name addEventListener
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Adds an event listener of the specified type to the specified element.
+             * 
+             * @param {Node} element The element to add the event listener to.
+             * @param {string} type The type of event to listen to.
+             * @param {plat.ui.IGestureListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
+             * of event propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added event listener.
+             */
             addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+            /**
+             * @name addEventListener
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Adds an event listener of the specified type to the specified element.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} type The type of event to listen to.
+             * @param {plat.ui.IGestureListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
+             * of event propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added event listener.
+             */
             addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
+            /**
+             * @name addEventListener
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * Adds an event listener of the specified type to the specified element.
+             * 
+             * @param {Node} element The element to add the event listener to.
+             * @param {string} type The type of event to listen to.
+             * @param {EventListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
+             * of event propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added event listener.
+             */
             addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+            /**
+             * @name addEventListener
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 3
+             * 
+             * @description
+             * Adds an event listener of the specified type to the specified element.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} type The type of event to listen to.
+             * @param {EventListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
+             * of event propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added event listener.
+             */
             addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
-            addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean) {
+            addEventListener(element: any, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener {
                 return this.$DomEvents.addEventListener(element, type, listener, useCapture);
             }
 
+            /**
+             * @name appendChildren
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Takes a Node Array and creates a DocumentFragment and adds the nodes to the Fragment.
+             * 
+             * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
+             * 
+             * @returns {DocumentFragment} A DocumentFragment.
+             */
             appendChildren(nodeList: Array<Node>): DocumentFragment;
+            /**
+             * @name appendChildren
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Takes a NodeList and creates a DocumentFragment and adds the NodeList to the Fragment.
+             * 
+             * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
+             * 
+             * @returns {DocumentFragment} A DocumentFragment.
+             */
             appendChildren(nodeList: NodeList): DocumentFragment;
+            /**
+             * @name appendChildren
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * Takes a Node Array and either adds it to the passed in Node,
+             * or creates a DocumentFragment and adds the nodes to the
+             * Fragment.
+             * 
+             * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+             * @param {Node} root? An optional Node to append the nodeList.
+             * 
+             * @returns {Node} The root Node or a DocumentFragment.
+             */
             appendChildren(nodeList: Array<Node>, root?: Node): Node;
+            /**
+             * @name appendChildren
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 3
+             * 
+             * @description
+             * Takes a NodeList and either adds it to the passed in Node,
+             * or creates a DocumentFragment and adds the NodeList to the
+             * Fragment.
+             * 
+             * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+             * @param {Node} root? An optional Node to append the nodeList.
+             * 
+             * @returns {Node} The root Node or a DocumentFragment.
+             */
             appendChildren(nodeList: NodeList, root?: Node): Node;
             appendChildren(nodeList: any, root?: Node): any {
                 return appendChildren(nodeList, root);
             }
 
-            clearNode(node: Node) {
+            /**
+             * @name clearNode
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Clears a DOM Node by removing all of its childNodes.
+             * 
+             * @param {Node} node The DOM Node to clear.
+             * 
+             * @returns {void}
+             */
+            clearNode(node: Node): void {
                 return clearNode(node);
             }
 
+            /**
+             * @name clearNodeBlock
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Removes all the Nodes in the Array from the parent Node.
+             * 
+             * @param {Array<Node>} nodeList The Node Array to remove from the parent Node.
+             * @param {Node} parent? The parent Node used to remove the nodeList.
+             * 
+             * @returns {void}
+             */
             clearNodeBlock(nodeList: Array<Node>, parent?: Node): void;
+            /**
+             * @name clearNodeBlock
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Removes all the Nodes in the NodeList from the parent Node.
+             * 
+             * @param {NodeList} nodeList The NodeList to remove from the parent Node.
+             * @param {Node} parent? The parent Node used to remove the nodeList.
+             * 
+             * @returns {void}
+             */
             clearNodeBlock(nodeList: NodeList, parent?: Node): void;
-            clearNodeBlock(nodeList: any, parent?: Node) {
+            clearNodeBlock(nodeList: any, parent?: Node): void {
                 return clearNodeBlock(nodeList, parent);
             }
 
+            /**
+             * @name setInnerHtml
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Sets the innerHTML of a Node. Can take in a Node rather than an Element
+             * because it does not use innerHTML on the passed-in Node (it appends its
+             * childNodes).
+             * 
+             * @param {Node} node The Node to set innerHTML.
+             * @param {string} html HTML string to be put inside the node.
+             * 
+             * @returns {Node} The same node passed in, with innerHTML set.
+             */
             setInnerHtml(node: Node, html: string): Node {
                 return setInnerHtml(node, html);
             }
 
+            /**
+             * @name insertBefore
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Inserts a list of Nodes before the designated end Node.
+             * 
+             * @param {Node} parent The parent node into which to insert nodes.
+             * @param {Array<Node>} nodes The Node Array to insert into the parent.
+             * @param {Node} endNode? An optional endNode to use to insert nodes.
+             * 
+             * @returns {Array<Node>} An Array copy of the nodes.
+             */
             insertBefore(parent: Node, nodes: Array<Node>, endNode?: Node): Array<Node>;
+            /**
+             * @name insertBefore
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Inserts a list of Nodes before the designated end Node.
+             * 
+             * @param {Node} parent The parent node into which to insert nodes.
+             * @param {NodeList} nodes The NodeList to insert into the parent.
+             * @param {Node} endNode? An optional endNode to use to insert nodes.
+             * 
+             * @returns {Array<Node>} An Array copy of the nodes.
+             */
             insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Array<Node>;
+            /**
+             * @name insertBefore
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * Inserts a DocumentFragment before the designated end Node.
+             * 
+             * @param {Node} parent The parent node into which to insert nodes.
+             * @param {DocumentFragment} fragment The DocumentFragment to insert into the parent.
+             * @param {Node} endNode? An optional endNode to use to insert nodes.
+             * 
+             * @returns {Array<Node>} An Array copy of the fragment's childNodes.
+             */
             insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
-            insertBefore(parent: Node, nodes: any, endNode?: Node) {
+            insertBefore(parent: Node, nodes: any, endNode?: Node): Array<Node> {
                 return insertBefore(parent, nodes, endNode);
             }
 
+            /**
+             * @name replace
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Takes the child nodes of the given node and places them above the node
+             * in the DOM. Then removes the given node.
+             * 
+             * @param {Node} node The Node to replace.
+             * 
+             * @returns {Array<Node>} A Node Array that represents the childNodes of the
+             * given node.
+             */
             replace(node: Node): Array<Node> {
                 return replace(node);
             }
 
+            /**
+             * @name replaceWith
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Takes the childNodes of the given element and appends them to the newElement.
+             * Then replaces the element in its parent's tree with the newElement.
+             * 
+             * @param {Node} node The Node to remove from its parent.
+             * @param {HTMLElement} newElement The HTMLElement to populate with childNodes and add to the
+             * element's parent.
+             * 
+             * @returns {HTMLElement} The replaced element (newElement).
+             */
             replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
+            /**
+             * @name replaceWith
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Takes the childNodes of the given element and appends them to the newElement.
+             * Then replaces the element in its parent's tree with the newElement.
+             * 
+             * @param {Node} node The Node to remove from its parent.
+             * @param {Element} newElement The Element to populate with childNodes and add to the
+             * element's parent.
+             * 
+             * @returns {Element} The replaced element (newElement).
+             */
             replaceWith(node: Node, newElement: Element): Element;
+            /**
+             * @name replaceWith
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * Takes the childNodes of the given element and appends them to the newElement.
+             * Then replaces the element in its parent's tree with the newElement.
+             * 
+             * @param {Node} node The Node to remove from its parent.
+             * @param {Node} newElement The Node to populate with childNodes and add to the
+             * element's parent.
+             * 
+             * @returns {Node} The replaced element (newElement).
+             */
             replaceWith(node: Node, newNode: Node): Node;
             replaceWith(node: any, newNode: any): any {
                 return replaceWith(node, newNode);
             }
 
+            /**
+             * @name serializeHtml
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Takes in a string representing innerHTML and returns a DocumentFragment
+             * containing the serialized DOM.
+             * 
+             * @param {string} html The DOM string.
+             * 
+             * @returns {DocumentFragment} The serialized DOM.
+             */
             serializeHtml(html: string): DocumentFragment {
                 return serializeHtml(html);
             }
 
+            /**
+             * @name removeBetween
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Takes in a startNode and endNode, each having the same parentNode.
+             * Removes every node in between the startNode.  If endNode is not specified,
+             * DOM will be removed until the end of the parentNode's children.
+             * 
+             * @param {Node} startNode The starting node, which will not be removed.
+             * @param {Node} endNode The ending node, which will not be removed.
+             * 
+             * @returns {void}
+             */
             removeBetween(startNode: Node, endNode?: Node): void {
                 return removeBetween(startNode, endNode);
             }
 
+            /**
+             * @name removeAll
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Takes in a startNode and endNode, each having the same parentNode.
+             * Removes every node in between the startNode and endNode as well as
+             * the startNode and the endNode.  If endNode is not specified, DOM
+             * will be removed until the end of the parentNode's children.
+             * 
+             * @param {Node} startNode The first node to remove.
+             * @param {Node} endNode The last node to remove.
+             * 
+             * @returns {void}
+             */
             removeAll(startNode: Node, endNode?: Node): void {
                 return removeAll(startNode, endNode);
             }
 
+            /**
+             * @name addClass
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Adds a class to the specified element.
+             * 
+             * @param {Element} element The element to which the class name is being added.
+             * @param {string} className The class name to add to the element.
+             * 
+             * @returns {void}
+             */
             addClass(element: Element, className: string): void {
                 return addClass(<HTMLElement>element, className);
             }
 
+            /**
+             * @name removeClass
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Removes a class from the specified element.
+             * 
+             * @param {Element} element The element from which the class name is being removed.
+             * @param {string} className The class name to remove from the element.
+             * 
+             * @returns {void}
+             */
             removeClass(element: Element, className: string): void {
                 return removeClass(<HTMLElement>element, className);
             }
 
+            /**
+             * @name toggleClass
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Toggles a class from the specified element.
+             * 
+             * @param {Element} element The element on which the class name is being toggled.
+             * @param {string} className The class name to toggle on the element.
+             * 
+             * @returns {void}
+             */
             toggleClass(element: Element, className: string): void {
                 return toggleClass(<HTMLElement>element, className);
             }
 
+            /**
+             * @name hasClass
+             * @memberof plat.ui.Dom
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Returns whether or not an element has a particular class assigned to it.
+             * 
+             * @param {Element} element The element on which the class name is being checked.
+             * @param {string} className The class name to check on the element.
+             * 
+             * @returns {void}
+             */
             hasClass(element: Element, className: string): boolean {
                 return hasClass(<HTMLElement>element, className);
             }
@@ -24013,165 +26487,288 @@ module plat {
         register.injectable(__Dom, IDom);
 
         /**
+         * @name IDom
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * An object that deals with the creation, deletion, and modification 
          * of DOM.
          */
         export interface IDom {
             /**
+             * @name addEventListener
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
              * Adds an event listener of the specified type to the specified element.
              * 
-             * @param element The element to add the event listener to.
-             * @param type The type of event to listen to.
-             * @param listener The listener to fire when the event occurs.
-             * @param useCapture Whether to fire the event on the capture or the bubble phase 
+             * @param {Node} element The element to add the event listener to.
+             * @param {string} type The type of event to listen to.
+             * @param {plat.ui.IGestureListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
              * of event propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added event listener.
              */
             addEventListener(element: Node, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
             /**
+             * @name addEventListener
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
              * Adds an event listener of the specified type to the specified element.
              * 
-             * @param element The window object.
-             * @param type The type of event to listen to.
-             * @param listener The listener to fire when the event occurs.
-             * @param useCapture Whether to fire the event on the capture or the bubble phase 
+             * @param {Window} element The window object.
+             * @param {string} type The type of event to listen to.
+             * @param {plat.ui.IGestureListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
              * of event propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added event listener.
              */
             addEventListener(element: Window, type: string, listener: ui.IGestureListener, useCapture?: boolean): IRemoveListener;
             /**
+             * @name addEventListener
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
              * Adds an event listener of the specified type to the specified element.
              * 
-             * @param element The element to add the event listener to.
-             * @param type The type of event to listen to.
-             * @param listener The listener to fire when the event occurs.
-             * @param useCapture Whether to fire the event on the capture or the bubble phase 
+             * @param {Node} element The element to add the event listener to.
+             * @param {string} type The type of event to listen to.
+             * @param {EventListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
              * of event propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added event listener.
              */
             addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
             /**
+             * @name addEventListener
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 3
+             * 
+             * @description
              * Adds an event listener of the specified type to the specified element.
              * 
-             * @param element The window object.
-             * @param type The type of event to listen to.
-             * @param listener The listener to fire when the event occurs.
-             * @param useCapture Whether to fire the event on the capture or the bubble phase 
+             * @param {Window} element The window object.
+             * @param {string} type The type of event to listen to.
+             * @param {EventListener} listener The listener to fire when the event occurs.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or the bubble phase 
              * of event propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added event listener.
              */
             addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
 
             /**
-             * Takes a Node Array and either adds it to the passed in Node,
-             * or creates a DocumentFragment and adds the NodeList to the
-             * Fragment.
+             * @name appendChildren
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 0
              * 
-             * @param nodeList A Node Array to be appended to the root/DocumentFragment
+             * @description
+             * Takes a Node Array and creates a DocumentFragment and adds the nodes to the Fragment.
              * 
-             * @returns {Node} The root Node or a DocumentFragment.
+             * @param {Array<Node>} nodeList A Node Array to be appended to the DocumentFragment
+             * 
+             * @returns {DocumentFragment} A DocumentFragment.
              */
             appendChildren(nodeList: Array<Node>): DocumentFragment;
             /**
-             * Takes a Node Array and either adds it to the passed in Node,
-             * or creates a DocumentFragment and adds the NodeList to the
-             * Fragment.
+             * @name appendChildren
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 1
              * 
-             * @param nodeList A Node Array to be appended to the root/DocumentFragment
-             * @param root An optional Node to append the nodeList.
+             * @description
+             * Takes a NodeList and creates a DocumentFragment and adds the NodeList to the Fragment.
              * 
-             * @returns {Node} The root Node or a DocumentFragment.
+             * @param {NodeList} nodeList A NodeList to be appended to the DocumentFragment
+             * 
+             * @returns {DocumentFragment} A DocumentFragment.
              */
             appendChildren(nodeList: NodeList): DocumentFragment;
             /**
+             * @name appendChildren
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
              * Takes a Node Array and either adds it to the passed in Node,
-             * or creates a DocumentFragment and adds the NodeList to the
+             * or creates a DocumentFragment and adds the nodes to the
              * Fragment.
              * 
-             * @param nodeList A Node Array to be appended to the root/DocumentFragment
-             * @param root An optional Node to append the nodeList.
+             * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+             * @param {Node} root? An optional Node to append the nodeList.
              * 
              * @returns {Node} The root Node or a DocumentFragment.
              */
             appendChildren(nodeList: Array<Node>, root?: Node): Node;
             /**
+             * @name appendChildren
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 3
+             * 
+             * @description
              * Takes a NodeList and either adds it to the passed in Node,
              * or creates a DocumentFragment and adds the NodeList to the
              * Fragment.
              * 
-             * @param nodeList A NodeList to be appended to the root/DocumentFragment
-             * @param root An optional Node to append the nodeList.
+             * @param {NodeList} nodeList A NodeList to be appended to the root/DocumentFragment.
+             * @param {Node} root? An optional Node to append the nodeList.
              * 
              * @returns {Node} The root Node or a DocumentFragment.
              */
             appendChildren(nodeList: NodeList, root?: Node): Node;
 
             /**
+             * @name clearNode
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Clears a DOM Node by removing all of its childNodes.
              * 
-             * @param node The DOM Node to clear.
+             * @param {Node} node The DOM Node to clear.
+             * 
+             * @returns {void}
              */
             clearNode(node: Node): void;
 
             /**
+             * @name clearNodeBlock
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
              * Removes all the Nodes in the Array from the parent Node.
              * 
-             * @param nodeList The Node Array to remove from the parent Node.
-             * @param parent The parent Node used to remove the nodeList.
+             * @param {Array<Node>} nodeList The Node Array to remove from the parent Node.
+             * @param {Node} parent? The parent Node used to remove the nodeList.
+             * 
+             * @returns {void}
              */
             clearNodeBlock(nodeList: Array<Node>, parent?: Node): void;
             /**
+             * @name clearNodeBlock
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
              * Removes all the Nodes in the NodeList from the parent Node.
              * 
-             * @param nodeList The NodeList to remove from the parent Node.
-             * @param parent The parent Node used to remove the nodeList.
+             * @param {NodeList} nodeList The NodeList to remove from the parent Node.
+             * @param {Node} parent? The parent Node used to remove the nodeList.
+             * 
+             * @returns {void}
              */
             clearNodeBlock(nodeList: NodeList, parent?: Node): void;
 
             /**
+             * @name setInnerHtml
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Sets the innerHTML of a Node. Can take in a Node rather than an Element
              * because it does not use innerHTML on the passed-in Node (it appends its
              * childNodes).
              * 
-             * @param node The Node to set innerHTML.
-             * @param html HTML string to be put inside the node.
+             * @param {Node} node The Node to set innerHTML.
+             * @param {string} html HTML string to be put inside the node.
              * 
              * @returns {Node} The same node passed in, with innerHTML set.
              */
             setInnerHtml(node: Node, html: string): Node;
 
             /**
+             * @name insertBefore
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
              * Inserts a list of Nodes before the designated end Node.
              * 
-             * @param parent The parent node into which to insert nodes.
-             * @param nodes The Node Array to insert into the parent.
-             * @param endNode An optional endNode to use to insert nodes.
+             * @param {Node} parent The parent node into which to insert nodes.
+             * @param {Array<Node>} nodes The Node Array to insert into the parent.
+             * @param {Node} endNode? An optional endNode to use to insert nodes.
              * 
-             * @returns {Array<Node>} An Array copy of nodes.
+             * @returns {Array<Node>} An Array copy of the nodes.
              */
             insertBefore(parent: Node, nodes: Array<Node>, endNode?: Node): Array<Node>;
             /**
+             * @name insertBefore
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
              * Inserts a list of Nodes before the designated end Node.
              * 
-             * @param parent The parent node into which to insert nodes.
-             * @param nodes The NodeList to insert into the parent.
-             * @param endNode An optional endNode to use to insert nodes.
+             * @param {Node} parent The parent node into which to insert nodes.
+             * @param {NodeList} nodes The NodeList to insert into the parent.
+             * @param {Node} endNode? An optional endNode to use to insert nodes.
              * 
-             * @returns {Array<Node>} An Array copy of nodes.
+             * @returns {Array<Node>} An Array copy of the nodes.
              */
             insertBefore(parent: Node, nodes: NodeList, endNode?: Node): Array<Node>;
             /**
-             * Inserts a list of Nodes before the designated end Node.
+             * @name insertBefore
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 2
              * 
-             * @param parent The parent node into which to insert nodes.
-             * @param fragment The DocumentFragment to insert into the parent.
-             * @param endNode An optional endNode to use to insert the fragment.
+             * @description
+             * Inserts a DocumentFragment before the designated end Node.
+             * 
+             * @param {Node} parent The parent node into which to insert nodes.
+             * @param {DocumentFragment} fragment The DocumentFragment to insert into the parent.
+             * @param {Node} endNode? An optional endNode to use to insert nodes.
              * 
              * @returns {Array<Node>} An Array copy of the fragment's childNodes.
              */
             insertBefore(parent: Node, fragment: DocumentFragment, endNode?: Node): Array<Node>;
 
             /**
+             * @name replace
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Takes the child nodes of the given node and places them above the node
              * in the DOM. Then removes the given node.
              * 
-             * @param node The Node to replace.
+             * @param {Node} node The Node to replace.
              * 
              * @returns {Array<Node>} A Node Array that represents the childNodes of the
              * given node.
@@ -24179,148 +26776,300 @@ module plat {
             replace(node: Node): Array<Node>;
 
             /**
+             * @name replaceWith
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
              * Takes the childNodes of the given element and appends them to the newElement.
              * Then replaces the element in its parent's tree with the newElement.
              * 
-             * @param node The Node to remove from its parent.
-             * @param newElement The HTMLElement populate with childNodes and add to the
+             * @param {Node} node The Node to remove from its parent.
+             * @param {HTMLElement} newElement The HTMLElement to populate with childNodes and add to the
              * element's parent.
              * 
              * @returns {HTMLElement} The replaced element (newElement).
              */
             replaceWith(node: Node, newElement: HTMLElement): HTMLElement;
             /**
+             * @name replaceWith
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
              * Takes the childNodes of the given element and appends them to the newElement.
              * Then replaces the element in its parent's tree with the newElement.
              * 
-             * @param node The Node to remove from its parent.
-             * @param newElement The Element populate with childNodes and add to the
+             * @param {Node} node The Node to remove from its parent.
+             * @param {Element} newElement The Element to populate with childNodes and add to the
              * element's parent.
              * 
              * @returns {Element} The replaced element (newElement).
              */
             replaceWith(node: Node, newElement: Element): Element;
             /**
-             * Takes the childNodes of the given Node and appends them to the newNode.
-             * Then replaces the Node in its parent's tree with the newNode.
+             * @name replaceWith
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * @variation 2
              * 
-             * @param node The Node to remove from its parent.
-             * @param newElement The Node populate with childNodes and add to the
-             * node's parent.
+             * @description
+             * Takes the childNodes of the given element and appends them to the newElement.
+             * Then replaces the element in its parent's tree with the newElement.
              * 
-             * @returns {Node} The replaced Node (newNode).
+             * @param {Node} node The Node to remove from its parent.
+             * @param {Node} newElement The Node to populate with childNodes and add to the
+             * element's parent.
+             * 
+             * @returns {Node} The replaced element (newElement).
              */
             replaceWith(node: Node, newNode: Node): Node;
 
             /**
+             * @name serializeHtml
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Takes in a string representing innerHTML and returns a DocumentFragment
              * containing the serialized DOM.
              * 
-             * @param html The DOM string.
+             * @param {string} html The DOM string.
              * 
              * @returns {DocumentFragment} The serialized DOM.
              */
             serializeHtml(html?: string): DocumentFragment;
 
             /**
+             * @name removeBetween
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Takes in a startNode and endNode, each having the same parentNode.
              * Removes every node in between the startNode.  If endNode is not specified,
              * DOM will be removed until the end of the parentNode's children.
              * 
-             * @param startNode The starting node, which will not be removed.
-             * @param endNode The ending node, which will not be removed.
+             * @param {Node} startNode The starting node, which will not be removed.
+             * @param {Node} endNode The ending node, which will not be removed.
+             * 
+             * @returns {void}
              */
             removeBetween(startNode: Node, endNode?: Node): void;
 
             /**
+             * @name removeAll
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Takes in a startNode and endNode, each having the same parentNode.
              * Removes every node in between the startNode and endNode as well as
              * the startNode and the endNode.  If endNode is not specified, DOM
              * will be removed until the end of the parentNode's children.
              * 
-             * @param startNode The first node to remove.
-             * @param endNode The last node to remove.
+             * @param {Node} startNode The first node to remove.
+             * @param {Node} endNode The last node to remove.
+             * 
+             * @returns {void}
              */
             removeAll(startNode: Node, endNode?: Node): void;
 
             /**
+             * @name addClass
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Adds a class to the specified element.
              * 
-             * @param element The element to which the class name is being added.
-             * @param className The class name to add to the element.
+             * @param {Element} element The element to which the class name is being added.
+             * @param {string} className The class name to add to the element.
+             * 
+             * @returns {void}
              */
             addClass(element: Element, className: string): void;
 
             /**
+             * @name removeClass
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Removes a class from the specified element.
              * 
-             * @param element The element from which the class name is being removed.
-             * @param className The class name to remove from the element.
+             * @param {Element} element The element from which the class name is being removed.
+             * @param {string} className The class name to remove from the element.
+             * 
+             * @returns {void}
              */
             removeClass(element: Element, className: string): void;
 
             /**
+             * @name toggleClass
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Toggles a class from the specified element.
              * 
-             * @param element The element on which the class name is being toggled.
-             * @param className The class name to toggle on the element.
+             * @param {Element} element The element on which the class name is being toggled.
+             * @param {string} className The class name to toggle on the element.
+             * 
+             * @returns {void}
              */
             toggleClass(element: Element, className: string): void;
 
             /**
+             * @name hasClass
+             * @memberof plat.ui.IDom
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Returns whether or not an element has a particular class assigned to it.
              * 
-             * @param element The element on which the class name is being checked.
-             * @param className The class name to check on the element.
+             * @param {Element} element The element on which the class name is being checked.
+             * @param {string} className The class name to check on the element.
+             * 
+             * @returns {void}
              */
             hasClass(element: Element, className: string): void;
         }
 
         /**
+         * @name ICustomElementProperty
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @extends {plat.IObject<string>}
+         * 
+         * @description
          * An object describing custom element properties added to elements for hashing purposes.
          */
         export interface ICustomElementProperty extends IObject<string> {
             /**
+             * @name domEvent
+             * @memberof plat.ui.ICustomElementProperty
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
              * A unique id given to the element if it's registered for a custom DOM event.
              */
             domEvent?: string;
 
             /**
+             * @name animation
+             * @memberof plat.ui.ICustomElementProperty
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
              * A unique id given to the element if it's registered for an animation.
              */
             animation?: string;
         }
 
         /**
-         * An interface for describing an Element with an ICustomElementProperty attached.
+         * @name ICustomElement
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @extends {HTMLElement}
+         * 
+         * @description
+         * An interface for describing an Element with an ICustomElementProperty attached. Primarily 
+         * used for element interaction with {@link plat.ui.DomEvents|DomEvents} and the 
+         * {@link plat.ui.Animator|Animator}.
          */
         export interface ICustomElement extends HTMLElement {
             /**
-             * The PlatypusTS custom element.
+             * @name __plat
+             * @memberof plat.ui.ICustomElementProperty
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.ICustomElementProperty}
+             * 
+             * @description
+             * The PlatypusTS custom element property.
              */
             __plat: ICustomElementProperty;
         }
 
         /**
-         * The class which provides a way for ITemplateControls to bind a template 
+         * @name BindableTemplates
+         * @memberof plat.ui
+         * @kind class
+         * 
+         * @implements {plat.ui.IBindableTemplates}
+         * 
+         * @description
+         * The class which provides a way for {@link plat.ui.ITemplateControl|ITemplateControls} to bind a template 
          * to a context. Useful for narrowing context without needing another 
-         * ITemplateControl. In addition, this object provides a performance increase because 
+         * {@link plat.ui.ITemplateControl|ITemplateControl}. In addition, this object provides a performance increase because 
          * it will only compile the template once. This object is also useful when a 
-         * ITemplateControl expects multiple configuration templates in its innerHTML. It can 
+         * {@link plat.ui.ITemplateControl|ITemplateControls} expects multiple configuration templates in its innerHTML. It can 
          * separate those templates and reuse them accordingly.
          */
         export class BindableTemplates implements IBindableTemplates {
             /**
+             * @name create
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @static
+             * @variation 0
+             * 
+             * @description
              * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
              * passed in, it will use the properties on the original BindableTemplates.
              * 
-             * @static
-             * @param control The ITemplateControl containing the new BindableTemplate object, used for data context 
-             * inheritance for templates.
-             * @param originalBindableTemplates An optional IBindableTemplates object to copy.
-             * @returns {BindableTemplates} The newly instantiated BindableTemplates object.
+             * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} 
+             * containing the new {@link plat.ui.BindableTemplates|BindableTemplates} object, used for data 
+             * context inheritance for templates.
+             * @param {plat.ui.IBindableTemplates} original? An optional {@link plat.ui.IBindableTemplates|IBindableTemplates} 
+             * object to copy.
+             * 
+             * @returns {plat.ui.IBindableTemplates} The newly instantiated {@link plat.ui.IBindableTemplates|IBindableTemplates} object.
              */
             static create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
+            /**
+             * @name create
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @static
+             * @variation 1
+             * 
+             * @description
+             * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
+             * passed in, it will use the properties on the original BindableTemplates.
+             * 
+             * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} 
+             * containing the new {@link plat.ui.BindableTemplates|BindableTemplates} object, used for data 
+             * context inheritance for templates.
+             * @param {plat.ui.BindableTemplates} original? An optional {@link plat.ui.BindableTemplates|BindableTemplates} 
+             * object to copy.
+             * 
+             * @returns {plat.ui.IBindableTemplates} The newly instantiated {@link plat.ui.IBindableTemplates|IBindableTemplates} object.
+             */
             static create(control: ITemplateControl, original?: BindableTemplates): IBindableTemplates {
                 var bindableTemplates = new BindableTemplates();
                 bindableTemplates.control = control;
@@ -24334,10 +27083,19 @@ module plat {
             }
 
             /**
+             * @name dispose
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Clears the memory being held by control's bindableTemplates.
              * 
              * @static
-             * @param control The control whose bindableTemplates will be disposed.
+             * @param {plat.ui.ITemplateControl} control The control whose bindableTemplates will be disposed.
+             * 
+             * @returns {void}
              */
             static dispose(control: ITemplateControl): void {
                 if (isNull(control)) {
@@ -24352,25 +27110,178 @@ module plat {
                 instance.dispose();
             }
 
+            /**
+             * @name $ResourcesFactory
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.IResourcesFactory}
+             * 
+             * @description
+             * Reference to the {@link plat.ui.IResourcesFactory|IResourcesFactory} injectable.
+             */
             $ResourcesFactory: IResourcesFactory = acquire(__ResourcesFactory);
+            /**
+             * @name $TemplateControlFactory
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.ITemplateControlFactory}
+             * 
+             * @description
+             * Reference to the {@link plat.ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
+             */
             $TemplateControlFactory: ITemplateControlFactory = acquire(__TemplateControlFactory);
+            /**
+             * @name $Promise
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.async.IPromise}
+             * 
+             * @description
+             * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+             */
             $Promise: async.IPromise = acquire(__Promise);
+            /**
+             * @name $ManagerCache
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.storage.ICache<processing.IElementManager>}
+             * 
+             * @description
+             * Reference to a cache injectable that stores {@link plat.processing.IElementManager|IElementManagers}.
+             */
             $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+            /**
+             * @name $Document
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {Document}
+             * 
+             * @description
+             * Reference to the Document injectable.
+             */
             $Document: Document = acquire(__Document);
+            /**
+             * @name $ElementManagerFactory
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.processing.IElementManagerFactory}
+             * 
+             * @description
+             * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
+             */
             $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
 
+            /**
+             * @name control
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.ITemplateControl}
+             * 
+             * @description
+             * The control containing this {@link plat.ui.BindableTemplates|BindableTemplates} object.
+             */
             control: ITemplateControl;
+            /**
+             * @name templates
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.IObject<plat.async.IThenable<DocumentFragment>>}
+             * 
+             * @description
+             * Stores promises that resolve to all the compiled templates for this object, ready to be bound to a data context. 
+             * All created templates are DocumentFragments, allowing an {@link plat.ui.ITemplateControl|ITemplateControl} to
+             * easily insert the template into the DOM (without iterating over childNodes).
+             */
             templates: IObject<async.IThenable<DocumentFragment>> = {};
 
             /**
-             * A keyed cache of IElementManagers that represent the roots of compiled templates 
-             * created by this instance of BindableTemplates.
+             * @name _cache
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access protected
+             * 
+             * @type {plat.IObject<plat.processing.IElementManager>}
+             * 
+             * @description
+             * A keyed cache of {@link plat.processing.IElementManager|IElementManagers} that represent the roots of compiled templates 
+             * created by this instance.
              */
             _cache: IObject<processing.IElementManager> = {};
 
+            /**
+             * @name __compiledControls
+             * @memberof plat.ui.BindableTemplates
+             * @kind property
+             * @access private
+             * 
+             * @type {Array<plat.ui.ITemplateControl>}
+             * 
+             * @description
+             * A collection of all the controls created while compiling an added template. Useful during disposal.
+             */
             private __compiledControls: Array<ITemplateControl> = [];
 
+            /**
+             * @name bind
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Method for linking a new template to a data context and returning a clone of the template, 
+             * with all new {@link plat.IControl|IControls} created if the template contains controls. It is not necessary
+             * to specify a data context.
+             * 
+             * @param {string} key The key used to retrieve the template.
+             * @param {string} relativeIdentifier? The identifier string relative to this control's context
+             * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the 
+             * most efficient way of specifying context, else the framework has to search for the 
+             * object.
+             * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level 
+             * controls created in the template.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound and 
+             * ready to return.
+             */
             bind(key: string, relativeIdentifier?: string, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
+            /**
+             * @name bind
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Method for linking a new template to a data context and returning a clone of the template, 
+             * with all new {@link plat.IControl|IControls} created if the template contains controls. It is not necessary
+             * to specify a data context.
+             * 
+             * @param {string} key The key used to retrieve the template.
+             * @param {number} relativeIdentifier? The identifier number relative to this control's context
+             * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+             * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level 
+             * controls created in the template.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound and 
+             * ready to return.
+             */
             bind(key: string, relativeIdentifier?: number, resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
             bind(key: any, relativeIdentifier?: any, resources?: IObject<IResource>): async.IThenable<DocumentFragment> {
                 var templatePromise = this.templates[key],
@@ -24403,12 +27314,92 @@ module plat {
                 });
             }
 
+            /**
+             * @name add
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Adds a template to this object. The template will be stored with the key,
+             * and it will be transformed into a DocumentFragment.
+             * 
+             * @param {string} key The key used to store the template.
+             * @param {Element} template An Element representing the DOM template.
+             * 
+             * @returns {void}
+             */
             add(key: string, template: Element): void;
+            /**
+             * @name add
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Adds a template to this object. The template will be stored with the key,
+             * and it will be transformed into a DocumentFragment.
+             * 
+             * @param {string} key The key used to store the template.
+             * @param {Array<Node>} template A node Array representing the DOM template.
+             * 
+             * @returns {void}
+             */
             add(key: string, template: Array<Node>): void;
+            /**
+             * @name add
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * Adds a template to this object. The template will be stored with the key,
+             * and it will be transformed into a DocumentFragment.
+             * 
+             * @param {string} key The key used to store the template.
+             * @param {NodeList} template A NodeList representing the DOM template.
+             * 
+             * @returns {void}
+             */
             add(key: string, template: NodeList): void;
+            /**
+             * @name add
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @variation 3
+             * 
+             * @description
+             * Adds a template to this object. The template will be stored with the key,
+             * and it will be transformed into a DocumentFragment.
+             * 
+             * @param {string} key The key used to store the template.
+             * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
+             * 
+             * @returns {void}
+             */
             add(key: string, template: DocumentFragment): void;
+            /**
+             * @name add
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * @variation 4
+             * 
+             * @description
+             * Adds a template to this object. The template will be stored with the key,
+             * and it will be transformed into a DocumentFragment.
+             * 
+             * @param {string} key The key used to store the template.
+             * @param {Node} template A Node representing the DOM template.
+             * 
+             * @returns {void}
+             */
             add(key: string, template: Node): void;
-            add(key: string, template: any) {
+            add(key: string, template: any): void {
                 if (isNull(template)) {
                     return;
                 }
@@ -24431,6 +27422,17 @@ module plat {
                 this._compile(key, fragment);
             }
 
+            /**
+             * @name dispose
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Clears the memory being held by this instance.
+             * 
+             * @returns {void}
+             */
             dispose(): void {
                 var dispose = this.$TemplateControlFactory.dispose,
                     compiledControls = this.__compiledControls,
@@ -24445,15 +27447,29 @@ module plat {
                 this._cache = {};
                 this.templates = {};
             }
-
+        
             /**
-             * Creates the template's bound control and INodeMap and initiates 
-             * the binding of the INodeMap for a cloned template.
+             * @name _bindTemplate
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Creates the template's bound control and {@link plat.processing.INodeMap|INodeMap} and initiates 
+             * the binding of the {@link plat.processing.INodeMap|INodeMap} for a cloned template.
+             * 
+             * @param {string} key The template key.
+             * @param {DocumentFragment} template The cached HTML template.
+             * @param {string} contextId The relative path from the context used to bind this template.
+             * @param {plat.IObject<plat.ui.IResource>} A set of resources to add to the control used to bind this 
+             * template.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound.
              */
-            _bindTemplate(key: string, template: DocumentFragment, context: string,
+            _bindTemplate(key: string, template: DocumentFragment, contextId: string,
                 resources: IObject<IResource>): async.IThenable<DocumentFragment> {
-                var control = this._createBoundControl(key, template, context, resources),
-                    nodeMap = this._createNodeMap(control, template, context),
+                var control = this._createBoundControl(key, template, contextId, resources),
+                    nodeMap = this._createNodeMap(control, template, contextId),
                     disposed = false,
                     dispose = control.dispose;
 
@@ -24483,10 +27499,23 @@ module plat {
                     return <DocumentFragment>null;
                 });
             }
-
+        
             /**
-             * Clones the compiled IElementManager using the newly created 
-             * INodeMap and binds and loads this control's IElementManager.
+             * @name _bindNodeMap
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Clones the compiled {@link plat.processing.IElementManager|IElementManager} using the newly created 
+             * {@link plat.processing.INodeMap|INodeMap} and binds and loads this control's 
+             * {@link plat.processing.IElementManager|IElementManager}.
+             * 
+             * @param {plat.processing.INodeMap} nodeMap The node map to bind.
+             * @param {string} key The template key used to grab the {@link plat.processing.IElementManager|IElementManager}.
+             * 
+             * @returns {plat.async.IThenable<void>} A promise that resolves when the control's 
+             * {@link plat.processing.IElementManager|IElementManager} is bound and loaded.
              */
             _bindNodeMap(nodeMap: processing.INodeMap, key: string): async.IThenable<void> {
                 var manager = this._cache[key],
@@ -24499,10 +27528,21 @@ module plat {
                 manager.clone(template, $managerCache.read(this.control.uid), nodeMap);
                 return $managerCache.read(child.uid).bindAndLoad();
             }
-
+        
             /**
-             * Creates the template's compiled, bound control and INodeMap and initiates 
+             * @name _compile
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Creates the template's compiled, bound control and {@link plat.processing.INodeMap|INodeMap} and initiates 
              * the compilation of the template.
+             * 
+             * @param {string} key The template key.
+             * @param {DocumentFragment} template The HTML template being bound.
+             * 
+             * @returns {void}
              */
             _compile(key: string, template: DocumentFragment): void {
                 var control = this._createBoundControl(key + __COMPILED, template),
@@ -24512,12 +27552,24 @@ module plat {
 
                 this._compileNodeMap(control, nodeMap, key);
             }
-
+        
             /**
-             * Instantiates a new IElementManager for the root of this template and resolves 
-             * any asynchronous url templates within the template being compiled.
+             * @name _compileNodeMap
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Instantiates a new {@link plat.processing.IElementManager|IElementManager} for the root of this 
+             * template and resolves any asynchronous url templates within the template being compiled.
+             * 
+             * @param {plat.ui.ITemplateControl} control The newly created control used to bind the template.
+             * @param {plat.processing.INodeMap} nodeMap The newly created node map to bind.
+             * @param {string} key The template key.
+             * 
+             * @returns {void}
              */
-            _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string) {
+            _compileNodeMap(control: ITemplateControl, nodeMap: processing.INodeMap, key: string): void {
                 var manager = this.$ElementManagerFactory.getInstance(),
                     promises: Array<async.IThenable<void>> = [];
 
@@ -24544,9 +27596,22 @@ module plat {
                     return clone;
                 });
             }
-
+        
             /**
-             * Creates an INodeMap for either a template being compiled or a template being bound.
+             * @name _createNodeMap
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Creates an {@link plat.processing.INodeMap|INodeMap} for either a template being compiled or a 
+             * template being bound.
+             * 
+             * @param {plat.ui.ITemplateControl} uiControl The newly created control used to bind the template.
+             * @param {Node} template The template being compiled.
+             * @param {string} childContext? A potential child context string identifier.
+             * 
+             * @returns {plat.processing.INodeMap} The newly created {@link plat.processing.INodeMap|INodeMap}.
              */
             _createNodeMap(uiControl: ITemplateControl, template: Node, childContext?: string): processing.INodeMap {
                 return {
@@ -24562,9 +27627,25 @@ module plat {
                     }
                 };
             }
-
+        
             /**
-             * Creates a bound control for either a template being compiled or a template being bound.
+             * @name _createBoundControl
+             * @memberof plat.ui.BindableTemplates
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Creates a {@link plat.ui.ITemplateControl|ITemplateControl} used for binding either a template being compiled 
+             * or a template being bound.
+             * 
+             * @param {string} key The template key.
+             * @param {DocumentFragment} template The template being compiled or being bound.
+             * @param {string} relativeIdentifier? A potential context string identifier identifying the 
+             * object's position off the context.
+             * @param {plat.IObject<plat.ui.IResource>} resources? A set of resources to add to the control used to 
+             * compile/bind this template.
+             * 
+             * @returns {plat.ui.ITemplateControl} The newly created {@link plat.ui.ITemplateControl|ITemplateControl}.
              */
             _createBoundControl(key: string, template: DocumentFragment,
                 relativeIdentifier?: string, resources?: IObject<IResource>): ITemplateControl {
@@ -24599,137 +27680,322 @@ module plat {
         register.injectable(__BindableTemplatesFactory, IBindableTemplatesFactory, null, __FACTORY);
 
         /**
-         * The external interface for the '$BindableTemplatesFactory' injectable.
+         * @name IBindableTemplatesFactory
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
+         * Creates and manages {@link plat.ui.IBindableTemplates|IBindableTemplates}.
          */
         export interface IBindableTemplatesFactory {
             /**
-             * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is
+             * @name create
+             * @memberof plat.ui.IBindableTemplatesFactory
+             * @kind function
+             * @access public
+             * @static
+             * @variation 0
+             * 
+             * @description
+             * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
              * passed in, it will use the properties on the original BindableTemplates.
              * 
-             * @static
-             * @param control The ITemplateControl containing the new BindableTemplate object, used for data context
-             * inheritance for templates.
-             * @param originalBindableTemplates An optional IBindableTemplates object to copy.
-             * @returns {BindableTemplates} The newly instantiated BindableTemplates object.
+             * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} 
+             * containing the new {@link plat.ui.BindableTemplates|BindableTemplates} object, used for data 
+             * context inheritance for templates.
+             * @param {plat.ui.IBindableTemplates} original? An optional {@link plat.ui.IBindableTemplates|IBindableTemplates} 
+             * object to copy.
+             * 
+             * @returns {plat.ui.IBindableTemplates} The newly instantiated {@link plat.ui.IBindableTemplates|IBindableTemplates} object.
              */
             create(control: ITemplateControl, original?: IBindableTemplates): IBindableTemplates;
+            /**
+             * @name create
+             * @memberof plat.ui.IBindableTemplatesFactory
+             * @kind function
+             * @access public
+             * @static
+             * @variation 1
+             * 
+             * @description
+             * Creates a new instance of BindableTemplates and returns it. If a BindableTemplates is 
+             * passed in, it will use the properties on the original BindableTemplates.
+             * 
+             * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} 
+             * containing the new {@link plat.ui.BindableTemplates|BindableTemplates} object, used for data 
+             * context inheritance for templates.
+             * @param {plat.ui.BindableTemplates} original? An optional {@link plat.ui.BindableTemplates|BindableTemplates} 
+             * object to copy.
+             * 
+             * @returns {plat.ui.IBindableTemplates} The newly instantiated {@link plat.ui.IBindableTemplates|IBindableTemplates} object.
+             */
+            create(control: ITemplateControl, original?: BindableTemplates): IBindableTemplates;
 
             /**
+             * @name dispose
+             * @memberof plat.ui.IBindableTemplatesFactory
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Clears the memory being held by control's bindableTemplates.
              * 
              * @static
-             * @param control The control whose bindableTemplates will be disposed.
+             * @param {plat.ui.ITemplateControl} control The control whose bindableTemplates will be disposed.
+             * 
+             * @returns {void}
              */
             dispose(control: ITemplateControl): void;
         }
 
         /**
-         * Describes an object which provides a way for ITemplateControls to bind a template 
-         * to a data context. Useful for narrowing data context without needing another 
-         * ITemplateControl. In addition, this object provides a performance increase because 
+         * @name IBindableTemplates
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
+         * An object that provides a way for {@link plat.ui.ITemplateControl|ITemplateControls} to bind a template 
+         * to a context. Useful for narrowing context without needing another 
+         * {@link plat.ui.ITemplateControl|ITemplateControl}. In addition, this object provides a performance increase because 
          * it will only compile the template once. This object is also useful when a 
-         * ITemplateControl expects multiple configuration templates in its innerHTML. It can 
+         * {@link plat.ui.ITemplateControl|ITemplateControls} expects multiple configuration templates in its innerHTML. It can 
          * separate those templates and reuse them accordingly.
          */
         export interface IBindableTemplates {
             /**
-             * The control containing the IBindableTemplate object.
+             * @name control
+             * @memberof plat.ui.IBindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.ITemplateControl}
+             * 
+             * @description
+             * The control containing this {@link plat.ui.BindableTemplates|BindableTemplates} object.
              */
             control: ITemplateControl;
 
             /**
-             * Stores the compiled templates for this object, ready to be bound to a data context. 
-             * All created templates are DocumentFragments, allowing a ITemplateControl to
-             * easily insert the template into the DOM (without iterating over childNodes). This object
-             * may contain a template promise.
+             * @name templates
+             * @memberof plat.ui.IBindableTemplates
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.IObject<plat.async.IThenable<DocumentFragment>>}
+             * 
+             * @description
+             * Stores promises that resolve to all the compiled templates for this object, ready to be bound to a data context. 
+             * All created templates are DocumentFragments, allowing an {@link plat.ui.ITemplateControl|ITemplateControl} to
+             * easily insert the template into the DOM (without iterating over childNodes).
              */
-            templates: {};
+            templates: IObject<async.IThenable<DocumentFragment>>;
 
             /**
+             * @name bind
+             * @memberof plat.ui.IBindableTemplates
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
              * Method for linking a new template to a data context and returning a clone of the template, 
-             * with all new IControls created if the template contains controls. It is not necessary
+             * with all new {@link plat.IControl|IControls} created if the template contains controls. It is not necessary
              * to specify a data context.
              * 
-             * @param key The key used to retrieve the template.
-             * @param relativeIdentifier The identifier string relative to this control's context
+             * @param {string} key The key used to retrieve the template.
+             * @param {string} relativeIdentifier? The identifier string relative to this control's context
              * (e.g. 'foo.bar.baz' would signify the object this.context.foo.bar.baz). This is the 
              * most efficient way of specifying context, else the framework has to search for the 
              * object.
-             * @param resources An object used as the resources for any top-level 
+             * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level 
              * controls created in the template.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound and 
+             * ready to return.
              */
             bind(key: string, relativeIdentifier?: string,
                 resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
             /**
+             * @name bind
+             * @memberof plat.ui.IBindableTemplates
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
              * Method for linking a new template to a data context and returning a clone of the template, 
-             * with all new IControls created if the template contains controls. It is not necessary
+             * with all new {@link plat.IControl|IControls} created if the template contains controls. It is not necessary
              * to specify a data context.
              * 
-             * @param key The key used to retrieve the template.
-             * @param relativeIdentifier The identifier number relative to this control's context. Only 
-             * necessary when context is an array.
-             * @param resources An object used as the resources for any top-level 
+             * @param {string} key The key used to retrieve the template.
+             * @param {number} relativeIdentifier? The identifier number relative to this control's context
+             * (e.g. '1' would signify the object this.context[1]). Only necessary when context is an array.
+             * @param {plat.IObject<plat.IResource>} resources? An object used as the resources for any top-level 
              * controls created in the template.
+             * 
+             * @returns {plat.async.IThenable<DocumentFragment>} A promise that resolves when the template is bound and 
+             * ready to return.
              */
             bind(key: string, relativeIdentifier?: number,
                 resources?: IObject<IResource>): async.IThenable<DocumentFragment>;
 
             /**
+             * @name add
+             * @memberof plat.ui.IBindableTemplates
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
              * Adds a template to this object. The template will be stored with the key,
              * and it will be transformed into a DocumentFragment.
              * 
-             * @param key The key used to store the template.
-             * @param template An Element represending the template DOM.
+             * @param {string} key The key used to store the template.
+             * @param {Element} template An Element representing the DOM template.
+             * 
+             * @returns {void}
              */
             add(key: string, template: Element): void;
             /**
+             * @name add
+             * @memberof plat.ui.IBindableTemplates
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
              * Adds a template to this object. The template will be stored with the key,
              * and it will be transformed into a DocumentFragment.
              * 
-             * @param key The key used to store the template.
-             * @param template A Node array represending the template DOM.
+             * @param {string} key The key used to store the template.
+             * @param {Array<Node>} template A node Array representing the DOM template.
+             * 
+             * @returns {void}
              */
             add(key: string, template: Array<Node>): void;
             /**
+             * @name add
+             * @memberof plat.ui.IBindableTemplates
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
              * Adds a template to this object. The template will be stored with the key,
              * and it will be transformed into a DocumentFragment.
              * 
-             * @param key The key used to store the template.
-             * @param template A NodeList represending the template DOM.
+             * @param {string} key The key used to store the template.
+             * @param {NodeList} template A NodeList representing the DOM template.
+             * 
+             * @returns {void}
              */
             add(key: string, template: NodeList): void;
             /**
-             * Adds a template to this object. The template will be stored with the key.
+             * @name add
+             * @memberof plat.ui.IBindableTemplates
+             * @kind function
+             * @access public
+             * @variation 3
              * 
-             * @param key The key used to store the template.
-             * @param template A DocumentFragment represending the template DOM.
-             */
-            add(key: string, template: DocumentFragment): void;
-            /**
+             * @description
              * Adds a template to this object. The template will be stored with the key,
              * and it will be transformed into a DocumentFragment.
              * 
-             * @param key The key used to store the template.
-             * @param template A Node represending the template DOM.
+             * @param {string} key The key used to store the template.
+             * @param {DocumentFragment} template A DocumentFragment representing the DOM template.
+             * 
+             * @returns {void}
+             */
+            add(key: string, template: DocumentFragment): void;
+            /**
+             * @name add
+             * @memberof plat.ui.IBindableTemplates
+             * @kind function
+             * @access public
+             * @variation 4
+             * 
+             * @description
+             * Adds a template to this object. The template will be stored with the key,
+             * and it will be transformed into a DocumentFragment.
+             * 
+             * @param {string} key The key used to store the template.
+             * @param {Node} template A Node representing the DOM template.
+             * 
+             * @returns {void}
              */
             add(key: string, template: Node): void;
 
             /**
-             * Clears the memory being held by this BindableTemplates instance.
+             * @name dispose
+             * @memberof plat.ui.IBindableTemplates
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Clears the memory being held by this instance.
+             * 
+             * @returns {void}
              */
             dispose(): void;
         }
 
         /**
-         * The class that stores the information about an Element's attribute NamedNodeMap.
+         * @name Attributes
+         * @memberof plat.ui
+         * @kind class
+         * 
+         * @implements {plat.ui.IAttributesInstance}
+         * 
+         * @description
+         * The class that stores the information about an Element's attributes (NamedNodeMap).
          * Methods are implemented to allow you to observe for changes on an attribute.
          * 
+         * @remarks
          * Attributes for this object are converted from dash-notation to camelCase notation.
          */
         export class Attributes implements IAttributesInstance {
+            /**
+             * @name __listeners
+             * @memberof plat.ui.Attributes
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.IObject<Array<plat.IPropertyChangedListener>>}
+             * 
+             * @description
+             * The set of functions added externally that listens 
+             * for attribute changes.
+             */
             private __listeners: IObject<Array<(newValue: any, oldValue?: any) => void>> = {};
+            /**
+             * @name __control
+             * @memberof plat.ui.Attributes
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.IControl}
+             * 
+             * @description
+             * The control tied to this instance.
+             */
             private __control: IControl;
 
+            /**
+             * @name initialize
+             * @memberof plat.ui.Attributes
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Initializes this instance with a {@link plat.IControl|IControl} and the camelCased 
+             * attribute properties and their values.
+             * 
+             * @param {plat.IControl} control The function that acts as a listener.
+             * @param {plat.IObject<string>} attributes The camelCased attribute properties and their values.
+             * 
+             * @returns {void}
+             */
             initialize(control: IControl, attributes: IObject<string>): void {
                 this.__control = control;
 
@@ -24745,6 +28011,20 @@ module plat {
                 }
             }
 
+            /**
+             * @name observe
+             * @memberof plat.ui.Attributes
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Provides a way to observe an attribute for changes.
+             * 
+             * @param {string} key The attribute to observe for changes (e.g. 'src').
+             * @param {plat.IPropertyChangedListener} listener The listener function to be called when the attribute changes.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop observing this attribute for changes.
+             */
             observe(key: string, listener: (newValue: any, oldValue?: any) => void): IRemoveListener {
                 var listeners = this.__listeners[camelCase(key)];
 
@@ -24760,15 +28040,23 @@ module plat {
                     listeners.splice(length, 1);
                 };
             }
-
+        
             /**
+             * @name _attributeChanged
+             * @memberof plat.ui.Attributes
+             * @kind function
+             * @access protected
+             * 
+             * @description
              * Used to show an attribute has been changed and forces listeners to be fired.
              * 
-             * @param key The attribute being observed for changes (e.g. 'platOptions').
-             * @param newValue The new value of the attribute.
-             * @param oldValue The previous value of the attribute.
+             * @param {string} key The attribute being observed for changes (e.g. 'src').
+             * @param {any} newValue The new value of the attribute.
+             * @param {any} oldValue The previous value of the attribute.
+             * 
+             * @returns {void}
              */
-            attributeChanged(key: string, newValue: any, oldValue: any): void {
+            _attributeChanged(key: string, newValue: any, oldValue: any): void {
                 var control = this.__control,
                     listeners = this.__listeners[camelCase(key)],
                     length = listeners.length;
@@ -24787,55 +28075,82 @@ module plat {
         }
 
         register.injectable(__AttributesInstance, IAttributesInstance, null, __INSTANCE);
-
+    
         /**
+         * @name IAttributesInstance
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object that stores the information about an Element's attribute NamedNodeMap.
          * Methods are implemented to allow you to observe for changes on an attribute.
-         * 
-         * Attributes for this object are converted from dash-notation to camelCase notation.
          */
         export interface IAttributesInstance {
             /**
-             * Stores the information about an Element's attribute NamedNodeMap, and allows a control to observe 
-             * for changes on an attribute. The interface takes in a generic type, allowing ITemplateControls 
-             * to specify an interface for their plat-options.
+             * @name initialize
+             * @memberof plat.ui.IAttributesInstance
+             * @kind function
+             * @access public
              * 
-             * Attributes for this object are converted from dash-notation to camelCase notation. 'plat-options' are 
-             * parsed and stored as an object on this object, all other attributes are stored with their string values.
+             * @description
+             * Initializes this instance with a {@link plat.IControl|IControl} and the camelCased 
+             * attribute properties and their values.
+             * 
+             * @param {plat.IControl} control The function that acts as a listener.
+             * @param {plat.IObject<string>} attributes The camelCased attribute properties and their values.
+             * 
+             * @returns {void}
              */
             initialize(control: IControl, attributes: IObject<string>): void;
 
             /**
+             * @name observe
+             * @memberof plat.ui.IAttributesInstance
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Provides a way to observe an attribute for changes.
              * 
-             * @param key The attribute to observe for changes.
-             * @param listener The listener function to be called when the attribute changes.
+             * @param {string} key The attribute to observe for changes (e.g. 'src').
+             * @param {plat.IPropertyChangedListener} listener The listener function to be called when the attribute changes.
+             * 
+             * @returns {plat.IRemoveListener} A function to stop observing this attribute for changes.
              */
             observe(key: string, listener: (newValue: any, oldValue: any) => void): IRemoveListener;
-
-            /**
-             * Used to show an attribute has been changed and forces listeners to be fired.
-             * 
-             * @param key The attribute being observed for changes (e.g. 'platOptions').
-             * @param newValue The new value of the attribute.
-             * @param oldValue The previous value of the attribute.
-             */
-            attributeChanged(key: string, newValue: any, oldValue: any): void;
         }
 
         /**
+         * @name Resources
+         * @memberof plat.ui
+         * @kind class
+         * 
+         * @implements {plat.ui.IResources}
+         * 
+         * @description
          * Resources are used for providing aliases to use in markup expressions. They 
          * are particularly useful when trying to access properties outside of the 
          * current context, as well as reassigning context at any point in an app.
          * 
+         * @remarks
          * By default, every control has a resource for '@control' and '@context'.
-         * IViewControl objects also have a resource for '@root' and '@rootContext', 
+         * {@link plat.ui.IViewControl|IViewControl} objects also have a resource for '@root' and '@rootContext', 
          * which is a reference to the control and its context.
          * 
          * Resources can be created in HTML, or through the exposed control.resources 
          * object. If specified in HTML, they must be the first element child of the 
          * control upon which the resources will be placed. IViewControls that use a 
          * templateUrl can have resources as their first element in the templateUrl.
+         * 
+         * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
+         * The type of resource is denoted by the element name.
+         * 
+         * Only resources of type 'observable' will have data binding. The types of resources are:
+         * function, injectable, observable, and object. Resources of type 'function' will have their
+         * associated function context bound to the control that contains the resource.
+         * 
+         * When an alias is found in a markup expression, the framework will search up the control chain 
+         * to find the alias on a control's resources. This first matching alias will be used.
          * 
          * @example 
          * <custom-control>
@@ -24850,28 +28165,49 @@ module plat {
          *         </observable>
          *     </plat-resources>
          * </custom-control>
-         * 
-         * In the above example, the resources can be accessed by using '@Cache' and '@testObj'.
-         * The type of resource is denoted by the element name.
-         * 
-         * Only resources of type 'observable' will have data binding. The types of resources are:
-         * function, injectable, observable, and object. Resources of type 'function' will have their
-         * associated function context bound to the control that contains the resource.
-         * 
-         * When an alias is found in a markup expression, the framework will search up the control chain 
-         * to find the alias on a control's resources. This first matching alias will be used.
          */
         export class Resources implements IResources {
+            /**
+             * @name $ContextManagerStatic
+             * @memberof plat.ui.Resources
+             * @kind property
+             * @access public
+             * @static
+             * 
+             * @type {plat.observable.IContextManagerStatic}
+             * 
+             * @description
+             * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
+             */
             static $ContextManagerStatic: observable.IContextManagerStatic;
+            /**
+             * @name $Regex
+             * @memberof plat.ui.Resources
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.expressions.IRegex}
+             * 
+             * @description
+             * Reference to the {@link plat.expressions.IRegex|IRegex} injectable.
+             */
             static $Regex: expressions.IRegex;
 
             /**
-             * Populates an IResource value if necessary, and adds it to the given 
+             * @name create
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Populates an {@link plat.ui.IResource|IResource} value if necessary, and adds it to the given 
              * control's resources.
              * 
-             * @static
-             * @param control The control for which to create a resource.
-             * @param resource The IResource used to set the value.
+             * @param {plat.ui.ITemplateControl} control The control for which to create a resource.
+             * @param {plat.ui.IResource} resource The object used to set the resource values.
+             * 
+             * @returns {plat.ui.IResource} The newly created {@link plat.ui.IResource|IResource}.
              */
             static create(control: ITemplateControl, resource: IResource): IResource {
                 if (isNull(resource)) {
@@ -24917,11 +28253,19 @@ module plat {
             }
 
             /**
+             * @name addControlResources
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Adds resource aliases for '@control' and '@context'. The resources are 
              * aliases for the control instance and the control.context.
              * 
-             * @static
-             * @param control The control on which to add the resources.
+             * @param {plat.ui.ITemplateControl} control The control on which to add the resources.
+             * 
+             * @returns {void}
              */
             static addControlResources(control: ITemplateControl): void {
                 control.resources.add({
@@ -24941,15 +28285,41 @@ module plat {
             }
 
             /**
+             * @name bindResources
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @static
+             * @variation 0
+             * 
+             * @description
              * Binds the resources in a resource instance. This involves injecting 
              * the injectable resources, creating object/observable resources, and
              * binding functions to the associated control's instance.
              * 
-             * @static
-             * @param resourcesInstance The instance of the IResources object.
+             * @param {plat.ui.IResources} resourcesInstance The instance of the IResources object.
+             * 
+             * @returns {void}
              */
             static bindResources(resourcesInstance: IResources): void;
-            static bindResources(resourcesInstance: Resources) {
+            /**
+             * @name bindResources
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @static
+             * @variation 1
+             * 
+             * @description
+             * Binds the resources in a resource instance. This involves injecting 
+             * the injectable resources, creating object/observable resources, and
+             * binding functions to the associated control's instance.
+             * 
+             * @param {plat.ui.Resources} resourcesInstance The Resources  instance.
+             * 
+             * @returns {void}
+             */
+            static bindResources(resourcesInstance: Resources): void {
                 var resources = resourcesInstance.__resources,
                     control = resourcesInstance.__controlInstance,
                     aliases = Object.keys(resources),
@@ -24972,14 +28342,22 @@ module plat {
             }
 
             /**
+             * @name dispose
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Disposes a resource instance, removing its reference 
              * from a control and breaking references to all resource 
              * objects.
              * 
-             * @static
-             * @param control The control whose resources will be disposed.
-             * @param persist Whether or not to persist a resource object post 
+             * @param {plat.ui.ITemplateControl} control The control whose resources will be disposed.
+             * @param {boolean} persist? Whether or not to persist a resource object post 
              * disposal or set it to null.
+             * 
+             * @returns {void}
              */
             static dispose(control: ITemplateControl, persist?: boolean): void {
                 var resources = <Resources>control.resources;
@@ -25007,14 +28385,19 @@ module plat {
             }
 
             /**
-             * Parses a resources Element and creates 
-             * an IObject<IResource> with its element children.
-             * 
+             * @name parseElement
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
              * @static
-             * @param element The resources element to parse.
              * 
-             * @returns {IObject<IResource>} The resources created 
-             * using element.
+             * @description
+             * Parses a resources Element (<plat-resources>) and creates 
+             * an {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} with its element children.
+             * 
+             * @param {Element} element The resources element to parse.
+             * 
+             * @returns {plat.IObject<plat.ui.IResource>} The resources created using the input element.
              */
             static parseElement(element: Element): IObject<IResource> {
                 var children: Array<Element> = Array.prototype.slice.call((<HTMLElement>element).children),
@@ -25062,20 +28445,35 @@ module plat {
             }
 
             /**
-             * Returns a new instance of IResources.
-             * 
+             * @name getInstance
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
              * @static
+             * 
+             * @description
+             * Returns a new instance with type {@link plat.ui.IResources|IResources}.
+             * 
+             * @returns {plat.ui.IResources} A new {@link plat.ui.Resources|Resources} instance.
              */
             static getInstance(): IResources {
                 return new Resources();
             }
 
             /**
+             * @name _observeResource
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access protected
+             * @static
+             * 
+             * @description
              * Observes the resource if the type is 'observable'.
              * 
-             * @static
-             * @param control The control in charge of the observable resource.
-             * @param resource The resource to observe.
+             * @param {plat.ui.ITemplateControl} control The control in charge of the observable resource.
+             * @param {plat.ui.IResource} resource The resource to observe.
+             * 
+             * @returns {void}
              */
             static _observeResource(control: ITemplateControl, resource: IResource): void {
                 var value = resource.value,
@@ -25101,10 +28499,18 @@ module plat {
             }
 
             /**
+             * @name _removeListeners
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access protected
+             * @static
+             * 
+             * @description
              * Removes observable resource listeners for a specified control.
              * 
-             * @static
-             * @param control The control whose listeners are being removed.
+             * @param {plat.ui.ITemplateControl} control The control whose listeners are being removed.
+             * 
+             * @returns {void}
              */
             static _removeListeners(control: ITemplateControl): void {
                 if (isNull(control)) {
@@ -25125,17 +28531,62 @@ module plat {
                 deleteProperty(Resources.__observableResourceRemoveListeners, uid);
             }
 
+            /**
+             * @name __controlResources
+             * @memberof plat.ui.Resources
+             * @kind property
+             * @access private
+             * @static
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
+             * A list of resources to place on a control.
+             */
             private static __controlResources = ['control', 'context', 'root', 'rootContext'];
+            /**
+             * @name __resourceTypes
+             * @memberof plat.ui.Resources
+             * @kind property
+             * @access private
+             * @static
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
+             * A list of all resource types.
+             */
             private static __resourceTypes = ['injectable', 'object', 'observable', 'function'];
+            /**
+             * @name __observableResourceRemoveListeners
+             * @memberof plat.ui.Resources
+             * @kind property
+             * @access private
+             * @static
+             * 
+             * @type {plat.IObject<Array<plat.IRemoveListener>>}
+             * 
+             * @description
+             * An object consisting of keyed arrays containing functions for removing observation listeners.
+             */
             private static __observableResourceRemoveListeners: IObject<Array<IRemoveListener>> = {};
 
             /**
-             * Adds a '@root' alias and '@rootContext' to a control, specifying that it contains the root 
-             * and root context. Root controls are the root IViewControl.
+             * @name __addRoot
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access private
+             * @static
              * 
-             * @param control The root IViewControl.
+             * @description
+             * Adds a '@root' alias and '@rootContext' to a control, specifying that it contains the root 
+             * and root context. Root controls are generally the root {@link plat.ui.IViewControl|IViewControl}.
+             * 
+             * @param {plat.ui.ITemplateControl} control The root control.
+             * 
+             * @returns {void}
              */
-            private static __addRoot(control: IViewControl): void {
+            private static __addRoot(control: ITemplateControl): void {
                 control.resources.add({
                     root: {
                         value: control,
@@ -25150,14 +28601,94 @@ module plat {
                 });
             }
 
+            /**
+             * @name __resources
+             * @memberof plat.ui.Resources
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.IObject<plat.ui.IResource>}
+             * 
+             * @description
+             * An object representing all of the currently available resources.
+             */
             private __resources: IObject<IResource> = {};
+            /**
+             * @name __bound
+             * @memberof plat.ui.Resources
+             * @kind property
+             * @access private
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Whether this {@link plat.ui.Resources|Resources} instance has been bound yet.
+             */
             private __bound: boolean = false;
+            /**
+             * @name __controlInstance
+             * @memberof plat.ui.Resources
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.ui.ITemplateControl}
+             * 
+             * @description
+             * The control that these resources are for.
+             */
             private __controlInstance: ITemplateControl;
 
+            /**
+             * @name initialize
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Initializes this {@link plat.ui.Resources|Resources} instance.
+             * 
+             * @param {plat.ui.ITemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
+             * @param {Element} element? An optional element used to create initial {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @returns {void}
+             */
             initialize(control: ITemplateControl, element?: Element): void;
+            /**
+             * @name initialize
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Initializes this {@link plat.ui.Resources|Resources} instance.
+             * 
+             * @param {plat.ui.ITemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
+             * @param {IObject<IResource>} resources? An optional object used to populate initial
+             * {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @returns {void}
+             */
             initialize(control: ITemplateControl, resources?: IObject<IResource>): void;
+            /**
+             * @name initialize
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * Initializes this {@link plat.ui.Resources|Resources} instance.
+             * 
+             * @param {plat.ui.ITemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
+             * @param {plat.ui.IResources} resources? An optional {@link plat.ui.IResources|IResources} object used to populate initial 
+             * {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @returns {void}
+             */
             initialize(control: ITemplateControl, resources?: IResources): void;
-            initialize(controlInstance: ITemplateControl, resources?: any) {
+            initialize(controlInstance: ITemplateControl, resources?: any): void {
                 this.__controlInstance = controlInstance;
 
                 if (isNull(resources)) {
@@ -25180,9 +28711,57 @@ module plat {
                 }
             }
 
+            /**
+             * @name add
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @param resources An {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} used to add 
+             * resources, keyed by their alias.
+             * 
+             * @returns {void}
+             * 
+             * @example 
+             * control.resources.add({
+             *     myAlias: {
+             *         type: 'observable',
+             *         value: { 
+             *             hello: 'Hello World!'
+             *         } 
+             *     }
+             * });
+             */
             add(resources: IObject<IResource>): void;
+            /**
+             * @name add
+             * @memberof plat.ui.Resources
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @param {Element} element An Element containing resource element children.
+             * 
+             * @returns {void}
+             * 
+             * @remarks
+             * The resource type is specified by the element name.
+             * 
+             * @example
+             *     <plat-resources>
+             *         <injectable alias="Cache">$CacheFactory</injectable>
+             *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
+             *     </plat-resources>
+             */
             add(element: Element): void;
-            add(resources: any) {
+            add(resources: any): void {
                 if (isNull(resources)) {
                     return;
                 } else if (isNode(resources)) {
@@ -25224,83 +28803,167 @@ module plat {
         ], __FACTORY);
 
         /**
-         * Creates and manages IResources for TemplateControls.
+         * @name IResourcesFactory
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
+         * Creates and manages {@link plat.ui.IResources|IResources} for {@link plat.ui.ITemplateControl|ITemplateControls}.
          */
         export interface IResourcesFactory {
             /**
-             * Populates an IResource value if necessary, and adds it to the given
+             * @name create
+             * @memberof plat.ui.IResourcesFactory
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Populates an {@link plat.ui.IResource|IResource} value if necessary, and adds it to the given 
              * control's resources.
              * 
-             * @static
-             * @param control The control for which to create a resource.
-             * @param resource The IResource used to set the value.
+             * @param {plat.ui.ITemplateControl} control The control for which to create a resource.
+             * @param {plat.ui.IResource} resource The object used to set the resource values.
+             * 
+             * @returns {plat.ui.IResource} The newly created {@link plat.ui.IResource|IResource}.
              */
             create(control: ITemplateControl, resource: IResource): IResource;
 
             /**
-             * Adds resource aliases for '@control' and '@context'. The resources are
+             * @name addControlResources
+             * @memberof plat.ui.IResourcesFactory
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Adds resource aliases for '@control' and '@context'. The resources are 
              * aliases for the control instance and the control.context.
              * 
-             * @static
-             * @param control The control on which to add the resources.
+             * @param {plat.ui.ITemplateControl} control The control on which to add the resources.
+             * 
+             * @returns {void}
              */
             addControlResources(control: ITemplateControl): void;
 
             /**
-             * Binds the resources in a resource instance. This involves injecting
+             * @name bindResources
+             * @memberof plat.ui.IResourcesFactory
+             * @kind function
+             * @access public
+             * @static
+             * @variation 0
+             * 
+             * @description
+             * Binds the resources in a resource instance. This involves injecting 
              * the injectable resources, creating object/observable resources, and
              * binding functions to the associated control's instance.
              * 
-             * @static
-             * @param resourcesInstance The instance of the IResources object.
+             * @param {plat.ui.IResources} resourcesInstance The instance of the IResources object.
+             * 
+             * @returns {void}
              */
             bindResources(resourcesInstance: IResources): void;
+            /**
+             * @name bindResources
+             * @memberof plat.ui.IResourcesFactory
+             * @kind function
+             * @access public
+             * @static
+             * @variation 1
+             * 
+             * @description
+             * Binds the resources in a resource instance. This involves injecting 
+             * the injectable resources, creating object/observable resources, and
+             * binding functions to the associated control's instance.
+             * 
+             * @param {plat.ui.Resources} resourcesInstance The Resources  instance.
+             * 
+             * @returns {void}
+             */
+            bindResources(resourcesInstance: Resources): void;
 
             /**
-             * Disposes a resource instance, removing its reference
-             * from a control and breaking references to all resource
+             * @name dispose
+             * @memberof plat.ui.IResourcesFactory
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Disposes a resource instance, removing its reference 
+             * from a control and breaking references to all resource 
              * objects.
              * 
-             * @static
-             * @param control The control whose resources will be disposed.
-             * @param persist Whether or not to persist a resource object post 
+             * @param {plat.ui.ITemplateControl} control The control whose resources will be disposed.
+             * @param {boolean} persist? Whether or not to persist a resource object post 
              * disposal or set it to null.
+             * 
+             * @returns {void}
              */
             dispose(control: ITemplateControl, persist?: boolean): void;
 
             /**
-             * Parses a resources Element and creates
-             * an IObject<IResource> with its element children.
-             * 
+             * @name parseElement
+             * @memberof plat.ui.IResourcesFactory
+             * @kind function
+             * @access public
              * @static
-             * @param element The resources element to parse.
              * 
-             * @returns {IObject<IResource>} The resources created
-             * using element.
+             * @description
+             * Parses a resources Element (<plat-resources>) and creates 
+             * an {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} with its element children.
+             * 
+             * @param {Element} element The resources element to parse.
+             * 
+             * @returns {plat.IObject<plat.ui.IResource>} The resources created using the input element.
              */
             parseElement(element: Element): IObject<IResource>;
 
             /**
-             * Returns a new instance of IResources
-             * 
+             * @name getInstance
+             * @memberof plat.ui.IResourcesFactory
+             * @kind function
+             * @access public
              * @static
+             * 
+             * @description
+             * Returns a new instance with type {@link plat.ui.IResources|IResources}.
+             * 
+             * @returns {plat.ui.IResources} A new {@link plat.ui.Resources|Resources} instance.
              */
             getInstance(): IResources;
         }
 
         /**
+         * @name IResources
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Resources are used for providing aliases to use in markup expressions. They 
          * are particularly useful when trying to access properties outside of the 
          * current context, as well as reassigning context at any point in an app.
          * 
+         * @remarks
          * By default, every control has a resource for '@control' and '@context'.
-         * IViewControl objects also have a resource for '@root' and '@rootContext', 
+         * {@link plat.ui.IViewControl|IViewControl} objects also have a resource for '@root' and '@rootContext', 
          * which is a reference to the control and its context.
          * 
          * Resources can be created in HTML, or through the exposed control.resources 
          * object. If specified in HTML, they must be the first element child of the 
          * control upon which the resources will be placed. IViewControls that use a 
          * templateUrl can have resources as their first element in the templateUrl.
+         * 
+         * In the provided example, the resources can be accessed by using '@Cache' and '@testObj'.
+         * The type of resource is denoted by the element name.
+         * 
+         * Only resources of type 'observable' will have data binding. The types of resources are:
+         * function, injectable, observable, and object. Resources of type 'function' will have their
+         * associated function context bound to the control that contains the resource.
+         * 
+         * When an alias is found in a markup expression, the framework will search up the control chain 
+         * to find the alias on a control's resources. This first matching alias will be used.
          * 
          * @example 
          * <custom-control>
@@ -25315,25 +28978,25 @@ module plat {
          *         </observable>
          *     </plat-resources>
          * </custom-control>
-         * 
-         * In the above example, the resources can be accessed by using '@Cache' and '@testObj'.
-         * The type of resource is denoted by the element name.
-         * 
-         * Only resources of type 'observable' will have data binding. The types of resources are:
-         * function, injectable, observable, and object. Resources of type 'function' will have their
-         * associated function context bound to the control that contains the resource.
-         * 
-         * When an alias is found in a markup expression, the framework will search up the control chain 
-         * to find the alias on a control's resources. This first matching alias will be used.
          */
         export interface IResources {
             /**
-             * Used for programatically adding IResource objects.
+             * @name add
+             * @memberof plat.ui.IResources
+             * @kind function
+             * @access public
+             * @variation 0
              * 
-             * @param resources An IObject<IResource> used to add 
+             * @description
+             * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @param resources An {@link plat.IObject<plat.ui.IResource>|IObject<IResource>} used to add 
              * resources, keyed by their alias.
              * 
-             * @example control.resources.add({
+             * @returns {void}
+             * 
+             * @example 
+             * control.resources.add({
              *     myAlias: {
              *         type: 'observable',
              *         value: { 
@@ -25344,44 +29007,100 @@ module plat {
              */
             add(resources: IObject<IResource>): void;
             /**
-             * Used for programatically adding IResource objects.
+             * @name add
+             * @memberof plat.ui.IResources
+             * @kind function
+             * @access public
+             * @variation 1
              * 
-             * @param element An Element containing resource element children.
+             * @description
+             * Used for programatically adding {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @param {Element} element An Element containing resource element children.
+             * 
+             * @returns {void}
+             * 
+             * @remarks
+             * The resource type is specified by the element name.
              * 
              * @example
              *     <plat-resources>
              *         <injectable alias="Cache">$CacheFactory</injectable>
              *         <observable alias="testObj">{ foo: 'foo', bar: 'bar', baz: 2 }</observable>
              *     </plat-resources>
-             * 
-             * The resource type is specified by the element name.
              */
             add(element: Element): void;
 
             /**
-             * @param control The control containing this Resources instance.
-             * @param element An optional element used to create initial IResource objects.
+             * @name initialize
+             * @memberof plat.ui.IResources
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Initializes this {@link plat.ui.Resources|Resources} instance.
+             * 
+             * @param {plat.ui.ITemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
+             * @param {Element} element? An optional element used to create initial {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @returns {void}
              */
             initialize(control: ITemplateControl, element?: Element): void;
             /**
-             * @param control The control containing this Resources instance.
-             * @param resources An optional IObject<IResource> used to populate initial
-             * IResource objects.
+             * @name initialize
+             * @memberof plat.ui.IResources
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Initializes this {@link plat.ui.Resources|Resources} instance.
+             * 
+             * @param {plat.ui.ITemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
+             * @param {IObject<IResource>} resources? An optional object used to populate initial
+             * {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @returns {void}
              */
             initialize(control: ITemplateControl, resources?: IObject<IResource>): void;
             /**
-             * @param control The control containing this Resources instance.
-             * @param element An optional IResources object used to populate initial 
-             * IResource objects.
+             * @name initialize
+             * @memberof plat.ui.IResources
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * Initializes this {@link plat.ui.Resources|Resources} instance.
+             * 
+             * @param {plat.ui.ITemplateControl} control The control containing this {@link plat.ui.Resources|Resources} instance.
+             * @param {plat.ui.IResources} resources? An optional {@link plat.ui.IResources|IResources} object used to populate initial 
+             * {@link plat.ui.IResource|IResource} objects.
+             * 
+             * @returns {void}
              */
             initialize(control: ITemplateControl, resources?: IResources): void;
         }
 
         /**
-         * Defines a single resource on the IResources object.
+         * @name IResource
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
+         * Defines a single resource on the {@link plat.ui.IResources|IResources} object.
          */
         export interface IResource {
             /**
+             * @name type
+             * @memberof plat.ui.IResource
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
              * The type of resource.
              * - injectable
              * - observable
@@ -25391,26 +29110,66 @@ module plat {
             type: string;
 
             /**
-             * The alias used to reference the Resource.
+             * @name alias
+             * @memberof plat.ui.IResource
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The alias used to reference the resource.
              */
             alias?: string;
 
             /**
-             * The value of the Resource
+             * @name value
+             * @memberof plat.ui.IResource
+             * @kind property
+             * @access public
+             * 
+             * @type {any}
+             * 
+             * @description
+             * The value of the resource.
              */
             value?: any;
 
             /**
-             * The initial value prior to it being observed.
+             * @name initialValue
+             * @memberof plat.ui.IResource
+             * @kind property
+             * @access public
+             * 
+             * @type {any}
+             * 
+             * @description
+             * The initial value of the resource prior to it being observed.
              */
             initialValue?: any;
         }
 
         /**
+         * @name DomEvents
+         * @memberof plat.ui
+         * @kind class
+         * 
+         * @implements {plat.ui.IDomEvents}
+         * 
+         * @description
          * A class for managing DOM event registration and handling.
          */
         export class DomEvents implements IDomEvents {
             /**
+             * @name config
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access public
+             * @static
+             * 
+             * @type {plat.ui.IDomEventsConfig}
+             * 
+             * @description
              * A configuration object for all DOM events.
              */
             static config: IDomEventsConfig = {
@@ -25483,7 +29242,7 @@ module plat {
                     /**
                      * An array of string styles to be placed on an element to allow for the 
                      * best touch experience. In the format 'CSS identifier: value'
-                     * (i.e. 'width : 100px')
+                     * (e.g. 'width : 100px')
                      */
                     styles: [
                         '-moz-user-select: none',
@@ -25507,7 +29266,7 @@ module plat {
                      * An array of string styles that block touch action scrolling, zooming, etc. 
                      * Primarily useful on elements such as a canvas.
                      * In the format 'CSS identifier: value'
-                     * (i.e. 'width : 100px')
+                     * (e.g. 'width : 100px')
                      */
                     styles: [
                         '-ms-touch-action: none',
@@ -25516,43 +29275,123 @@ module plat {
                 }]
             };
 
+            /**
+             * @name $Document
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access public
+             * @static
+             * 
+             * @type {Document}
+             * 
+             * @description
+             * Reference to the Document injectable.
+             */
             $Document: Document = acquire(__Document);
+            /**
+             * @name $Compat
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access public
+             * @static
+             * 
+             * @type {plat.ICompat}
+             * 
+             * @description
+             * Reference to the {@link plat.ICompat|ICompat} injectable.
+             */
             $Compat: ICompat = acquire(__Compat);
 
             /**
-             * Whether or not the DomEvents are currently active. 
+             * @name _isActive
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access protected
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Whether or not the {@link plat.ui.DomEvents|DomEvents} are currently active. 
              * They become active at least one element on the current 
              * page is listening for a custom event.
              */
             _isActive: boolean;
 
             /**
+             * @name _inTouch
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access protected
+             * 
+             * @type {boolean}
+             * 
+             * @description
              * Whether or not the user is currently touching the screen.
              */
             _inTouch: boolean;
 
             /**
-             * An array of subscriptions that keep track of all of the 
+             * @name _subscribers
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access protected
+             * 
+             * @type {plat.IObject<plat.ui.IEventSubscriber>}
+             * 
+             * @description
+             * An object with keyed subscribers that keep track of all of the 
              * events registered on a particular element.
              */
             _subscribers: IObject<IEventSubscriber> = {};
 
             /**
+             * @name _startEvents
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access protected
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
              * The touch start events defined by this browser.
              */
             _startEvents: Array<string>;
 
             /**
+             * @name _moveEvents
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access protected
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
              * The touch move events defined by this browser.
              */
             _moveEvents: Array<string>;
 
             /**
+             * @name _endEvents
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access protected
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
              * The touch end events defined by this browser.
              */
             _endEvents: Array<string>;
 
             /**
+             * @name _gestures
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access protected
+             * 
+             * @type {plat.ui.IGestures<string>}
+             * 
+             * @description
              * An object containing the event types for all of the 
              * supported gestures.
              */
@@ -25575,6 +29414,14 @@ module plat {
             };
 
             /**
+             * @name _gestureCount
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access protected
+             * 
+             * @type {plat.ui.IGestures<number>}
+             * 
+             * @description
              * An object containing the number of currently active 
              * events of each type.
              */
@@ -25588,30 +29435,306 @@ module plat {
                 $trackend: 0
             };
 
+            /**
+             * @name __START
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {string}
+             * 
+             * @description
+             * A constant for specifying the start condition.
+             */
             private __START = 'start';
+            /**
+             * @name __MOVE
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {string}
+             * 
+             * @description
+             * A constant for specifying the move condition.
+             */
             private __MOVE = 'move';
+            /**
+             * @name __END
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {string}
+             * 
+             * @description
+             * A constant for specifying the end condition.
+             */
             private __END = 'end';
+            /**
+             * @name __hasMoved
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Whether or not the user moved while in touch.
+             */
             private __hasMoved = false;
+            /**
+             * @name __hasSwiped
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Whether or not the user swiped while in touch.
+             */
             private __hasSwiped = false;
+            /**
+             * @name __hasRelease
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Whether or not their is a registered "release" event.
+             */
             private __hasRelease = false;
+            /**
+             * @name __detectingMove
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Whether or not we should be detecting move events.
+             */
             private __detectingMove = false;
+            /**
+             * @name __tapCount
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {number}
+             * 
+             * @description
+             * The current tap count to help distinguish single from double taps.
+             */
             private __tapCount = 0;
+            /**
+             * @name __touchCount
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {number}
+             * 
+             * @description
+             * The total number of touches on the screen.
+             */
             private __touchCount = 0;
+            /**
+             * @name __tapTimeout
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {number}
+             * 
+             * @description
+             * A timeout ID given in the case that a tap delay was needed for 
+             * something such as a double tap to zoom feature.
+             */
             private __tapTimeout: number;
+            /**
+             * @name __holdTimeout
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {number}
+             * 
+             * @description
+             * A timeout ID for removing a registered hold event.
+             */
             private __holdTimeout: number;
+            /**
+             * @name __cancelRegex
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {RegExp}
+             * 
+             * @description
+             * A regular expressino for determining a "cancel" event.
+             */
             private __cancelRegex = /cancel/i;
+            /**
+             * @name __pointerEndRegex
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {RegExp}
+             * 
+             * @description
+             * A regular expressino for determining a pointer end event.
+             */
             private __pointerEndRegex = /up|cancel/i;
+            /**
+             * @name __lastTouchDown
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.ui.IPointerEvent}
+             * 
+             * @description
+             * The user's last touch down.
+             */
             private __lastTouchDown: IPointerEvent;
+            /**
+             * @name __lastTouchUp
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.ui.IPointerEvent}
+             * 
+             * @description
+             * The user's last touch up.
+             */
             private __lastTouchUp: IPointerEvent;
+            /**
+             * @name __swipeOrigin
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.ui.IPointerEvent}
+             * 
+             * @description
+             * The starting place of an initiated swipe gesture.
+             */
             private __swipeOrigin: IPointerEvent;
+            /**
+             * @name __lastMoveEvent
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.ui.IPointerEvent}
+             * 
+             * @description
+             * The user's last move while in touch.
+             */
             private __lastMoveEvent: IPointerEvent;
+            /**
+             * @name __capturedTarget
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.ui.ICustomElement}
+             * 
+             * @description
+             * The captured target that the user first initiated a gesture on.
+             */
             private __capturedTarget: ICustomElement;
+            /**
+             * @name __focusedElement
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {HTMLInputElement}
+             * 
+             * @description
+             * The currently focused element on the screen. Used in the case of WebKit touch events.
+             */
             private __focusedElement: HTMLInputElement;
-            private __mappedEventListener = this.__handleMappedEvent.bind(this);
+            /**
+             * @name __mappedEventListener
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {EventListener}
+             * 
+             * @description
+             * An EventListener with a bound context for registering mapped events.
+             */
+            private __mappedEventListener: EventListener = this.__handleMappedEvent.bind(this);
+            /**
+             * @name __reverseMap
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {{}}
+             * 
+             * @description
+             * A hash map for mapping custom events to standard events.
+             */
             private __reverseMap = {};
+            /**
+             * @name __swipeSubscribers
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {{ master: plat.ui.IDomEventInstance; directional: plat.ui.IDomEventInstance }}
+             * 
+             * @description
+             * A set of subscribers for the swipe gesture.
+             */
             private __swipeSubscribers: { master: IDomEventInstance; directional: IDomEventInstance };
+            /**
+             * @name __pointerHash
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.IObject<plat.ui.IPointerEvent>}
+             * 
+             * @description
+             * A hash of the current pointer touch points on the page.
+             */
             private __pointerHash: IObject<IPointerEvent> = {};
+            /**
+             * @name __pointerEvents
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {Array<plat.ui.IPointerEvent>}
+             * 
+             * @description
+             * An array containing all current pointer touch points on the page.
+             */
             private __pointerEvents: Array<IPointerEvent> = [];
+            /**
+             * @name __listeners
+             * @memberof plat.ui.DomEvents
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.ui.ICustomEventListener}
+             * 
+             * @description
+             * A set of touch start, move, and end listeners to be place on the document.
+             */
             private __listeners: ICustomEventListener = {
                 start: this._onTouchStart.bind(this),
                 move: this._onMove.bind(this),
@@ -25619,15 +29742,91 @@ module plat {
             };
 
             /**
+             * @name constructor
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Retrieve the type of touch events for this browser and create the default gesture style.
+             * 
+             * @returns {plat.ui.DomEvents} The {@link plat.ui.DomEvents|DomEvents} instance.
              */
             constructor() {
                 this.__getTypes();
             }
 
+            /**
+             * @name addEventListener
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Add an event listener for the specified event type on the specified element.
+             * 
+             * @param {Node} element The node listening for the event.
+             * @param {string} type The type of event being listened to.
+             * @param {plat.ui.IGestureListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
+             */
             addEventListener(element: Node, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+            /**
+             * @name addEventListener
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Add an event listener for the specified event type on the specified element.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} type The type of event being listened to.
+             * @param {plat.ui.IGestureListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
+             */
             addEventListener(element: Window, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener;
+            /**
+             * @name addEventListener
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access public
+             * @variation 2
+             * 
+             * @description
+             * Add an event listener for the specified event type on the specified element.
+             * 
+             * @param {Node} element The node listening for the event.
+             * @param {string} type The type of event being listened to.
+             * @param {EventListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
+             */
             addEventListener(element: Node, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
+            /**
+             * @name addEventListener
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access public
+             * @variation 3
+             * 
+             * @description
+             * Add an event listener for the specified event type on the specified element.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} type The type of event being listened to.
+             * @param {EventListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
+             */
             addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): IRemoveListener;
             addEventListener(element: any, type: string, listener: IGestureListener, useCapture?: boolean): IRemoveListener {
                 var $compat = this.$Compat,
@@ -25681,6 +29880,17 @@ module plat {
                 };
             }
 
+            /**
+             * @name dispose
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Stops listening for touch events and resets the DomEvents instance.
+             * 
+             * @returns {void}
+             */
             dispose(): void {
                 this.__unregisterTypes();
 
@@ -25713,9 +29923,17 @@ module plat {
             }
 
             /**
+             * @name _onTouchStart
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access protected
+             * 
+             * @description
              * A listener for touch/mouse start events.
              * 
-             * @param ev The touch start event object.
+             * @param {plat.ui.IPointerEvent} ev The touch start event object.
+             * 
+             * @returns {boolean} Prevents default and stops propagation if false is returned.
              */
             _onTouchStart(ev: IPointerEvent): boolean {
                 var isTouch = ev.type !== 'mousedown';
@@ -25790,9 +30008,17 @@ module plat {
             }
 
             /**
+             * @name _onMove
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access protected
+             * 
+             * @description
              * A listener for touch/mouse move events.
              * 
-             * @param ev The touch start event object.
+             * @param {plat.ui.IPointerEvent} ev The touch move event object.
+             * 
+             * @returns {boolean} Prevents default and stops propagation if false is returned.
              */
             _onMove(ev: IPointerEvent): boolean {
                 // clear hold event
@@ -25850,9 +30076,17 @@ module plat {
             }
 
             /**
+             * @name _onTouchEnd
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access protected
+             * 
+             * @description
              * A listener for touch/mouse end events.
              * 
-             * @param ev The touch start event object.
+             * @param {plat.ui.IPointerEvent} ev The touch end event object.
+             * 
+             * @returns {boolean} Prevents default and stops propagation if false is returned.
              */
             _onTouchEnd(ev: IPointerEvent): boolean {
                 var eventType = ev.type,
@@ -25962,6 +30196,19 @@ module plat {
 
             // gesture handling methods
 
+            /**
+             * @name __handleTap
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * A function for handling and firing tap events.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The touch end event object.
+             * 
+             * @returns {void}
+             */
             private __handleTap(ev: IPointerEvent): void {
                 this.__tapCount++;
 
@@ -25993,6 +30240,19 @@ module plat {
                 }, DomEvents.config.intervals.dblTapZoomDelay);
 
             }
+            /**
+             * @name __handleDbltap
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * A function for handling and firing double tap events.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The touch end event object.
+             * 
+             * @returns {void}
+             */
             private __handleDbltap(ev: IPointerEvent): void {
                 this.__tapCount = 0;
 
@@ -26014,6 +30274,19 @@ module plat {
                 // set touch count to -1 to prevent repeated fire on sequential taps
                 this.__tapCount = -1;
             }
+            /**
+             * @name __handleRelease
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * A function for handling and firing release events.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The touch end event object.
+             * 
+             * @returns {void}
+             */
             private __handleRelease(ev: IPointerEvent): void {
                 var domEvent = this.__findFirstSubscriber(<ICustomElement>ev.target, this._gestures.$release);
                 if (!isNull(domEvent)) {
@@ -26022,6 +30295,17 @@ module plat {
 
                 this.__hasRelease = false;
             }
+            /**
+             * @name __handleSwipe
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * A function for handling and firing swipe events.
+             * 
+             * @returns {void}
+             */
             private __handleSwipe(): void {
                 var lastMove = this.__lastMoveEvent;
                 if (isNull(lastMove)) {
@@ -26045,6 +30329,19 @@ module plat {
                 this.__lastMoveEvent = null;
                 this.__swipeSubscribers = null;
             }
+            /**
+             * @name __handleTrack
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * A function for handling and firing track events.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The touch move event object.
+             * 
+             * @returns {void}
+             */
             private __handleTrack(ev: IPointerEvent): void {
                 var trackGesture = this._gestures.$track,
                     direction = ev.direction,
@@ -26063,6 +30360,19 @@ module plat {
                     trackDirectionDomEvent.trigger(ev);
                 }
             }
+            /**
+             * @name __handleTrackEnd
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * A function for handling and firing track end events.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The touch end event object.
+             * 
+             * @returns {void}
+             */
             private __handleTrackEnd(ev: IPointerEvent): void {
                 if (this._gestureCount.$trackend <= 0) {
                     return;
@@ -26076,6 +30386,19 @@ module plat {
 
                 domEvent.trigger(ev);
             }
+            /**
+             * @name __handleMappedEvent
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * A function for handling and firing custom events that are mapped to standard events.
+             * 
+             * @param {plat.ui.IExtendedEvent} ev The touch event object.
+             * 
+             * @returns {void}
+             */
             private __handleMappedEvent(ev: IExtendedEvent): void {
                 var mappedType = ev.type,
                     eventType = (<any>this.__reverseMap)[mappedType],
@@ -26091,6 +30414,17 @@ module plat {
 
             // touch type and element registration
 
+            /**
+             * @name __getTypes
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * A function for determining the proper touch events.
+             * 
+             * @returns {void}
+             */
             private __getTypes(): void {
                 var $compat = this.$Compat,
                     touchEvents = $compat.mappedEvents;
@@ -26112,15 +30446,50 @@ module plat {
                 this._moveEvents = [touchEvents.$touchmove];
                 this._endEvents = isNull(cancelEvent) ? [touchEvents.$touchend] : [touchEvents.$touchend, cancelEvent];
             }
+            /**
+             * @name __registerTypes
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Registers for and starts listening to start and end touch events on the document.
+             * 
+             * @returns {void}
+             */
             private __registerTypes(): void {
                 this.__registerType(this.__START);
                 this.__registerType(this.__END);
             }
+            /**
+             * @name __unregisterTypes
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Unregisters for and stops listening to all touch events on the document.
+             * 
+             * @returns {void}
+             */
             private __unregisterTypes(): void {
                 this.__unregisterType(this.__START);
                 this.__unregisterType(this.__MOVE);
                 this.__unregisterType(this.__END);
             }
+            /**
+             * @name __registerType
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Registers for and begins listening to a particular touch event type.
+             * 
+             * @param {string} event The event type to begin listening for.
+             * 
+             * @returns {void}
+             */
             private __registerType(event: string): void {
                 var events: Array<string>,
                     listener = this.__listeners[event],
@@ -26145,6 +30514,19 @@ module plat {
                     $document.addEventListener(events[index], listener, false);
                 }
             }
+            /**
+             * @name __unregisterType
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Unregisters for and stops listening to a particular touch event type.
+             * 
+             * @param {string} event The event type to stop listening for.
+             * 
+             * @returns {void}
+             */
             private __unregisterType(event: string): void {
                 var events: Array<string>,
                     listener = this.__listeners[event],
@@ -26169,6 +30551,20 @@ module plat {
                     $document.removeEventListener(events[index], listener, false);
                 }
             }
+            /**
+             * @name __registerElement
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Registers and associates an element with an event.
+             * 
+             * @param {plat.ui.ICustomElement} element The element being tied to a custom event.
+             * @param {string} type The type of event.
+             * 
+             * @returns {void}
+             */
             private __registerElement(element: ICustomElement, type: string): void {
                 var id: string,
                     plat = element.__plat;
@@ -26215,6 +30611,20 @@ module plat {
                     this.__removeSelections(element);
                 }
             }
+            /**
+             * @name __unregisterElement
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Unregisters and disassociates an element with an event.
+             * 
+             * @param {plat.ui.ICustomElement} element The element being disassociated with the given custom event.
+             * @param {string} type The type of event.
+             * 
+             * @returns {void}
+             */
             private __unregisterElement(element: ICustomElement, type: string): void {
                 var plat = element.__plat;
                 if (isNull(plat) || isNull(plat.domEvent)) {
@@ -26240,6 +30650,19 @@ module plat {
                     this.__removeElement(element);
                 }
             }
+            /**
+             * @name __setTouchPoint
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Sets the current touch point and helps standardize the given event object.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The current point being touched.
+             * 
+             * @returns {void}
+             */
             private __setTouchPoint(ev: IPointerEvent): void {
                 var eventType = ev.type,
                     $compat = this.$Compat;
@@ -26264,11 +30687,38 @@ module plat {
                     ev.pointerType = eventType.indexOf('mouse') === -1 ? 'touch' : 'mouse';
                 }
             }
-            private __setCapture(target: EventTarget) {
+            /**
+             * @name __setCapture
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Sets the captured target.
+             * 
+             * @param {EventTarget} target The target to capture.
+             * 
+             * @returns {void}
+             */
+            private __setCapture(target: EventTarget): void {
                 if (isNull(this.__capturedTarget) && !isDocument(target)) {
                     this.__capturedTarget = <ICustomElement>target;
                 }
             }
+            /**
+             * @name __updatePointers
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Sets the captured target.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The current touch point.
+             * @param {boolean} remove Whether to remove the touch point or add it.
+             * 
+             * @returns {void}
+             */
             private __updatePointers(ev: IPointerEvent, remove: boolean): void {
                 var id = ev.pointerId,
                     pointer = this.__pointerHash[id];
@@ -26292,6 +30742,23 @@ module plat {
 
             // event and subscription handling
 
+            /**
+             * @name __findFirstSubscriber
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Searches from the EventTarget up the DOM tree looking for an element with the 
+             * registered event type.
+             * 
+             * @param {plat.ui.ICustomElement} eventTarget The current target of the touch event.
+             * @param {string} type The type of event being searched for.
+             * 
+             * @returns {plat.ui.IDomEventInstance} The found {@link plat.ui.IDomEventInstance} associated 
+             * with the first found element in the tree and the event type. Used to trigger the event at this 
+             * point in the DOM tree.
+             */
             private __findFirstSubscriber(eventTarget: ICustomElement, type: string): IDomEventInstance {
                 var plat: ICustomElementProperty,
                     subscriber: IEventSubscriber,
@@ -26312,6 +30779,20 @@ module plat {
                     return domEvent;
                 } while (!isNull(eventTarget = <ICustomElement>eventTarget.parentNode));
             }
+            /**
+             * @name __addMappedEvent
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Adds a listener for listening to a standard event and mapping it to a custom event.
+             * 
+             * @param {string} mappedEvent The mapped event type.
+             * @param {boolean} useCapture? Whether the mapped event listener is fired on the capture or bubble phase.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the added mapped listener.
+             */
             private __addMappedEvent(mappedEvent: string, useCapture?: boolean): IRemoveListener {
                 var $document = this.$Document;
                 $document.addEventListener(mappedEvent, this.__mappedEventListener, useCapture);
@@ -26320,6 +30801,22 @@ module plat {
                     $document.removeEventListener(mappedEvent, this.__mappedEventListener, useCapture);
                 };
             }
+            /**
+             * @name __removeEventListener
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Removes an event listener for a given event type.
+             * 
+             * @param {plat.ui.ICustomElement} element The element to remove the listener from.
+             * @param {string} type The type of event being removed.
+             * @param {plat.ui.IGestureListener} listener The listener being removed.
+             * @param {boolean} useCapture? Whether the listener is fired on the capture or bubble phase.
+             * 
+             * @returns {void}
+             */
             private __removeEventListener(element: ICustomElement, type: string, listener: IGestureListener,
                 useCapture?: boolean): void {
                 var gestures = this._gestures;
@@ -26339,6 +30836,19 @@ module plat {
                 (<any>this._gestureCount)[countType]--;
                 this.__unregisterElement(element, type);
             }
+            /**
+             * @name __removeElement
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Removes an element from the subscriber object.
+             * 
+             * @param {plat.ui.ICustomElement} element The element being removed.
+             * 
+             * @returns {void}
+             */
             private __removeElement(element: ICustomElement): void {
                 this.__returnSelections(element);
 
@@ -26357,6 +30867,19 @@ module plat {
                     this.dispose();
                 }
             }
+            /**
+             * @name __standardizeEventObject
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Standardizes certain properties on the event object for custom events.
+             * 
+             * @param {plat.ui.IExtendedEvent} ev The event object to be standardized.
+             * 
+             * @returns {void}
+             */
             private __standardizeEventObject(ev: IExtendedEvent): void {
                 this.__setTouchPoint(ev);
 
@@ -26384,6 +30907,19 @@ module plat {
                     y: ev.offsetY
                 };
             }
+            /**
+             * @name __getOffset
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Grabs the x and y offsets of an event object's target.
+             * 
+             * @param {plat.ui.IExtendedEvent} ev The current event object.
+             * 
+             * @returns {plat.ui.IPoint} An object containing the x and y offsets.
+             */
             private __getOffset(ev: IExtendedEvent): IPoint {
                 var target = this.__capturedTarget || <any>ev.target;
                 if (isDocument(target)) {
@@ -26405,6 +30941,17 @@ module plat {
                     y: (ev.clientY - y)
                 };
             }
+            /**
+             * @name __clearHold
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Clears the hold events setTimeout.
+             * 
+             * @returns {void}
+             */
             private __clearHold(): void {
                 if (!isNull(this.__holdTimeout)) {
                     clearTimeout(this.__holdTimeout);
@@ -26414,17 +30961,62 @@ module plat {
 
             // utility methods
 
+            /**
+             * @name __getDistance
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Calculates the distance between two (x, y) coordinate points.
+             * 
+             * @param {number} x1 The x-coordinate of the first point.
+             * @param {number} x2 The x-coordinate of the second point.
+             * @param {number} y1 The y-coordinate of the first point.
+             * @param {number} y2 The y-coordinate of the second point.
+             * 
+             * @returns {number} The distance between the points.
+             */
             private __getDistance(x1: number, x2: number, y1: number, y2: number): number {
                 var x = Math.abs(x2 - x1),
                     y = Math.abs(y2 - y1);
                 return Math.sqrt((x * x) + (y * y));
             }
+            /**
+             * @name __getVelocity
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Calculates the velocity between two (x, y) coordinate points over a given time.
+             * 
+             * @param {number} dx The change in x position.
+             * @param {number} dy The change in y position.
+             * @param {number} dt The change in time.
+             * 
+             * @returns {plat.ui.IVelocity} A velocity object containing horiztonal and vertical velocities.
+             */
             private __getVelocity(dx: number, dy: number, dt: number): IVelocity {
                 return {
                     x: Math.abs(dx / dt) || 0,
                     y: Math.abs(dy / dt) || 0
                 };
             }
+            /**
+             * @name __getDirection
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Calculates the direction of movement.
+             * 
+             * @param {number} dx The change in x position.
+             * @param {number} dy The change in y position.
+             * 
+             * @returns {string} The direction of movement.
+             */
             private __getDirection(dx: number, dy: number): string {
                 var distanceX = Math.abs(dx),
                     distanceY = Math.abs(dy);
@@ -26435,6 +31027,20 @@ module plat {
 
                 return dx < 0 ? 'left' : 'right';
             }
+            /**
+             * @name __checkForOriginChanged
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Checks to see if a swipe direction has changed to recalculate 
+             * an origin point.
+             * 
+             * @param {string} direction The current direction of movement.
+             * 
+             * @returns {boolean} Whether or not the origin point has changed.
+             */
             private __checkForOriginChanged(direction: string): boolean {
                 var lastMove = this.__lastMoveEvent;
                 if (isNull(lastMove)) {
@@ -26452,6 +31058,19 @@ module plat {
                 this.__hasSwiped = false;
                 return this.__checkForRegisteredSwipe(direction);
             }
+            /**
+             * @name __checkForRegisteredSwipe
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Checks to see if a swipe event has been registered.
+             * 
+             * @param {string} direction The current direction of movement.
+             * 
+             * @returns {boolean} Whether or not a registerd swipe event exists.
+             */
             private __checkForRegisteredSwipe(direction: string): boolean {
                 var swipeTarget = <ICustomElement>this.__swipeOrigin.target,
                     swipeGesture = this._gestures.$swipe,
@@ -26466,9 +31085,33 @@ module plat {
 
                 return !isNull(domEventSwipe) || !isNull(domEventSwipeDirection);
             }
+            /**
+             * @name __isHorizontal
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Checks to see if a swipe event has been registered.
+             * 
+             * @param {string} direction The current direction of movement.
+             * 
+             * @returns {boolean} Whether or not the current movement is horizontal.
+             */
             private __isHorizontal(direction: string): boolean {
                 return direction === 'left' || direction === 'right';
             }
+            /**
+             * @name __appendGestureStyle
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Appends CSS to the head for gestures if needed.
+             * 
+             * @returns {void}
+             */
             private __appendGestureStyle(): void {
                 var $document = this.$Document,
                     styleClasses: Array<IDefaultStyle>,
@@ -26499,6 +31142,20 @@ module plat {
                 style.textContent = textContent;
                 head.appendChild(style);
             }
+            /**
+             * @name __createStyle
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Creates a style text to append to the document head.
+             * 
+             * @param {plat.ui.IDefaultStyle} styleClass The object containing the custom styles for 
+             * gestures.
+             * 
+             * @returns {string} The style text.
+             */
             private __createStyle(styleClass: IDefaultStyle): string {
                 var styles: Array<string> = styleClass.styles || [],
                     styleLength = styles.length,
@@ -26515,9 +31172,35 @@ module plat {
 
                 return style;
             }
+            /**
+             * @name __isFocused
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Determines whether the target is the currently focused element.
+             * 
+             * @param {EventTarget} target The event target.
+             * 
+             * @returns {boolean} Whether or not the target is focused.
+             */
             private __isFocused(target: EventTarget): boolean {
                 return target === this.__focusedElement;
             }
+            /**
+             * @name __handleInput
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles HTMLInputElements in WebKit based touch applications.
+             * 
+             * @param {HTMLInputElement} target The event target.
+             * 
+             * @returns {void}
+             */
             private __handleInput(target: HTMLInputElement): void {
                 var nodeName = target.nodeName,
                     focusedElement = this.__focusedElement || <HTMLInputElement>{};
@@ -26530,8 +31213,7 @@ module plat {
                     return;
                 }
 
-                var remover: IRemoveListener,
-                    $document: Document;
+                var remover: IRemoveListener;
                 switch (nodeName.toLowerCase()) {
                     case 'input':
                         switch (target.type) {
@@ -26548,9 +31230,8 @@ module plat {
                                 if (isFunction(focusedElement.blur)) {
                                     focusedElement.blur();
                                 }
-                                $document = this.$Document;
                                 postpone(() => {
-                                    if ($document.body.contains(target)) {
+                                    if (this.$Document.body.contains(target)) {
                                         target.click();
                                     }
                                 });
@@ -26574,9 +31255,8 @@ module plat {
                         if (isFunction(focusedElement.blur)) {
                             focusedElement.blur();
                         }
-                        $document = this.$Document;
                         postpone(() => {
-                            if ($document.body.contains(target)) {
+                            if (this.$Document.body.contains(target)) {
                                 target.click();
                             }
                         });
@@ -26595,12 +31275,28 @@ module plat {
                         if (isFunction(focusedElement.blur)) {
                             focusedElement.blur();
                         }
+                        postpone(() => {
+                            if (this.$Document.body.contains(target) && isFunction(target.click)) {
+                                target.click();
+                            }
+                        });
                         break;
                 }
 
                 this.__focusedElement = null;
                 return;
             }
+            /**
+             * @name __preventClickFromTouch
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles the phantom click in WebKit based touch applications.
+             * 
+             * @returns {void}
+             */
             private __preventClickFromTouch(): void {
                 var $document = this.$Document,
                     delayedClickRemover = defer(() => {
@@ -26630,6 +31326,19 @@ module plat {
                 $document.addEventListener('mousedown', preventDefault, true);
                 $document.addEventListener('mouseup', preventDefault, true);
             }
+            /**
+             * @name __removeSelections
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Removes selection capability from the element.
+             * 
+             * @param {Node} element The element to remove selections on.
+             * 
+             * @returns {void}
+             */
             private __removeSelections(element: Node): void {
                 if (!isNode(element)) {
                     return;
@@ -26642,6 +31351,19 @@ module plat {
                     element.addEventListener('dragstart', this.__preventDefault, false);
                 }
             }
+            /**
+             * @name __returnSelections
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Returns selection capability from the element.
+             * 
+             * @param {Node} element The element to return selections on.
+             * 
+             * @returns {void}
+             */
             private __returnSelections(element: Node): void {
                 if (!isNode(element)) {
                     return;
@@ -26654,6 +31376,20 @@ module plat {
                     element.removeEventListener('dragstart', this.__preventDefault, false);
                 }
             }
+            /**
+             * @name __preventDefault
+             * @memberof plat.ui.DomEvents
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Prevents default and stops propagation in all elements other than 
+             * inputs and textareas.
+             * 
+             * @param {Event} ev The event object.
+             * 
+             * @returns {boolean} Prevents default and stops propagation if false.
+             */
             private __preventDefault(ev: Event): boolean {
                 var nodeName = (<Node>ev.target).nodeName;
                 if (isString(nodeName)) {
@@ -26679,56 +31415,101 @@ module plat {
         register.injectable(__DomEvents, IDomEvents);
 
         /**
+         * @name IDomEvents
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object for managing DOM event registration and handling.
          */
         export interface IDomEvents {
             /**
-             * Add an event listener for the specified event type on the specified element. 
+             * @name addEventListener
+             * @memberof plat.ui.IDomEvents
+             * @kind function
+             * @access public
+             * @variation 0
              * 
-             * @param element The node listening for the event.
-             * @param type The type of event being listened to.
-             * @param listener The listener to be fired.
-             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-             * @returns {IRemoveListener} A function to remove the added event listener.
+             * @description
+             * Add an event listener for the specified event type on the specified element.
+             * 
+             * @param {Node} element The node listening for the event.
+             * @param {string} type The type of event being listened to.
+             * @param {plat.ui.IGestureListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
              */
             addEventListener(element: Node, type: string, listener: IGestureListener,
                 useCapture?: boolean): IRemoveListener;
             /**
-             * Add an event listener for the specified event type on the specified element. 
+             * @name addEventListener
+             * @memberof plat.ui.IDomEvents
+             * @kind function
+             * @access public
+             * @variation 1
              * 
-             * @param element The window object.
-             * @param type The type of event being listened to.
-             * @param listener The listener to be fired.
-             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-             * @returns {IRemoveListener} A function to remove the added event listener.
+             * @description
+             * Add an event listener for the specified event type on the specified element.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} type The type of event being listened to.
+             * @param {plat.ui.IGestureListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
              */
             addEventListener(element: Window, type: string, listener: IGestureListener,
                 useCapture?: boolean): IRemoveListener;
             /**
-             * Add an event listener for the specified event type on the specified element. 
+             * @name addEventListener
+             * @memberof plat.ui.IDomEvents
+             * @kind function
+             * @access public
+             * @variation 2
              * 
-             * @param element The node listening for the event.
-             * @param type The type of event being listened to.
-             * @param listener The listener to be fired.
-             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-             * @returns {IRemoveListener} A function to remove the added event listener.
+             * @description
+             * Add an event listener for the specified event type on the specified element.
+             * 
+             * @param {Node} element The node listening for the event.
+             * @param {string} type The type of event being listened to.
+             * @param {EventListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
              */
             addEventListener(element: Node, type: string, listener: EventListener,
                 useCapture?: boolean): IRemoveListener;
             /**
-             * Add an event listener for the specified event type on the specified element. 
+             * @name addEventListener
+             * @memberof plat.ui.IDomEvents
+             * @kind function
+             * @access public
+             * @variation 3
              * 
-             * @param element The window object.
-             * @param type The type of event being listened to.
-             * @param listener The listener to be fired.
-             * @param useCapture Whether to fire the event on the capture or bubble phase of propagation.
-             * @returns {IRemoveListener} A function to remove the added event listener.
+             * @description
+             * Add an event listener for the specified event type on the specified element.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} type The type of event being listened to.
+             * @param {EventListener} listener The listener to be fired.
+             * @param {boolean} useCapture? Whether to fire the event on the capture or bubble phase of propagation.
+             * 
+             * @returns {plat.IRemoveListener} A function for removing the event listener and stop listening to the event.
              */
             addEventListener(element: Window, type: string, listener: EventListener,
                 useCapture?: boolean): IRemoveListener;
 
             /**
+             * @name dispose
+             * @memberof plat.ui.IDomEvents
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Stops listening for touch events and resets the DomEvents instance.
+             * 
+             * @returns {void}
              */
             dispose(): void;
         }
@@ -26743,21 +31524,104 @@ module plat {
         register.injectable(__DomEventsConfig, IDomEventsConfig);
 
         /**
+         * @name DomEvent
+         * @memberof plat.ui
+         * @kind class
+         * 
+         * @implements {plat.ui.IDomEventInstance}
+         * 
+         * @description
          * A class for managing a single custom event.
          */
         export class DomEvent implements IDomEventInstance {
+            /**
+             * @name $Document
+             * @memberof plat.ui.DomEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {Document}
+             * 
+             * @description
+             * Reference to the Document injectable.
+             */
             $Document: Document = acquire(__Document);
 
+            /**
+             * @name element
+             * @memberof plat.ui.DomEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {any}
+             * 
+             * @description
+             * The node or window object associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             */
             element: any;
+            /**
+             * @name event
+             * @memberof plat.ui.DomEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The event type associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             */
             event: string;
 
+            /**
+             * @name initialize
+             * @memberof plat.ui.DomEvent
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * Initializes the element and event of this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * 
+             * @param {Node} element The element associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * 
+             * @returns {void}
+             */
             initialize(element: Node, event: string): void;
+            /**
+             * @name initialize
+             * @memberof plat.ui.DomEvent
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * Initializes the element and event of this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * 
+             * @returns {void}
+             */
             initialize(element: Window, event: string): void;
             initialize(element: any, event: string): void {
                 this.element = element;
                 this.event = event;
             }
 
+            /**
+             * @name trigger
+             * @memberof plat.ui.DomEvent
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Triggers its event on its element.
+             * 
+             * @param {Object} eventExtension? An event extension to extend the dispatched CustomEvent.
+             * 
+             * @returns {void}
+             */
             trigger(eventExtension?: Object): void {
                 var customEv = <CustomEvent>this.$Document.createEvent('CustomEvent');
                 if (isObject(eventExtension)) {
@@ -26778,12 +31642,64 @@ module plat {
         register.injectable(__DomEventInstance, IDomEventInstance, null, __INSTANCE);
 
         /**
-         * A specialized class for managing a single custom touch event in DomEvents.
+         * @name CustomDomEvent
+         * @memberof plat.ui
+         * @kind class
+         * @exported false
+         * 
+         * @extends {plat.ui.DomEvent}
+         * @implements {plat.ui.ICustomDomEventInstance}
+         * 
+         * @description
+         * A specialized class for managing a single custom touch event in {@link plat.ui.DomEvents|DomEvents}.
          */
-        class CustomDomEvent extends DomEvent {
+        class CustomDomEvent extends DomEvent implements ICustomDomEventInstance {
+            /**
+             * @name count
+             * @memberof plat.ui.CustomDomEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
+             * The number of listeners added for this event on this element.
+             */
             count = 0;
 
+            /**
+             * @name constructor
+             * @memberof plat.ui.CustomDomEvent
+             * @kind function
+             * @access public
+             * @variation 0
+             * 
+             * @description
+             * The constructor for a {@link plat.ui.CustomDomEvent|CustomDomEvent}. Assigns the 
+             * associated element and event.
+             * 
+             * @param {Node} element The associated element.
+             * @param {string} event The associated event.
+             * 
+             * @returns {plat.ui.CustomDomEvent} A {@link plat.ui.CustomDomEvent|CustomDomEvent} instance.
+             */
             constructor(element: Node, event: string);
+            /**
+             * @name constructor
+             * @memberof plat.ui.CustomDomEvent
+             * @kind function
+             * @access public
+             * @variation 1
+             * 
+             * @description
+             * The constructor for a {@link plat.ui.CustomDomEvent|CustomDomEvent}. Assigns the 
+             * associated element and event.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} event The associated event.
+             * 
+             * @returns {plat.ui.CustomDomEvent} A {@link plat.ui.CustomDomEvent|CustomDomEvent} instance.
+             */
             constructor(element: Window, event: string);
             constructor(element: any, event: string) {
                 super();
@@ -26792,6 +31708,20 @@ module plat {
                 this.count++;
             }
 
+            /**
+             * @name trigger
+             * @memberof plat.ui.CustomDomEvent
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Triggers its event on its element.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The current touch event object used to extend the 
+             * newly created custom event.
+             * 
+             * @returns {void}
+             */
             trigger(ev: IPointerEvent): void {
                 var customEv = <CustomEvent>this.$Document.createEvent('CustomEvent');
                 this.__extendEventObject(customEv, ev);
@@ -26799,6 +31729,20 @@ module plat {
                 this.element.dispatchEvent(customEv);
             }
 
+            /**
+             * @name __extendEventObject
+             * @memberof plat.ui.CustomDomEvent
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Extends the custom event to mimic a standardized touch event.
+             * 
+             * @param {plat.ui.IGestureEvent} customEv The newly created custom event object.
+             * @param {plat.ui.IPointerEvent} ev The current touch event object.
+             * 
+             * @returns {void}
+             */
             private __extendEventObject(customEv: IGestureEvent, ev: IPointerEvent): void {
                 // not using extend function because this gets called so often for certain events.
                 var pointerType = ev.pointerType;
@@ -26818,6 +31762,20 @@ module plat {
                 customEv.pageY = ev.pageY;
             }
 
+            /**
+             * @name __convertPointerType
+             * @memberof plat.ui.DomEvent
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Converts pointer type to a standardized string.
+             * 
+             * @param {any} pointerType The pointer type as either a number or a string.
+             * @param {string} eventType The touch event type.
+             * 
+             * @returns {string} The standardized pointer type.
+             */
             private __convertPointerType(pointerType: any, eventType: string): string {
                 switch (<any>pointerType) {
                     case MSPointerEvent.MSPOINTER_TYPE_MOUSE:
@@ -26832,104 +31790,258 @@ module plat {
             }
         }
 
+        /**
+         * @name ICustomDomEventInstance
+         * @memberof plat.ui
+         * @kind interface
+         * @exported false
+         * 
+         * @extends {plat.ui.IDomEventInstance}
+         * 
+         * @description
+         * A specialized object for managing a single custom touch event in {@link plat.ui.DomEvents|DomEvents}.
+         */
         interface ICustomDomEventInstance extends IDomEventInstance {
             /**
-             * The number of events registered to this IDomEventInstance.
+             * @name count
+             * @memberof plat.ui.ICustomDomEventInstance
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
+             * The number of listeners added for this event on this element.
              */
             count: number;
 
             /**
-             * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
+             * @name trigger
+             * @memberof plat.ui.ICustomDomEventInstance
+             * @kind function
+             * @access public
              * 
-             * @param ev The event object used to extend the custom touch event.
+             * @description
+             * Triggers its event on its element.
+             * 
+             * @param {plat.ui.IPointerEvent} ev The current touch event object used to extend the 
+             * newly created custom event.
+             * 
+             * @returns {void}
              */
             trigger(ev: IPointerEvent): void;
         }
 
         /**
+         * @name IDomEventInstance
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object used for managing a single custom event.
          */
         export interface IDomEventInstance {
             /**
-             * The node or window object associated with this IDomEventInstance object.
+             * @name element
+             * @memberof plat.ui.IDomEventInstance
+             * @kind property
+             * @access public
+             * 
+             * @type {any}
+             * 
+             * @description
+             * The node or window object associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
              */
             element: any;
 
             /**
-             * The event type associated with this IDomEventInstance.
+             * @name event
+             * @memberof plat.ui.IDomEventInstance
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The event type associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
              */
             event: string;
 
             /**
-             * Initializes the element and event of the IDomEventInstance object
+             * @name initialize
+             * @memberof plat.ui.IDomEventInstance
+             * @kind function
+             * @access public
+             * @variation 0
              * 
-             * @param The node associated with this IDomEventInstance. 
-             * @param event The type of event this IDomEventInstance is managing.
+             * @description
+             * Initializes the element and event of this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * 
+             * @param {Node} element The element associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * 
+             * @returns {void}
              */
             initialize(element: Node, event: string): void;
             /**
-             * Initializes the element and event of the IDomEventInstance object
+             * @name initialize
+             * @memberof plat.ui.IDomEventInstance
+             * @kind function
+             * @access public
+             * @variation 1
              * 
-             * @param The window object. 
-             * @param event The type of event this IDomEventInstance is managing.
+             * @description
+             * Initializes the element and event of this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * 
+             * @param {Window} element The window object.
+             * @param {string} event The event associated with this {@link plat.ui.IDomEventInstance|IDomEventInstance} object.
+             * 
+             * @returns {void}
              */
             initialize(element: Window, event: string): void;
 
             /**
-             * Triggers a custom event to bubble up to all elements in this branch of the DOM tree.
+             * @name trigger
+             * @memberof plat.ui.IDomEventInstance
+             * @kind function
+             * @access public
              * 
-             * @param eventExtension object containing properties to extend the custom DOM event.
+             * @description
+             * Triggers its event on its element.
+             * 
+             * @param {Object} eventExtension? An event extension to extend the dispatched CustomEvent.
+             * 
+             * @returns {void}
              */
             trigger(eventExtension?: Object): void;
         }
 
         /**
+         * @name ICustomEventListener
+         * @memberof plat.ui
+         * @kind interface
+         * @exported false
+         * 
+         * @extends {plat.IObject<EventListener>}
+         * 
+         * @description
          * Describes the touch event listeners for the document.
          */
         interface ICustomEventListener extends IObject<EventListener> {
             /**
+             * @name start
+             * @memberof plat.ui.ICustomEventListener
+             * @kind property
+             * @access public
+             * 
+             * @type {EventListener}
+             * 
+             * @description
              * The touch start event.
              */
             start: EventListener;
             /**
+             * @name end
+             * @memberof plat.ui.ICustomEventListener
+             * @kind property
+             * @access public
+             * 
+             * @type {EventListener}
+             * 
+             * @description
              * The touch end event.
              */
             end: EventListener;
             /**
+             * @name move
+             * @memberof plat.ui.ICustomEventListener
+             * @kind property
+             * @access public
+             * 
+             * @type {EventListener}
+             * 
+             * @description
              * The touch move event.
              */
             move: EventListener;
         }
 
         /**
+         * @name IExtendedEvent
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @extends {Event}
+         * 
+         * @description
          * An extended event object potentially containing coordinate and movement information.
          */
         export interface IExtendedEvent extends Event {
             /**
+             * @name clientX
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate of the event on the screen relative to the upper left corner of the 
              * browser window. This value cannot be affected by scrolling.
              */
             clientX?: number;
 
             /**
+             * @name clientY
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The y-coordinate of the event on the screen relative to the upper left corner of the 
              * browser window. This value cannot be affected by scrolling.
              */
             clientY?: number;
 
             /**
+             * @name screenX
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate of the event on the screen relative to the upper left corner of the 
              * physical screen or monitor.
              */
             screenX?: number;
 
             /**
+             * @name screenY
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The y-coordinate of the event on the screen relative to the upper left corner of the 
              * physical screen or monitor.
              */
             screenY?: number;
 
             /**
+             * @name pageX
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate of the event on the screen relative to the upper left corner of the 
              * fully rendered content area in the browser window. This value can be altered and/or affected by 
              * embedded scrollable pages when the scroll bar is moved.
@@ -26937,6 +32049,14 @@ module plat {
             pageX?: number;
 
             /**
+             * @name pageY
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The y-coordinate of the event on the screen relative to the upper left corner of the 
              * fully rendered content area in the browser window. This value can be altered and/or affected by 
              * embedded scrollable pages when the scroll bar is moved.
@@ -26944,34 +32064,82 @@ module plat {
             pageY?: number;
 
             /**
+             * @name offsetX
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate of the event relative to the top-left corner of the 
              * offsetParent element that fires the event.
              */
             offsetX?: number;
 
             /**
+             * @name offsetY
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The y-coordinate of the event relative to the top-left corner of the 
              * offsetParent element that fires the event.
              */
             offsetY?: number;
 
             /**
+             * @name offset
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.IPoint}
+             * 
+             * @description
              * The x and y-coordinates of the event as an object relative to the top-left corner of the 
              * offsetParent element that fires the event.
              */
             offset: IPoint;
 
             /**
+             * @name direction
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
              * The potential direction associated with the event.
              */
             direction?: string;
 
             /**
+             * @name velocity
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.IVelocity}
+             * 
+             * @description
              * The potential velocity associated with the event.
              */
             velocity?: IVelocity;
 
             /**
+             * @name touches
+             * @memberof plat.ui.IExtendedEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<plat.ui.IExtendedEvent>}
+             * 
+             * @description
              * An array containing all current touch points. The IExtendedEvents 
              * may slightly differ depending on the browser implementation.
              */
@@ -26979,55 +32147,133 @@ module plat {
         }
 
         /**
+         * @name IPointerEvent
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @extends {plat.ui.IExtendedEvent}
+         * 
+         * @description
          * An extended event object potentially containing coordinate and movement information as 
          * well as pointer type for pointer events.
          */
         export interface IPointerEvent extends IExtendedEvent {
             /**
-             * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '')
+             * @name pointerType
+             * @memberof plat.ui.IPointerEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '').
              */
             pointerType?: string;
 
             /**
+             * @name pointerId
+             * @memberof plat.ui.IPointerEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * A unique touch identifier.
              */
             pointerId?: number;
 
             /**
+             * @name identifier
+             * @memberof plat.ui.IPointerEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * A unique touch identifier.
              */
             identifier?: number;
         }
 
         /**
+         * @name IGestureEvent
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @extends {CustomEvent}
+         * 
+         * @description
          * The type of event object passed into the listeners for our custom events.
          */
         export interface IGestureEvent extends CustomEvent {
             /**
+             * @name clientX
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate of the event on the screen relative to the upper left corner of the 
              * browser window. This value cannot be affected by scrolling.
              */
             clientX?: number;
 
             /**
+             * @name clientY
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The y-coordinate of the event on the screen relative to the upper left corner of the 
              * browser window. This value cannot be affected by scrolling.
              */
             clientY?: number;
 
             /**
+             * @name screenX
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate of the event on the screen relative to the upper left corner of the 
              * physical screen or monitor.
              */
             screenX?: number;
 
             /**
+             * @name screenY
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The y-coordinate of the event on the screen relative to the upper left corner of the 
              * physical screen or monitor.
              */
             screenY?: number;
 
             /**
+             * @name pageX
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate of the event on the screen relative to the upper left corner of the 
              * fully rendered content area in the browser window. This value can be altered and/or affected by 
              * embedded scrollable pages when the scroll bar is moved.
@@ -27035,6 +32281,14 @@ module plat {
             pageX?: number;
 
             /**
+             * @name pageY
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The y-coordinate of the event on the screen relative to the upper left corner of the 
              * fully rendered content area in the browser window. This value can be altered and/or affected by 
              * embedded scrollable pages when the scroll bar is moved.
@@ -27042,214 +32296,479 @@ module plat {
             pageY?: number;
 
             /**
+             * @name offsetX
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate of the event relative to the top-left corner of the 
              * offsetParent element that fires the event.
              */
             offsetX?: number;
 
             /**
+             * @name offsetY
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The y-coordinate of the event relative to the top-left corner of the 
              * offsetParent element that fires the event.
              */
             offsetY?: number;
 
             /**
+             * @name direction
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
              * The potential direction associated with the event.
              */
             direction?: string;
 
             /**
+             * @name velocity
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.IVelocity}
+             * 
+             * @description
              * The potential velocity associated with the event.
              */
             velocity?: IVelocity;
 
             /**
+             * @name touches
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<plat.ui.IExtendedEvent>}
+             * 
+             * @description
              * An array containing all current touch points. The IExtendedEvents 
              * may slightly differ depending on the browser implementation.
              */
             touches?: Array<IExtendedEvent>;
 
             /**
-             * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '')
+             * @name pointerType
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The type of interaction associated with the touch event ('touch', 'pen', 'mouse', '').
              */
             pointerType?: string;
 
             /**
+             * @name identifier
+             * @memberof plat.ui.IGestureEvent
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * A unique touch identifier.
              */
             identifier?: number;
         }
 
         /**
+         * @name IGestureListener
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * The listener interface for our custom DOM events.
          */
         export interface IGestureListener {
             /**
-             * An EventListener with the argument as an IGestureEvent.
+             * @memberof plat.ui.IGestureListener
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * The method signature for a {@link plat.ui.IGestureListener|IGestureListener}. 
+             * An EventListener with the argument as an {@link plat.ui.IGestureEvent|IGestureEvent}.
+             * 
+             * @param {plat.ui.IGestureEvent} ev The gesture event object.
+             * 
+             * @returns {void}
              */
             (ev?: IGestureEvent): void;
         }
 
         /**
+         * @name IEventSubscriber
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @extends {plat.ui.IGestures<plat.ui.IDomEventInstance>}
+         * 
+         * @description
          * Describes an object to keep track of a single 
          * element's registered custom event types.
          */
         export interface IEventSubscriber extends IGestures<IDomEventInstance> {
             /**
+             * @name gestureCount
+             * @memberof plat.ui.IEventSubscriber
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The total registered gesture count for the associated element.
              */
             gestureCount: number;
         }
 
         /**
+         * @name IGestures
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object containing information 
          * regarding all our custom events.
+         * 
+         * @typeparam {any} T The type of objects/primitives contained in this object.
          */
         export interface IGestures<T> {
             /**
+             * @name $tap
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the tap event.
              */
             $tap?: T;
 
             /**
+             * @name $dbltap
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the dbltap event.
              */
             $dbltap?: T;
 
             /**
+             * @name $hold
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the hold event.
              */
             $hold?: T;
 
             /**
+             * @name $release
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the release event.
              */
             $release?: T;
 
             /**
+             * @name $swipe
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the swipe event.
              */
             $swipe?: T;
 
             /**
+             * @name $swipeleft
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the swipeleft event.
              */
             $swipeleft?: T;
 
             /**
+             * @name $swiperight
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the swiperight event.
              */
             $swiperight?: T;
 
             /**
+             * @name $swipeup
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the swipeup event.
              */
             $swipeup?: T;
 
             /**
+             * @name $swipedown
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the swipedown event.
              */
             $swipedown?: T;
 
             /**
+             * @name $track
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the track event.
              */
             $track?: T;
 
             /**
+             * @name $trackleft
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the trackleft event.
              */
             $trackleft?: T;
 
             /**
+             * @name $trackright
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the trackright event.
              */
             $trackright?: T;
 
             /**
+             * @name $trackup
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the trackup event.
              */
             $trackup?: T;
 
             /**
+             * @name $trackdown
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the trackdown event.
              */
             $trackdown?: T;
 
             /**
+             * @name $trackend
+             * @memberof plat.ui.IGestures
+             * @kind property
+             * @access public
+             * 
+             * @type {T}
+             * 
+             * @description
              * The string type|number of events associated with the trackend event.
              */
             $trackend?: T;
         }
 
         /**
-         * Describes an object containing information about a single point touched.
-         */
-        export interface ITouchPoint extends IPoint {
-            /**
-             * The touch target.
-             */
-            target: EventTarget;
-
-            /**
-             * The time of the touch.
-             */
-            timeStamp: number;
-
-            /**
-             * Prevents the default action of the browser
-             */
-            preventDefault?: () => void;
-        }
-
-        /**
-         * Describes an object containing x and y coordinates
+         * @name IPoint
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
+         * Describes an object containing x and y coordinates.
          */
         export interface IPoint {
             /**
+             * @name x
+             * @memberof plat.ui.IPoint
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The x-coordinate.
              */
             x: number;
 
             /**
-             * The y-coordinate
+             * @name y
+             * @memberof plat.ui.IPoint
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
+             * The y-coordinate.
              */
             y: number;
         }
 
         /**
+         * @name IVelocity
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object containing a speed in both the horizontal and vertical directions.
          */
         export interface IVelocity {
             /**
-             * The horizontal speed.
+             * @name x
+             * @memberof plat.ui.IVelocity
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
+             * The horizontal, x velocity.
              */
             x: number;
 
             /**
-             * The vertical speed.
+             * @name y
+             * @memberof plat.ui.IVelocity
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
+             * The vertical, y velocity.
              */
             y: number;
         }
 
         /**
+         * @name IIntervals
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object containing time interval information that 
          * governs the behavior of certain custom DOM events.
          */
         export interface IIntervals {
             /**
+             * @name tapInterval
+             * @memberof plat.ui.IIntervals
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The max time in milliseconds a user can hold down on the screen 
              * for a tap event to be fired. Defaults to 200 ms.
              */
             tapInterval: number;
 
             /**
+             * @name dblTapInterval
+             * @memberof plat.ui.IIntervals
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The max time in milliseconds a user can wait between consecutive 
              * taps for a dbltap event to be fired. Defaults to 300 ms.
              */
             dblTapInterval: number;
 
             /**
+             * @name holdInterval
+             * @memberof plat.ui.IIntervals
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The time in milliseconds a user must hold down on the screen 
              * before a hold event is fired or a release event can be fired. 
              * Defaults to 400 ms.
@@ -27257,6 +32776,14 @@ module plat {
             holdInterval: number;
 
             /**
+             * @name dblTapZoomDelay
+             * @memberof plat.ui.IIntervals
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The delay in milliseconds between the time a user taps to the time 
              * the tap event fires. Used in the case where a double-tap-to-zoom 
              * feature is required. Defaults to 0 ms.
@@ -27265,17 +32792,38 @@ module plat {
         }
 
         /**
+         * @name IDistances
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object containing distance information that 
          * governs the behavior of certain custom DOM events.
          */
         export interface IDistances {
             /**
+             * @name minScrollDistance
+             * @memberof plat.ui.IDistances
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The minimum distance a user must move after touch down to register 
              * it as a scroll instead of a tap. Defaults to 5.
              */
             minScrollDistance: number;
 
             /**
+             * @name maxDblTapDistance
+             * @memberof plat.ui.IDistances
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The maximum distance between consecutive taps a user is allowed to 
              * register a dbltap event. Defaults to 20.
              */
@@ -27283,659 +32831,1533 @@ module plat {
         }
 
         /**
+         * @name IVelocities
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object containing velocity information that 
          * governs the behavior of certain custom DOM events.
          */
         export interface IVelocities {
             /**
+             * @name minSwipeVelocity
+             * @memberof plat.ui.IVelocities
+             * @kind property
+             * @access public
+             * 
+             * @type {number}
+             * 
+             * @description
              * The minimum velocity a user must move after touch down to register 
-             * a swipe event. Defaults to 0.5.
+             * a swipe event. Defaults to 0.8.
              */
             minSwipeVelocity: number;
         }
 
         /**
+         * @name IDefaultStyle
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes an object used for creating a custom class for styling an element 
          * listening for a custom DOM event.
          */
         export interface IDefaultStyle {
             /**
+             * @name className
+             * @memberof plat.ui.IDefaultStyle
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
              * The className that will be used to define the custom style.
              */
             className: string;
 
             /**
+             * @name styles
+             * @memberof plat.ui.IDefaultStyle
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
              * An array of string styles in the format:
              * CSS identifier : value
-             * (i.e. 'width : 100px')
+             * (e.g. 'width : 100px')
              */
             styles: Array<string>;
         }
 
         /**
+         * @name IDomEventsConfig
+         * @memberof plat.ui
+         * @kind interface
+         * 
+         * @description
          * Describes a configuration object for all custom DOM events.
          */
         export interface IDomEventsConfig {
             /**
+             * @name intervals
+             * @memberof plat.ui.IDomEventsConfig
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.IIntervals}
+             * 
+             * @description
              * An object containing the different time intervals that govern the behavior of certain 
              * custom DOM events.
              */
             intervals: IIntervals;
 
             /**
+             * @name distances
+             * @memberof plat.ui.IDomEventsConfig
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.IDistances}
+             * 
+             * @description
              * An object containing the different minimum/maximum distances that govern the behavior of certain 
              * custom DOM events.
              */
             distances: IDistances;
 
             /**
+             * @name velocities
+             * @memberof plat.ui.IDomEventsConfig
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.IVelocities}
+             * 
+             * @description
              * An object containing the different minimum/maximum velocities that govern the behavior of certain 
              * custom DOM events.
              */
             velocities: IVelocities;
 
             /**
+             * @name styleConfig
+             * @memberof plat.ui.IDomEventsConfig
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<plat.ui.IDefaultStyle>}
+             * 
+             * @description
              * The default CSS styles applied to elements listening for custom DOM events.
              */
             styleConfig: Array<IDefaultStyle>;
         }
 
-        /**
-         * A class used for animating elements.
-         */
-        export class Animator implements IAnimator {
-            $Compat: ICompat = acquire(__Compat);
-
+    /**
+     * @name animations
+     * @memberof plat.ui
+     * @kind namespace
+     * @access public
+     * 
+     * @description
+     * Holds all the classes and interfaces related to UI animation components for platypus.
+     */
+        export module animations {
             /**
-             * All elements currently being animated.
-             */
-            _elements: IObject<IAnimatedElement> = {};
-
-            private __cssWarning = false;
-
-            /**
-             * Animates the element with the defined animation denoted by the key.
+             * @name Animator
+             * @memberof plat.ui.animations
+             * @kind class
              * 
-             * @param element The Element to be animated.
-             * @param key The identifier specifying the type of animation.
-             * @param options Specified options for the animation.
+             * @implements {plat.ui.animations.IAnimator}
+             * 
+             * @description
+             * A class used for animating elements.
              */
-            animate(element: Element, key: string, options?: any): IAnimationPromise {
-                if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE || this.__parentIsAnimating(element)) {
-                    return this.__resolvePromise();
-                }
+            export class Animator implements IAnimator {
+                /**
+                 * @name $Compat
+                 * @memberof plat.ui.animations.Animator
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.ICompat}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.ICompat|ICompat} injectable.
+                 */
+                $Compat: ICompat = acquire(__Compat);
 
-                var $compat = this.$Compat,
-                    animation = animationInjectors[key],
-                    jsAnimation = jsAnimationInjectors[key],
-                    animationInstance: IBaseAnimation;
-
-                if (!$compat.animationSupported || isUndefined(animation)) {
-                    if (isUndefined(jsAnimation)) {
+                /**
+                 * @name _elements
+                 * @memberof plat.ui.animations.Animator
+                 * @kind property
+                 * @access protected
+                 * 
+                 * @type {plat.IObject<plat.ui.animations.IAnimatedElement>}
+                 * 
+                 * @description
+                 * All elements currently being animated.
+                 */
+                _elements: IObject<IAnimatedElement> = {};
+        
+                /**
+                 * @name __cssWarning
+                 * @memberof plat.ui.animations.Animator
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {boolean}
+                 * 
+                 * @description
+                 * Indicates if a warning regarding our CSS was previously fired.
+                 */
+                private __cssWarning = false;
+        
+                /**
+                 * @name animate
+                 * @memberof plat.ui.animations.Animator
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Animates the element with the defined animation denoted by the key.
+                 * 
+                 * @param {Element} element The Element to be animated.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {any} options Specified options for the animation.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationPromise} A promise that resolves when the animation is finished.
+                 */
+                animate(element: Element, key: string, options?: any): IAnimationPromise {
+                    if (!isNode(element) || element.nodeType !== Node.ELEMENT_NODE || this.__parentIsAnimating(element)) {
                         return this.__resolvePromise();
                     }
 
-                    animationInstance = jsAnimation.inject();
-                } else {
-                    if (!(this.__cssWarning || $compat.platCss)) {
-                        var $exception: IExceptionStatic = acquire(__ExceptionStatic);
-                        $exception.warn('CSS animation occurring and platypus.css was not found prior to platypus.js. If you ' +
-                            'intend to use platypus.css, please move it before platypus.js inside your head or body declaration.',
-                            $exception.ANIMATION);
-                        this.__cssWarning = true;
+                    var $compat = this.$Compat,
+                        animation = animationInjectors[key],
+                        jsAnimation = jsAnimationInjectors[key],
+                        animationInstance: IBaseAnimation;
+
+                    if (!$compat.animationSupported || isUndefined(animation)) {
+                        if (isUndefined(jsAnimation)) {
+                            return this.__resolvePromise();
+                        }
+
+                        animationInstance = jsAnimation.inject();
+                    } else {
+                        if (!(this.__cssWarning || $compat.platCss)) {
+                            var $exception: IExceptionStatic = acquire(__ExceptionStatic);
+                            $exception.warn('CSS animation occurring and platypus.css was not found prior to platypus.js. If you ' +
+                                'intend to use platypus.css, please move it before platypus.js inside your head or body declaration.',
+                                $exception.ANIMATION);
+                            this.__cssWarning = true;
+                        }
+
+                        animationInstance = animation.inject();
                     }
 
-                    animationInstance = animation.inject();
-                }
+                    var id = this.__setAnimationId(element, animationInstance);
+                    this.__stopChildAnimations(element, id);
+                    var animationObj = this._elements[id],
+                        animationPromise = (<BaseAnimation>animationInstance)._init(element, options).then(() => {
+                            animationObj.promise = null;
+                            animationObj.animationEnd();
+                        });
 
-                var id = this.__setAnimationId(element, animationInstance);
-                this.__stopChildAnimations(element, id);
-                var animationObj = this._elements[id],
-                    animationPromise = (<BaseAnimation>animationInstance)._init(element, options).then(() => {
-                        animationObj.promise = null;
-                        animationObj.animationEnd();
-                    });
-
-                if (!isNull(animationObj.promise)) {
-                    return animationObj.promise.then(() => {
-                        return animationPromise;
-                    });
-                }
-
-                return (animationObj.promise = animationPromise);
-            }
-
-            private __parentIsAnimating(element: Node): boolean {
-                while (!isDocument(element = element.parentNode) && element.nodeType === Node.ELEMENT_NODE) {
-                    if (hasClass(<HTMLElement>element, __Animating)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            private __setAnimationId(element: Node, animationInstance: IBaseAnimation): string {
-                var elements = this._elements,
-                    plat = (<ICustomElement>element).__plat,
-                    id: string;
-
-                if (isUndefined(plat)) {
-                    (<ICustomElement>element).__plat = plat = {};
-                }
-
-                if (isUndefined(plat.animation)) {
-                    plat.animation = id = uniqueId('animation_');
-                } else {
-                    id = plat.animation;
-                }
-
-                var animationObj = elements[id],
-                    removeListener = (reanimating?: boolean) => {
-                    if (reanimating === true) {
-                        animationInstance.cancel();
-                        return;
+                    if (!isNull(animationObj.promise)) {
+                        return animationObj.promise.then(() => {
+                            return animationPromise;
+                        });
                     }
 
-                    removeClass(<HTMLElement>element, __Animating);
-                    deleteProperty(elements, id);
-                    deleteProperty(plat, 'animation');
-                    if (isEmpty(plat)) {
-                        deleteProperty(element, '__plat');
-                    }
-                };
-
-                if (isUndefined(animationObj)) {
-                    addClass(<HTMLElement>element, __Animating);
-                    elements[id] = {
-                        animationEnd: removeListener
-                    };
-                } else {
-                    animationObj.animationEnd(true);
-                    animationObj.animationEnd = removeListener;
+                    return (animationObj.promise = animationPromise);
                 }
-
-                return id;
-            }
-
-            private __stopChildAnimations(element: Element, id: string): void {
-                var elements = this._elements,
-                    animatedElements = Array.prototype.slice.call(element.querySelectorAll('.' + __Animating)),
-                    length = animatedElements.length,
-                    animatedElement: ICustomElement,
-                    plat: ICustomElementProperty;
-
-                while (length-- > 0) {
-                    animatedElement = animatedElements[length];
-                    plat = animatedElement.__plat;
-                    if (isUndefined(plat) || isUndefined(plat.animation)) {
-                        continue;
+        
+                /**
+                 * @name __parentIsAnimating
+                 * @memberof plat.ui.animations.Animator
+                 * @kind function
+                 * @access private
+                 * 
+                 * @description
+                 * Checks whether or not any parent elements are animating.
+                 * 
+                 * @param {Node} element The element whose parents we need to check.
+                 * 
+                 * @returns {boolean} Whether or not animating parents were found.
+                 */
+                private __parentIsAnimating(element: Node): boolean {
+                    while (!isDocument(element = element.parentNode) && element.nodeType === Node.ELEMENT_NODE) {
+                        if (hasClass(<HTMLElement>element, __Animating)) {
+                            return true;
+                        }
                     }
 
-                    id = plat.animation;
-                    if (isFunction(elements[id])) {
-                        elements[id].animationEnd();
+                    return false;
+                }
+        
+                /**
+                 * @name __setAnimationId
+                 * @memberof plat.ui.animations.Animator
+                 * @kind function
+                 * @access private
+                 * 
+                 * @description
+                 * Sets an new, unique animation ID and denotes the element as currently being animated.
+                 * 
+                 * @param {Node} element The element being animated.
+                 * @param {plat.ui.animations.IBaseAnimation} animationInstance The animation instance doing the animating.
+                 * 
+                 * @returns {string} The new animation ID.
+                 */
+                private __setAnimationId(element: Node, animationInstance: IBaseAnimation): string {
+                    var elements = this._elements,
+                        plat = (<ICustomElement>element).__plat,
+                        id: string;
+
+                    if (isUndefined(plat)) {
+                        (<ICustomElement>element).__plat = plat = {};
                     }
-                }
-            }
 
-            private __resolvePromise() {
-                return new AnimationPromise((resolve) => {
-                    resolve();
-                });
-            }
-        }
+                    if (isUndefined(plat.animation)) {
+                        plat.animation = id = uniqueId('animation_');
+                    } else {
+                        id = plat.animation;
+                    }
 
-        /**
-         * The Type for referencing the '$Animator' injectable as a dependency.
-         */
-        export function IAnimator(): IAnimator {
-            return new Animator();
-        }
+                    var animationObj = elements[id],
+                        removeListener = (reanimating?: boolean) => {
+                        if (reanimating === true) {
+                            animationInstance.cancel();
+                            return;
+                        }
 
-        register.injectable('$Animator', IAnimator);
-
-        /**
-         * Describes an object used for animating elements.
-         */
-        export interface IAnimator {
-            /**
-             * Animates the element with the defined animation denoted by the key.
-             * 
-             * @param element The Element to be animated.
-             * @param key The identifier specifying the type of animation.
-             * @param options Specified options for the animation.
-             */
-            animate(element: Element, key: string, options?: any): IAnimationPromise;
-        }
-
-        /**
-         * Describes an object representing a currenlty animated element.
-         */
-        export interface IAnimatedElement {
-            /**
-             * The function called at the conclusion of the animation.
-             * 
-             * @param reanimated Specifies whether the element is being reanimated while 
-             * in a current animation.
-             */
-            animationEnd: (reanimated?: boolean) => void;
-
-            /**
-             * A promise representing an element's current state of animation.
-             */
-            promise?: IAnimationThenable<any>;
-        }
-
-        /**
-         * Describes a type of Promise that fulfills with an IAjaxResponse and can be optionally cancelled.
-         */
-        export class AnimationPromise extends async.Promise<void> implements IAnimationPromise {
-            private __animationInstance: IBaseAnimation;
-            constructor(resolveFunction: (resolve: (value?: void) => any) => void, promise?: any) {
-                super(resolveFunction);
-                if (!isNull(promise)) {
-                    this.__animationInstance = promise.__animationInstance;
-                }
-            }
-
-            cancel(): IAnimationPromise {
-                if (!isNull(this.__animationInstance)) {
-                    this.__animationInstance.cancel();
-                    this.__animationInstance.end();
-                }
-
-                return this;
-            }
-
-            then<U>(onFulfilled: (success: void) => U): IAnimationThenable<U>;
-            then<U>(onFulfilled: (success: void) => async.IThenable<U>): IAnimationThenable<U>;
-            then<U>(onFulfilled: (success: void) => any): IAnimationThenable<U>  {
-                return <IAnimationThenable<U>><any>super.then<U>(onFulfilled);
-            }
-
-            catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-            catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
-            catch<U>(onRejected: (error: any) => any): IAnimationThenable<U> {
-                return <IAnimationThenable<U>><any>super.catch<U>(onRejected);
-            }
-        }
-
-        /**
-         * Describes a type of IThenable that can optionally cancel it's associated animation.
-         */
-        export interface IAnimationThenable<R> extends async.IThenable<R> {
-            /**
-             * A method to cancel the current animation.
-             */
-            cancel(): IAnimationPromise;
-
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
-            then<U>(onFulfilled: (success: R) => IAnimationThenable<U>,
-                onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
-            then<U>(onFulfilled: (success: R) => IAnimationThenable<U>, onRejected?: (error: any) => U): IAnimationThenable<U>;
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
-            then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
-            then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAnimationThenable<U>;
-
-            /**
-             * A wrapper method for Promise.then(undefined, onRejected);
-             * 
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
-            catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
-            /**
-             * A wrapper method for Promise.then(undefined, onRejected);
-             * 
-             * @param onRejected A method called when/if the promise rejects. If undefined the next
-             * onRejected method in the promise chain will be called.
-             */
-            catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
-        }
-
-        /**
-         * Describes a type of IPromise that fulfills when an animation is finished and can be optionally cancelled.
-         */
-        export interface IAnimationPromise extends IAnimationThenable<void> {
-            /**
-             * A method to cancel the current animation.
-             */
-            cancel(): IAnimationPromise;
-
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             */
-            then<U>(onFulfilled: (success: void) => U): IAnimationThenable<U>;
-
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             */
-            then<U>(onFulfilled: (success: void) => async.IThenable<U>): IAnimationThenable<U>;
-
-            /**
-             * Takes in two methods, called when/if the promise fulfills/rejects.
-             * 
-             * @param onFulfilled A method called when/if the promise fulills. If undefined the next
-             * onFulfilled method in the promise chain will be called.
-             */
-            then<U>(onFulfilled: (success: void) => IAnimationThenable<U>): IAnimationThenable<U>;
-        }
-
-        /**
-         * A class representing a single animation for a single element.
-         */
-        export class BaseAnimation implements IBaseAnimation {
-            $Compat: ICompat = acquire(__Compat);
-
-            /**
-             * The node having the animation performed on it.
-             */
-            element: HTMLElement;
-
-            /**
-             * Contains DOM helper methods for manipulating this control's element.
-             */
-            dom: IDom = acquire(__Dom);
-
-            /**
-             * Specified options for the animation.
-             */
-            options: any;
-
-            private __resolve: () => void;
-
-            /**
-             * A function for initializing the animation or any of its properties before start.
-             */
-            initialize(): void { }
-
-            /**
-             * A function denoting the start of the animation.
-             */
-            start(): void { }
-
-            /**
-             * A function to be called when the animation is over.
-             */
-            end(): void {
-                if (isFunction(this.__resolve)) {
-                    this.__resolve();
-                }
-                this.dispose();
-            }
-
-            /**
-             * A function to be called to let it be known the animation is being cancelled.
-             */
-            cancel(): void {
-                this.end();
-            }
-
-            /**
-             * A function for reverting any modifications or changes that may have been made as a 
-             * result of this animation.
-             */
-            dispose(): void {
-                this.__resolve = null;
-            }
-
-            /**
-             * Initializes the element and key properties of this animation and passes in the function 
-             * to resolve when finished.
-             * 
-             * @param element The element on which the animation will occur.
-             * @param options Specified options for the animation.
-             */
-            _init(element: Element, options?: any): IAnimationPromise {
-                this.element = <HTMLElement>element;
-                this.options = options;
-
-                return new AnimationPromise((resolve) => {
-                    this.__resolve = resolve;
-                    this.initialize();
-                    this.start();
-                }, { __animationInstance: this });
-            }
-        }
-
-        /**
-         * Describes an object representing a single animation for a single element.
-         */
-        export interface IBaseAnimation {
-            /**
-             * The node having the animation performed on it.
-             */
-            element: HTMLElement;
-
-            /**
-             * Contains DOM helper methods for manipulating this control's element.
-             */
-            dom: IDom;
-
-            /**
-             * Specified options for the animation.
-             */
-            options: any;
-
-            /**
-             * A function for initializing the animation or any of its properties before start.
-             */
-            initialize(): void;
-
-            /**
-             * A function denoting the start of the animation.
-             */
-            start(): void;
-
-            /**
-             * A function to be called when the animation is over.
-             */
-            end(): void;
-
-            /**
-             * A function for reverting any modifications or changes that may have been made as a 
-             * result of this animation.
-             */
-            dispose(): void;
-
-            /**
-             * A function to be called to let it be known the animation is being cancelled.
-             */
-            cancel(): void;
-        }
-
-        /**
-         * A class representing a single CSS animation for a single element.
-         */
-        export class CssAnimation extends BaseAnimation implements ICssAnimation {
-            private __animationEvents: IAnimationEvents = this.$Compat.animationEvents;
-            private __subscribers: Array<() => void> = [];
-            private __removeListener: IRemoveListener;
-
-            /**
-             * A function for reverting any modifications or changes that may have been made as a 
-             * result of this animation.
-             */
-            dispose(): void {
-                if (isFunction(this.__removeListener)) {
-                    this.__removeListener();
-                    this.__removeListener = null;
-                }
-                this.__subscribers = [];
-                super.dispose();
-            }
-
-            /**
-             * A function to listen to the start of an animation event.
-             * 
-             * @param listener The function to call when the animation begins.
-             */
-            animationStart(listener: () => void): ICssAnimation {
-                return this.__addEventListener(this.__animationEvents.$animationStart, listener);
-            }
-
-            /**
-             * A function to listen to the start of a transition event.
-             * 
-             * @param listener The function to call when the transition begins.
-             */
-            transitionStart(listener: () => void): ICssAnimation {
-                return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
-            }
-
-            /**
-             * A function to listen to the end of an animation event.
-             * 
-             * @param listener The function to call when the animation ends.
-             */
-            animationEnd(listener: () => void): ICssAnimation {
-                return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
-            }
-
-            /**
-             * A function to listen to the end of a transition event.
-             * 
-             * @param listener The function to call when the transition ends.
-             */
-            transitionEnd(listener: () => void): ICssAnimation {
-                return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
-            }
-
-            private __addEventListener(event: string, listener: () => void): ICssAnimation {
-                var subscribers = this.__subscribers,
-                    subscriber = () => {
-                        this.__removeListener = this.dom.addEventListener(this.element, event, (ev: Event) => {
-                            this.__removeListener();
-                            this.__removeListener = null;
-
-                            if (subscribers.length === 0) {
-                                return;
-                            }
-
-                            listener.call(this);
-                            subscribers.shift();
-
-                            if (subscribers.length === 0) {
-                                return;
-                            }
-
-                            subscribers[0]();
-                        }, false);
+                        removeClass(<HTMLElement>element, __Animating);
+                        deleteProperty(elements, id);
+                        deleteProperty(plat, 'animation');
+                        if (isEmpty(plat)) {
+                            deleteProperty(element, '__plat');
+                        }
                     };
 
-                subscribers.push(subscriber);
+                    if (isUndefined(animationObj)) {
+                        addClass(<HTMLElement>element, __Animating);
+                        elements[id] = {
+                            animationEnd: removeListener
+                        };
+                    } else {
+                        animationObj.animationEnd(true);
+                        animationObj.animationEnd = removeListener;
+                    }
 
-                if (subscribers.length === 1) {
-                    subscriber();
+                    return id;
+                }
+        
+                /**
+                 * @name __stopChildAnimations
+                 * @memberof plat.ui.animations.Animator
+                 * @kind function
+                 * @access private
+                 * 
+                 * @description
+                 * Forces child nodes of an animating element to stop animating.
+                 * 
+                 * @param {Element} element The element being animated.
+                 * @param {string} id The animation ID.
+                 * 
+                 * @returns {void}
+                 */
+                private __stopChildAnimations(element: Element, id: string): void {
+                    var elements = this._elements,
+                        animatedElements = Array.prototype.slice.call(element.querySelectorAll('.' + __Animating)),
+                        length = animatedElements.length,
+                        animatedElement: ICustomElement,
+                        plat: ICustomElementProperty;
+
+                    while (length-- > 0) {
+                        animatedElement = animatedElements[length];
+                        plat = animatedElement.__plat;
+                        if (isUndefined(plat) || isUndefined(plat.animation)) {
+                            continue;
+                        }
+
+                        id = plat.animation;
+                        if (isFunction(elements[id])) {
+                            elements[id].animationEnd();
+                        }
+                    }
+                }
+        
+                /**
+                 * @name __resolvePromise
+                 * @memberof plat.ui.animations.Animator
+                 * @kind function
+                 * @access private
+                 * 
+                 * @description
+                 * Immediately resolves an empty {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<void>} The immediately resolved 
+                 * {@link plat.ui.animations.AnimationPromise|AnimationPromise}.
+                 */
+                private __resolvePromise(): IAnimationThenable<void> {
+                    return new AnimationPromise((resolve) => {
+                        resolve();
+                    });
+                }
+            }
+
+            /**
+             * The Type for referencing the '$Animator' injectable as a dependency.
+             */
+            export function IAnimator(): IAnimator {
+                return new Animator();
+            }
+
+            register.injectable('$Animator', IAnimator);
+
+            /**
+             * @name IAnimator
+             * @memberof plat.ui.animations
+             * @kind interface
+             * 
+             * @description
+             * Describes an object used for animating elements.
+             */
+            export interface IAnimator {
+                /**
+                 * @name animate
+                 * @memberof plat.ui.animations.IAnimator
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Animates the element with the defined animation denoted by the key.
+                 * 
+                 * @param {Element} element The Element to be animated.
+                 * @param {string} key The identifier specifying the type of animation.
+                 * @param {any} options Specified options for the animation.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationPromise} A promise that resolves when the animation is finished.
+                 */
+                animate(element: Element, key: string, options?: any): IAnimationPromise;
+            }
+    
+            /**
+             * @name IAnimatedElement
+             * @memberof plat.ui.animations
+             * @kind interface
+             * 
+             * @description
+             * Describes an object representing a currenlty animated element.
+             */
+            export interface IAnimatedElement {
+                /**
+                 * @name animationEnd
+                 * @memberof plat.ui.animations.IAnimatedElement
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * The function called at the conclusion of the animation.
+                 * 
+                 * @param {boolean} reanimated? Specifies whether the element is being reanimated while 
+                 * in a current animation.
+                 * 
+                 * @returns {void}
+                 */
+                animationEnd: (reanimated?: boolean) => void;
+
+                /**
+                 * @name promise
+                 * @memberof plat.ui.animations.IAnimatedElement
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.ui.animations.IAnimationThenable<any>}
+                 * 
+                 * @description
+                 * A promise representing an element's current state of animation.
+                 */
+                promise?: IAnimationThenable<any>;
+            }
+    
+            /**
+             * @name AnimationPromise
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.async.Promise<void>}
+             * @implements {plat.ui.animations.IAnimationPromise}
+             * 
+             * @description
+             * Describes a type of {@link plat.async.Promise|Promise} that can be optionally cancelled.
+             */
+            export class AnimationPromise extends async.Promise<void> implements IAnimationPromise {
+                /**
+                 * @name __animationInstance
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {plat.ui.animations.IBaseAnimation}
+                 * 
+                 * @description
+                 * The animation instance to cancel if needed.
+                 */
+                private __animationInstance: IBaseAnimation;
+
+                /**
+                 * @name constructor
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 0
+                 * 
+                 * @description
+                 * The constructor method for the {@link plat.async.AjaxPromise}.
+                 * 
+                 * @param {(resolve: (value?: void) => any) => void} resolveFunction A resolve function 
+                 * that only allows for a resolve of void and no reject.
+                 * 
+                 * @returns {plat.ui.animations.AnimationPromise}
+                 */
+                constructor(resolveFunction: (resolve: (value?: void) => any) => void);
+                /**
+                 * @name constructor
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 1
+                 * 
+                 * @description
+                 * The constructor method for the {@link plat.async.AjaxPromise}.
+                 * 
+                 * @param {(resolve: (value?: void) => any) => void} resolveFunction A resolve function 
+                 * that only allows for a resolve of void and no reject.
+                 * @param {any} promise The promise object to allow for cancelling the {@link plat.ui.animations.AnimationPromise}.
+                 * 
+                 * @returns {plat.ui.animations.AnimationPromise}
+                 */
+                constructor(resolveFunction: (resolve: (value?: void) => any) => void, promise: any);
+                constructor(resolveFunction: (resolve: (value?: void) => any) => void, promise?: any) {
+                    super(resolveFunction);
+                    if (!isNull(promise)) {
+                        this.__animationInstance = promise.__animationInstance;
+                    }
                 }
 
-                return this;
+                /**
+                 * @name cancel
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A method to cancel the associated animation.
+                 * 
+                 * @returns {plat.ui.animations.AnimationPromise} This promise instance.
+                 */
+                cancel(): IAnimationPromise {
+                    if (!isNull(this.__animationInstance)) {
+                        this.__animationInstance.cancel();
+                        this.__animationInstance.end();
+                    }
+
+                    return this;
+                }
+
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 0
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills.
+                 * 
+                 * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
+                 * next then method in the promise chain.
+                 * 
+                 * @param {(success: void) => U} onFulfilled A method called when/if the promise fulfills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>}
+                 */
+                then<U>(onFulfilled: (success: void) => U): IAnimationThenable<U>;
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 1
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills.
+                 * 
+                 * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
+                 * next then method in the promise chain.
+                 * 
+                 * @param {(success: void) => plat.ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>}
+                 */
+                then<U>(onFulfilled: (success: void) => IAnimationThenable<U>): IAnimationThenable<U>;
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 2
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills.
+                 * 
+                 * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
+                 * next then method in the promise chain.
+                 * 
+                 * @param {(success: void) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>}
+                 */
+                then<U>(onFulfilled: (success: void) => async.IThenable<U>): IAnimationThenable<U>;
+                then<U>(onFulfilled: (success: void) => any): IAnimationThenable<U>  {
+                    return <IAnimationThenable<U>><any>super.then<U>(onFulfilled);
+                }
+
+                /**
+                 * @name catch
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 0
+                 * 
+                 * @description
+                 * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+                 * 
+                 * @typeparam {any} U The return type of the returned promise.
+                 * 
+                 * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected A method called when/if the promise rejects. 
+                 * If undefined the next onRejected method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
+                 */
+                catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+                /**
+                 * @name catch
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 1
+                 * 
+                 * @description
+                 * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+                 * 
+                 * @typeparam {any} U The return type of the returned promise.
+                 * 
+                 * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+                 * onRejected method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
+                 */
+                catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
+                catch<U>(onRejected: (error: any) => any): IAnimationThenable<U> {
+                    return <IAnimationThenable<U>><any>super.catch<U>(onRejected);
+                }
             }
-        }
 
-        /**
-         * Describes an object representing a single CSS animation for a single element.
-         */
-        export interface ICssAnimation extends IBaseAnimation {
             /**
-             * A function to listen to the start of an animation event.
+             * @name IAnimationThenable
+             * @memberof plat.ui.animations
+             * @kind interface
              * 
-             * @param listener The function to call when the animation begins.
-             */
-            animationStart(listener: () => void): ICssAnimation;
-
-            /**
-             * A function to listen to the start of a transition event.
+             * @extends {plat.async.IThenable<R>}
              * 
-             * @param listener The function to call when the transition begins.
-             */
-            transitionStart(listener: () => void): ICssAnimation;
-
-            /**
-             * A function to listen to the end of an animation event.
+             * @description
+             * Describes a chaining function that fulfills when the previous link is complete and is 
+             * able to be caught in the case of an error.
              * 
-             * @param listener The function to call when the animation ends.
+             * @typeparam {any} R The return type of the thenable.
              */
-            animationEnd(listener: () => void): ICssAnimation;
+            export interface IAnimationThenable<R> extends async.IThenable<R> {
+                /**
+                 * @name cancel
+                 * @memberof plat.ui.animations.IAnimationThenable
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A method to cancel the associated animation.
+                 * 
+                 * @returns {plat.ui.animations.AnimationPromise} This promise instance.
+                 */
+                cancel(): IAnimationPromise;
 
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.IAnimationThenable
+                 * @kind function
+                 * @access public
+                 * @variation 0
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills/rejects.
+                 * 
+                 * @typeparam {any} U The return type of the returned promise.
+                 * 
+                 * @param {(success: R) => plat.ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected? A method called when/if the promise rejects. 
+                 * If undefined the next onRejected method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
+                 */
+                then<U>(onFulfilled: (success: R) => IAnimationThenable<U>,
+                    onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.IAnimationThenable
+                 * @kind function
+                 * @access public
+                 * @variation 1
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills/rejects.
+                 * 
+                 * @typeparam {any} U The return type of the returned promise.
+                 * 
+                 * @param {(success: R) => plat.ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. 
+                 * If undefined the next onRejected method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
+                 */
+                then<U>(onFulfilled: (success: R) => IAnimationThenable<U>, onRejected?: (error: any) => U): IAnimationThenable<U>;
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.IAnimationThenable
+                 * @kind function
+                 * @access public
+                 * @variation 2
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills/rejects.
+                 * 
+                 * @typeparam {any} U The return type of the returned promise.
+                 * 
+                 * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected? A method called when/if the promise rejects. 
+                 * If undefined the next onRejected method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
+                 */
+                then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.IAnimationThenable
+                 * @kind function
+                 * @access public
+                 * @variation 3
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills/rejects.
+                 * 
+                 * @typeparam {any} U The return type of the returned promise.
+                 * 
+                 * @param {(success: R) => U} onFulfilled A method called when/if the promise fulills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * @param {(error: any) => U} onRejected? A method called when/if the promise rejects. 
+                 * If undefined the next onRejected method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
+                 */
+                then<U>(onFulfilled: (success: R) => U, onRejected?: (error: any) => U): IAnimationThenable<U>;
+
+                /**
+                 * @name catch
+                 * @memberof plat.ui.animations.IAnimationThenable
+                 * @kind function
+                 * @access public
+                 * @variation 0
+                 * 
+                 * @description
+                 * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+                 * 
+                 * @typeparam {any} U The return type of the returned promise.
+                 * 
+                 * @param {(error: any) => plat.ui.animations.IAnimationThenable<U>} onRejected A method called when/if the promise rejects. 
+                 * If undefined the next onRejected method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
+                 */
+                catch<U>(onRejected: (error: any) => IAnimationThenable<U>): IAnimationThenable<U>;
+                /**
+                 * @name catch
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 1
+                 * 
+                 * @description
+                 * A wrapper method for {@link plat.async.Promise|Promise.then(undefined, onRejected);}
+                 * 
+                 * @typeparam {any} U The return type of the returned promise.
+                 * 
+                 * @param {(error: any) => U} onRejected A method called when/if the promise rejects. If undefined the next
+                 * onRejected method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>} A promise that resolves with the input type parameter U.
+                 */
+                catch<U>(onRejected: (error: any) => U): IAnimationThenable<U>;
+            }
+    
             /**
-             * A function to listen to the end of a transition event.
+             * @name IAnimationPromise
+             * @memberof plat.ui.animations
+             * @kind interface
              * 
-             * @param listener The function to call when the transition ends.
+             * @extends {plat.ui.animations.IAnimationThenable<void>}
+             * 
+             * @description
+             * Describes a type of {@link plat.async.IPromise|IPromise} that fulfills when an animation is 
+             * finished and can be optionally cancelled.
              */
-            transitionEnd(listener: () => void): ICssAnimation;
-        }
+            export interface IAnimationPromise extends IAnimationThenable<void> {
+                /**
+                 * @name cancel
+                 * @memberof plat.ui.animations.IAnimationPromise
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A method to cancel the associated animation.
+                 * 
+                 * @returns {plat.ui.animations.AnimationPromise} This promise instance.
+                 */
+                cancel(): IAnimationPromise;
 
-        /**
-         * A class for creating a single JavaScript animation for a single element.
-         */
-        export class JsAnimation extends BaseAnimation implements IJsAnimation {
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.IAnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 0
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills.
+                 * 
+                 * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
+                 * next then method in the promise chain.
+                 * 
+                 * @param {(success: void) => U} onFulfilled A method called when/if the promise fulfills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>}
+                 */
+                then<U>(onFulfilled: (success: void) => U): IAnimationThenable<U>;
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 1
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills.
+                 * 
+                 * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
+                 * next then method in the promise chain.
+                 * 
+                 * @param {(success: void) => plat.ui.animations.IAnimationThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>}
+                 */
+                then<U>(onFulfilled: (success: void) => IAnimationThenable<U>): IAnimationThenable<U>;
+                /**
+                 * @name then
+                 * @memberof plat.ui.animations.AnimationPromise
+                 * @kind function
+                 * @access public
+                 * @variation 2
+                 * 
+                 * @description
+                 * Takes in two methods, called when/if the promise fulfills.
+                 * 
+                 * @typeparam {any} U The type of the object returned from the fulfill callbacks, which will be carried to the 
+                 * next then method in the promise chain.
+                 * 
+                 * @param {(success: void) => plat.async.IThenable<U>} onFulfilled A method called when/if the promise fulfills. 
+                 * If undefined the next onFulfilled method in the promise chain will be called.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<U>}
+                 */
+                then<U>(onFulfilled: (success: void) => async.IThenable<U>): IAnimationThenable<U>;
+            }
+
             /**
-             * A flag specifying that this animation is a JavaScript implementation.
+             * @name BaseAnimation
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @implements {plat.ui.animations.IBaseAnimation}
+             * 
+             * @description
+             * A class representing a single animation for a single element.
              */
-            isJs = true;
-        }
+            export class BaseAnimation implements IBaseAnimation {
+                /**
+                 * @name $Compat
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.ICompat}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.ICompat|ICompat} injectable.
+                 */
+                $Compat: ICompat = acquire(__Compat);
 
-        /**
-         * Describes an object representing a single JavaScript animation for a single element.
-         */
-        export interface IJsAnimation extends IBaseAnimation {
+                /**
+                 * @name element
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {HTMLElement}
+                 * 
+                 * @description
+                 * The node having the animation performed on it.
+                 */
+                element: HTMLElement;
+
+                /**
+                 * @name dom
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.ui.IDom}
+                 * 
+                 * @description
+                 * Contains DOM helper methods for manipulating this control's element.
+                 */
+                dom: IDom = acquire(__Dom);
+
+                /**
+                 * @name options
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {any}
+                 * 
+                 * @description
+                 * Specified options for the animation.
+                 */
+                options: any;
+        
+                /**
+                 * @name __resolve
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {() => void}
+                 * 
+                 * @description
+                 * The resolve function for the end of the animation.
+                 */
+                private __resolve: () => void;
+
+                /**
+                 * @name initialize
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function for initializing the animation or any of its properties before start.
+                 * 
+                 * @returns {void}
+                 */
+                initialize(): void { }
+        
+                /**
+                 * @name start
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function denoting the start of the animation.
+                 * 
+                 * @returns {void}
+                 */
+                start(): void { }
+        
+                /**
+                 * @name end
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to be called when the animation is over.
+                 * 
+                 * @returns {void}
+                 */
+                end(): void {
+                    if (isFunction(this.__resolve)) {
+                        this.__resolve();
+                    }
+                    this.dispose();
+                }
+        
+                /**
+                 * @name cancel
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to be called to let it be known the animation is being cancelled.
+                 * 
+                 * @returns {void}
+                 */
+                cancel(): void {
+                    this.end();
+                }
+        
+                /**
+                 * @name dispose
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function for reverting any modifications or changes that may have been made as a 
+                 * result of this animation.
+                 * 
+                 * @returns {void}
+                 */
+                dispose(): void {
+                    this.__resolve = null;
+                }
+        
+                /**
+                 * @name _init
+                 * @memberof plat.ui.animations.BaseAnimation
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Initializes the element and key properties of this animation and passes in the function 
+                 * to resolve when finished.
+                 * 
+                 * @param {Element} element The element on which the animation will occur.
+                 * @param {any} options Specified options for the animation.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationPromise} The promise that will resolve when the 
+                 * animation is complete and end() is called.
+                 */
+                _init(element: Element, options?: any): IAnimationPromise {
+                    this.element = <HTMLElement>element;
+                    this.options = options;
+
+                    return new AnimationPromise((resolve) => {
+                        this.__resolve = resolve;
+                        this.initialize();
+                        this.start();
+                    }, { __animationInstance: this });
+                }
+            }
+
             /**
-             * A flag specifying that this animation is a JavaScript implementation.
+             * @name IBaseAnimation
+             * @memberof plat.ui.animations
+             * @kind interface
+             * 
+             * @description
+             * Describes an object representing a single animation for a single element.
              */
-            isJs: boolean;
-        }
+            export interface IBaseAnimation {
+                /**
+                 * @name element
+                 * @memberof plat.ui.animations.IBaseAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {HTMLElement}
+                 * 
+                 * @description
+                 * The node having the animation performed on it.
+                 */
+                element: HTMLElement;
 
-        export module animations {
+                /**
+                 * @name dom
+                 * @memberof plat.ui.animations.IBaseAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.ui.IDom}
+                 * 
+                 * @description
+                 * Contains DOM helper methods for manipulating this control's element.
+                 */
+                dom: IDom;
+
+                /**
+                 * @name options
+                 * @memberof plat.ui.animations.IBaseAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {any}
+                 * 
+                 * @description
+                 * Specified options for the animation.
+                 */
+                options: any;
+
+                /**
+                 * @name initialize
+                 * @memberof plat.ui.animations.IBaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function for initializing the animation or any of its properties before start.
+                 * 
+                 * @returns {void}
+                 */
+                initialize(): void;
+
+                /**
+                 * @name start
+                 * @memberof plat.ui.animations.IBaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function denoting the start of the animation.
+                 * 
+                 * @returns {void}
+                 */
+                start(): void;
+
+                /**
+                 * @name end
+                 * @memberof plat.ui.animations.IBaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to be called when the animation is over.
+                 * 
+                 * @returns {void}
+                 */
+                end(): void;
+
+                /**
+                 * @name cancel
+                 * @memberof plat.ui.animations.IBaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to be called to let it be known the animation is being cancelled.
+                 * 
+                 * @returns {void}
+                 */
+                cancel(): void;
+
+                /**
+                 * @name dispose
+                 * @memberof plat.ui.animations.IBaseAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function for reverting any modifications or changes that may have been made as a 
+                 * result of this animation.
+                 * 
+                 * @returns {void}
+                 */
+                dispose(): void;
+            }
+
             /**
-             * A simple Css Animation class that places the 'plat-animation' class on an 
+             * @name CssAnimation
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.ui.animations.BaseAnimation}
+             * @implements {plat.ui.animations.ICssAnimation}
+             * 
+             * @description
+             * A class representing a single CSS animation for a single element.
+             */
+            export class CssAnimation extends BaseAnimation implements ICssAnimation {
+                /**
+                 * @name __animationEvents
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.IAnimationEvents}
+                 * 
+                 * @description
+                 * A set of browser compatible CSS animation events capable of being listened to.
+                 */
+                private __animationEvents: IAnimationEvents = this.$Compat.animationEvents;
+                /**
+                 * @name __subscribers
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Array<() => void>}
+                 * 
+                 * @description
+                 * A collection of animation event subscriptions used for chaining.
+                 */
+                private __subscribers: Array<() => void> = [];
+                /**
+                 * @name __removeListener
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.IRemoveListener}
+                 * 
+                 * @description
+                 * The function to stop listening to the current event/animation in occurrence.
+                 */
+                private __removeListener: IRemoveListener;
+
+                /**
+                 * @name dispose
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function for reverting any modifications or changes that may have been made as a 
+                 * result of this animation.
+                 * 
+                 * @returns {void}
+                 */
+                dispose(): void {
+                    if (isFunction(this.__removeListener)) {
+                        this.__removeListener();
+                        this.__removeListener = null;
+                    }
+                    this.__subscribers = [];
+                    super.dispose();
+                }
+        
+                /**
+                 * @name animationStart
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to listen to the start of an animation event.
+                 * 
+                 * @param {() => void} listener The function to call when the animation begins.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                animationStart(listener: () => void): ICssAnimation {
+                    return this.__addEventListener(this.__animationEvents.$animationStart, listener);
+                }
+        
+                /**
+                 * @name transitionStart
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to listen to the start of a transition event.
+                 * 
+                 * @param {() => void} listener The function to call when the transition begins.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                transitionStart(listener: () => void): ICssAnimation {
+                    return this.__addEventListener(this.__animationEvents.$transitionStart, listener);
+                }
+        
+                /**
+                 * @name animationEnd
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to listen to the end of an animation event.
+                 * 
+                 * @param {() => void} listener The function to call when the animation ends.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                animationEnd(listener: () => void): ICssAnimation {
+                    return this.__addEventListener(this.__animationEvents.$animationEnd, listener);
+                }
+        
+                /**
+                 * @name animationEnd
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to listen to the end of a transition event.
+                 * 
+                 * @param {() => void} listener The function to call when the transition ends.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                transitionEnd(listener: () => void): ICssAnimation {
+                    return this.__addEventListener(this.__animationEvents.$transitionEnd, listener);
+                }
+        
+                /**
+                 * @name __addEventListener
+                 * @memberof plat.ui.animations.CssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Adds the listener for the desired event and handles subscription management and 
+                 * chaining.
+                 * 
+                 * @param {string} event The event to subscribe to.
+                 * @param {() => void} listener The function to call when the event fires.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                private __addEventListener(event: string, listener: () => void): ICssAnimation {
+                    var subscribers = this.__subscribers,
+                        subscriber = () => {
+                            this.__removeListener = this.dom.addEventListener(this.element, event, (ev: Event) => {
+                                this.__removeListener();
+                                this.__removeListener = null;
+
+                                if (subscribers.length === 0) {
+                                    return;
+                                }
+
+                                listener.call(this);
+                                subscribers.shift();
+
+                                if (subscribers.length === 0) {
+                                    return;
+                                }
+
+                                subscribers[0]();
+                            }, false);
+                        };
+
+                    subscribers.push(subscriber);
+
+                    if (subscribers.length === 1) {
+                        subscriber();
+                    }
+
+                    return this;
+                }
+            }
+    
+            /**
+             * @name ICssAnimation
+             * @memberof plat.ui.animations
+             * @kind interface
+             * 
+             * @extends {plat.ui.animations.IBaseAnimation}
+             * 
+             * @description
+             * Describes an object representing a single CSS animation for a single element.
+             */
+            export interface ICssAnimation extends IBaseAnimation {
+                /**
+                 * @name animationStart
+                 * @memberof plat.ui.animations.ICssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to listen to the start of an animation event.
+                 * 
+                 * @param {() => void} listener The function to call when the animation begins.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                animationStart(listener: () => void): ICssAnimation;
+        
+                /**
+                 * @name transitionStart
+                 * @memberof plat.ui.animations.ICssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to listen to the start of a transition event.
+                 * 
+                 * @param {() => void} listener The function to call when the transition begins.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                transitionStart(listener: () => void): ICssAnimation;
+        
+                /**
+                 * @name animationEnd
+                 * @memberof plat.ui.animations.ICssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to listen to the end of an animation event.
+                 * 
+                 * @param {() => void} listener The function to call when the animation ends.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                animationEnd(listener: () => void): ICssAnimation;
+        
+                /**
+                 * @name animationEnd
+                 * @memberof plat.ui.animations.ICssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to listen to the end of a transition event.
+                 * 
+                 * @param {() => void} listener The function to call when the transition ends.
+                 * 
+                 * @returns {plat.ui.animations.ICssAnimation} This instance (for chaining).
+                 */
+                transitionEnd(listener: () => void): ICssAnimation;
+            }
+
+            /**
+             * @name JsAnimation
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.ui.animations.BaseAnimation}
+             * @implements {plat.ui.animations.IJsAnimation}
+             * 
+             * @description
+             * A class for creating a single JavaScript animation for a single element.
+             */
+            export class JsAnimation extends BaseAnimation implements IJsAnimation {
+                /**
+                 * @name isJs
+                 * @memberof plat.ui.animations.JsAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {boolean}
+                 * 
+                 * @description
+                 * A flag specifying that this animation is a JavaScript implementation.
+                 */
+                isJs = true;
+            }
+
+            /**
+             * @name IJsAnimation
+             * @memberof plat.ui.animations
+             * @kind interface
+             * 
+             * @extends {plat.ui.animations.IBaseAnimation}
+             * 
+             * @description
+             * Describes an object representing a single JavaScript animation for a single element.
+             */
+            export interface IJsAnimation extends IBaseAnimation {
+                /**
+                 * @name isJs
+                 * @memberof plat.ui.animations.IJsAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {boolean}
+                 * 
+                 * @description
+                 * A flag specifying that this animation is a JavaScript implementation.
+                 */
+                isJs: boolean;
+            }
+
+            /**
+             * @name SimpleCssAnimation
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.ui.animations.CssAnimation}
+             * @implements {plat.ui.animations.ISimpleCssAnimation}
+             * 
+             * @description
+             * A simple CSS Animation class that places the 'plat-animation' class on an 
              * element, checks for animation properties, and waits for the animation to end.
              */
             export class SimpleCssAnimation extends CssAnimation implements ISimpleCssAnimation {
+                /**
+                 * @name $Window
+                 * @memberof plat.ui.animations.SimpleCssAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Window}
+                 * 
+                 * @description
+                 * Reference to the Window injectable.
+                 */
                 $Window: Window = acquire(__Window);
 
                 /**
+                 * @name className
+                 * @memberof plat.ui.animations.SimpleCssAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The class name added to the animated element.
                  */
                 className = __SimpleAnimation;
 
+                /**
+                 * @name initialize
+                 * @memberof plat.ui.animations.SimpleCssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function denoting the start of the animation.
+                 * 
+                 * @returns {void}
+                 */
                 start(): void {
                     var animationId = this.$Compat.animationEvents.$animation,
                         element = this.element,
@@ -27959,6 +34381,17 @@ module plat {
                     });
                 }
 
+                /**
+                 * @name cancel
+                 * @memberof plat.ui.animations.SimpleCssAnimation
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to be called to let it be known the animation is being cancelled.
+                 * 
+                 * @returns {void}
+                 */
                 cancel(): void {
                     removeClass(this.element, this.className);
                     super.cancel();
@@ -27966,72 +34399,206 @@ module plat {
             }
 
             register.animation(__SimpleAnimation, SimpleCssAnimation);
-
+    
             /**
-             * An interface for extending the SimpleCssAnimation or SimpleCssTransition and allowing for 
+             * @name ISimpleCssAnimation
+             * @memberof plat.ui.animations
+             * @kind interface
+             * 
+             * @extends {plat.ui.animations.ICssAnimation}
+             * 
+             * @description
+             * An interface for extending the {@link plat.ui.animations.SimpleCssAnimation|SimpleCssAnimation} 
+             * or {@link plat.ui.animations.SimpleCssTransition|SimpleCssTransition} and allowing for 
              * custom class names to initiate animations or transitions.
              */
             export interface ISimpleCssAnimation extends ICssAnimation {
                 /**
-                 * The class name to place on the element.
+                 * @name className
+                 * @memberof plat.ui.animations.ISimpleCssAnimation
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * The class name added to the animated element.
                  */
                 className: string;
             }
 
             /**
+             * @name FadeIn
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.ui.animations.SimpleCssAnimation}
+             * 
+             * @description
              * An animation control that fades in an element as defined by the included CSS.
              */
             export class FadeIn extends SimpleCssAnimation {
+                /**
+                 * @name className
+                 * @memberof plat.ui.animations.FadeIn
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * The class name added to the element fading in.
+                 */
                 className = __FadeIn;
             }
 
             register.animation(__FadeIn, FadeIn);
-
+    
             /**
+             * @name FadeOut
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.ui.animations.SimpleCssAnimation}
+             * 
+             * @description
              * An animation control that fades out an element as defined by the included CSS.
              */
             export class FadeOut extends SimpleCssAnimation {
+                /**
+                 * @name className
+                 * @memberof plat.ui.animations.FadeOut
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * The class name added to the element fading out.
+                 */
                 className = __FadeOut;
             }
 
             register.animation(__FadeOut, FadeOut);
-
+    
             /**
+             * @name Enter
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.ui.animations.SimpleCssAnimation}
+             * 
+             * @description
              * An animation control that causes an element to enter as defined by the included CSS.
              */
             export class Enter extends SimpleCssAnimation {
+                /**
+                 * @name className
+                 * @memberof plat.ui.animations.Enter
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * The class name added to the entering element.
+                 */
                 className = __Enter;
             }
 
             register.animation(__Enter, Enter);
-
+    
             /**
+             * @name Leave
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.ui.animations.SimpleCssAnimation}
+             * 
+             * @description
              * An animation control that causes an element to leave as defined by the included CSS.
              */
             export class Leave extends SimpleCssAnimation {
+                /**
+                 * @name className
+                 * @memberof plat.ui.animations.Leave
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * The class name added to the leaving element.
+                 */
                 className = __Leave;
             }
 
             register.animation(__Leave, Leave);
 
             /**
-             * A simple Css Animation class that places the 'plat-transition' class on an 
+             * @name SimpleCssTransition
+             * @memberof plat.ui.animations
+             * @kind class
+             * 
+             * @extends {plat.ui.animations.CssAnimation}
+             * @implements {plat.ui.animations.ISimpleCssTransition}
+             * 
+             * @description
+             * A simple CSS Animation class that places the 'plat-transition' class on an 
              * element, checks for transition properties, and waits for the transition to end.
              */
             export class SimpleCssTransition extends CssAnimation implements ISimpleCssTransition {
+                /**
+                 * @name $Window
+                 * @memberof plat.ui.animations.SimpleCssTransition
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Window}
+                 * 
+                 * @description
+                 * Reference to the Window injectable.
+                 */
                 $Window: Window = acquire(__Window);
 
                 /**
+                 * @name options
+                 * @memberof plat.ui.animations.SimpleCssTransition
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.IObject<string>}
+                 * 
+                 * @description
                  * A JavaScript object with key value pairs for adjusting transition values. 
-                 * (i.e. { width: '800px' } would set the element's width to 800px.
+                 * (e.g. { width: '800px' } would set the element's width to 800px.
                  */
-                options: plat.IObject<string>;
+                options: IObject<string>;
 
                 /**
+                 * @name className
+                 * @memberof plat.ui.animations.SimpleCssTransition
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The class name added to the animated element.
                  */
                 className = __SimpleTransition;
 
+                /**
+                 * @name initialize
+                 * @memberof plat.ui.animations.SimpleCssTransition
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function denoting the start of the animation.
+                 * 
+                 * @returns {void}
+                 */
                 start(): void {
                     var transitionId = this.$Compat.animationEvents.$transition,
                         element = this.element,
@@ -28062,13 +34629,33 @@ module plat {
                     endFn();
                 }
 
+                /**
+                 * @name cancel
+                 * @memberof plat.ui.animations.SimpleCssTransition
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * A function to be called to let it be known the animation is being cancelled.
+                 * 
+                 * @returns {void}
+                 */
                 cancel(): void {
                     removeClass(this.element, this.className);
                     super.cancel();
                 }
 
                 /**
-                 * Animate the element based on the options passed in
+                 * @name _animate
+                 * @memberof plat.ui.animations.SimpleCssTransition
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Animate the element based on the options passed in.
+                 * 
+                 * @returns {boolean} Whether or not the element is going to animate with the options passed in. 
+                 * If false, the control should begin cleaning up.
                  */
                 _animate(): boolean {
                     var style = this.element.style || {},
@@ -28101,75 +34688,196 @@ module plat {
 
             register.animation(__SimpleTransition, SimpleCssTransition);
 
+            /**
+             * @name ISimpleCssTransition
+             * @memberof plat.ui.animations
+             * @kind interface
+             * 
+             * @extends {plat.ui.animations.ISimpleCssAnimation}
+             * 
+             * @description
+             * An object that allows for transitioned changes to an Element's style based on  
+             * options passed in.
+             */
             export interface ISimpleCssTransition extends ISimpleCssAnimation {
                 /**
+                 * @name options
+                 * @memberof plat.ui.animations.ISimpleCssTransition
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.IObject<string>}
+                 * 
+                 * @description
                  * A JavaScript object with key value pairs for adjusting transition values. 
-                 * (i.e. { width: '800px' } would set the element's width to '800px'.
+                 * (e.g. { width: '800px' } would set the element's width to 800px.
                  */
                 options: plat.IObject<string>;
             }
         }
 
-        /**
-         * @name controls
-         * @memberof plat.ui
-         * @kind namespace
-         * 
-         * @description
-         * Holds classes and interfaces related to event management.
-         */
+    /**
+     * @name controls
+     * @memberof plat.ui
+     * @kind namespace
+     * @access public
+     * 
+     * @description
+     * Holds classes and interfaces related to UI control components in platypus.
+     */
         export module controls {
+            /**
+             * @name Baseport
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.TemplateControl}
+             * @implements {plat.ui.controls.IBaseport}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} that acts as a base for all 
+             * controls that can interchangeably swap out {@link plat.ui.IBaseViewControl|IBaseViewControls}.
+             */
             export class Baseport extends TemplateControl implements IBaseport {
+                /**
+                 * @name $ManagerCache
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.storage.ICache<plat.processing.IElementManager>}
+                 * 
+                 * @description
+                 * Reference to an injectable that caches {@link plat.processing.IElementManager|IElementManagers}.
+                 */
                 $ManagerCache: storage.ICache<processing.IElementManager> = acquire(__ManagerCache);
+                /**
+                 * @name $Document
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Document}
+                 * 
+                 * @description
+                 * Reference to the Document injectable.
+                 */
                 $Document: Document = acquire(__Document);
+                /**
+                 * @name $ElementManagerFactory
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.processing.IElementManagerFactory}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.processing.IElementManagerFactory|IElementManagerFactory} injectable.
+                 */
                 $ElementManagerFactory: processing.IElementManagerFactory = acquire(__ElementManagerFactory);
-                $Animator: IAnimator = acquire(__Animator);
+                /**
+                 * @name $Animator
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.ui.animations.IAnimator}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
+                 */
+                $Animator: animations.IAnimator = acquire(__Animator);
+                /**
+                 * @name $Promise
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.async.IPromise}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+                 */
                 $Promise: async.IPromise = acquire(__Promise);
 
                 /**
-                 * @param navigator The navigator used for navigating between pages.
+                 * @name navigator
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.navigation.IBaseNavigator}
+                 * 
+                 * @description
+                 * The navigator used for navigating between {@link plat.ui.IBaseViewControl|IBaseViewControls}.
                  */
-                constructor(public navigator: navigation.IBaseNavigator) {
+                navigator: navigation.IBaseNavigator;
+
+                /**
+                 * @name constructor
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * The constructor for a {@link plat.ui.controls.Baseport|Baseport}.
+                 * 
+                 * @param {plat.navigation.IBaseNavigator} navigator The navigator used for navigating between 
+                 * {@link plat.ui.IBaseViewControl|IBaseViewControls}.
+                 * 
+                 * @returns {plat.ui.controls.Baseport} A {@link plat.ui.controls.Baseport|Baseport} instance.
+                 */
+                constructor(navigator: navigation.IBaseNavigator) {
                     super();
+                    this.navigator = navigator;
                 }
 
                 /**
-                 * Clears the Baseport's innerHTML.
+                 * @name setTemplate
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Clears the control element's innerHTML.
+                 * 
+                 * @returns {void}
                  */
                 setTemplate(): void {
                     this.dom.clearNode(this.element);
                     this._load();
                 }
-
+        
                 /**
-                 * Initializes the navigator.
+                 * @name dispose
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind function
+                 * @access public
                  * 
-                 * @param navigationParameter A parameter needed 
-                 * to perform the specified type of navigation.
-                 * @param options The IBaseNavigationOptions 
-                 * needed on load for the inherited form of 
-                 * navigation.
-                 */
-                _load(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
-                    var navigator = this.navigator;
-                    navigator.initialize(this);
-                    navigator.navigate(navigationParameter, options);
-                }
-
-                /**
+                 * @description
                  * Clean up any memory being held.
+                 * 
+                 * @returns {void}
                  */
                 dispose() {
                     this.navigator.dispose();
                 }
-
+        
                 /**
-                 * Grabs the root of this Baseport's manager 
+                 * @name navigateTo
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Grabs the root of this control's manager 
                  * tree, clears it, and initializes the 
                  * creation of a new one by kicking off a 
                  * navigate.
                  * 
-                 * @param ev The navigation options
+                 * @param {plat.ui.controls.IBaseportNavigateToOptions} ev The navigation options.
+                 * 
+                 * @returns {void}
                  */
                 navigateTo(ev: IBaseportNavigateToOptions): void {
                     var control = ev.target,
@@ -28197,6 +34905,7 @@ module plat {
                         };
 
                     node.setAttribute('plat-control', controlType);
+                    node.className = controlType;
                     element.appendChild(node);
 
                     this.$Animator.animate(this.element, __Enter);
@@ -28218,13 +34927,22 @@ module plat {
 
                     manager.setUiControlTemplate();
                 }
-
+        
                 /**
-                 * Manages the navigatingFrom lifecycle event for 
-                 * ViewControls.
+                 * @name navigateFrom
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind function
+                 * @access public
                  * 
-                 * @param fromControl The ViewControl being navigated 
-                 * away from.
+                 * @description
+                 * Manages the navigatingFrom lifecycle event for 
+                 * {@link plat.ui.IBaseViewControl|IBaseViewControls}.
+                 * 
+                 * @param {plat.ui.IBaseViewControl} fromControl The {@link plat.ui.IBaseViewControl|IBaseViewControl} 
+                 * being navigated away from.
+                 * 
+                 * @returns {plat.async.IThenable<void>} A promise that resolves when the current view is done animating 
+                 * away.
                  */
                 navigateFrom(fromControl: IBaseViewControl): async.IThenable<void> {
                     if (isNull(fromControl) || !isFunction(fromControl.navigatingFrom)) {
@@ -28234,78 +34952,207 @@ module plat {
                     fromControl.navigatingFrom();
                     return this.$Animator.animate(this.element, __Leave);
                 }
+
+                /**
+                 * @name _load
+                 * @memberof plat.ui.controls.Baseport
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Initializes the navigator.
+                 * 
+                 * @param {any} navigationParameter? A parameter needed 
+                 * to perform the specified type of navigation.
+                 * @param {plat.navigation.IBaseNavigationOptions} options? The options 
+                 * needed on load for the inherited form of navigation.
+                 * 
+                 * @returns {void}
+                 */
+                _load(navigationParameter?: any, options?: navigation.IBaseNavigationOptions): void {
+                    var navigator = this.navigator;
+                    navigator.initialize(this);
+                    navigator.navigate(navigationParameter, options);
+                }
             }
 
+            /**
+             * @name IBaseport
+             * @memberof plat.ui.controls
+             * @kind interface
+             * 
+             * @extends {plat.ui.ITemplateControl}
+             * 
+             * @description
+             * Describes an object that acts as a base for all controls that can interchangeably 
+             * swap out {@link plat.ui.IBaseViewControl|IBaseViewControls}.
+             */
             export interface IBaseport extends ITemplateControl {
                 /**
-                 * The object in charge of performing the 
-                 * navigation to and from different 
-                 * ViewControls.
+                 * @name navigator
+                 * @memberof plat.ui.controls.IBaseport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.navigation.IBaseNavigator}
+                 * 
+                 * @description
+                 * The navigator used for navigating between {@link plat.ui.IBaseViewControl|IBaseViewControls}.
                  */
                 navigator: navigation.IBaseNavigator;
 
                 /**
-                 * Grabs the root of this Baseport's manager 
+                 * @name navigateTo
+                 * @memberof plat.ui.controls.IBaseport
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Grabs the root of this control's manager 
                  * tree, clears it, and initializes the 
                  * creation of a new one by kicking off a 
                  * navigate.
                  * 
-                 * @param ev The navigation options
+                 * @param {plat.ui.controls.IBaseportNavigateToOptions} ev The navigation options.
+                 * 
+                 * @returns {void}
                  */
                 navigateTo(ev: IBaseportNavigateToOptions): void;
 
                 /**
-                 * Manages the navigatingFrom lifecycle event for 
-                 * ViewControls.
+                 * @name navigateFrom
+                 * @memberof plat.ui.controls.IBaseport
+                 * @kind function
+                 * @access public
                  * 
-                 * @param fromControl The ViewControl being navigated 
-                 * away from.
+                 * @description
+                 * Manages the navigatingFrom lifecycle event for 
+                 * {@link plat.ui.IBaseViewControl|IBaseViewControls}.
+                 * 
+                 * @param {plat.ui.IBaseViewControl} fromControl The {@link plat.ui.IBaseViewControl|IBaseViewControl} 
+                 * being navigated away from.
+                 * 
+                 * @returns {plat.async.IThenable<void>} A promise that resolves when the current view is done animating 
+                 * away.
                  */
                 navigateFrom(fromControl: IBaseViewControl): async.IThenable<void>;
             }
 
             /**
-             * Navigation options for a Baseport and all 
-             * controls that inherit from Baseport.
+             * @name IBaseportNavigateToOptions
+             * @memberof plat.ui.controls
+             * @kind interface
+             * 
+             * @description
+             * Navigation options for a {@link plat.ui.controls.Baseport|Baseport} and all 
+             * controls that inherit from {@link plat.ui.controls.Baseport|Baseport}.
              */
             export interface IBaseportNavigateToOptions {
                 /**
-                 * Either a view control or an injector for a view control.
+                 * @name target
+                 * @memberof plat.ui.controls.IBaseportNavigateToOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {any}
+                 * 
+                 * @description
+                 * Either an {@link plat.ui.IBaseViewControl|IBaseViewControls} or an injector for an 
+                 * {@link plat.ui.IBaseViewControl|IBaseViewControls} to be used.
                  */
                 target: any;
 
                 /**
+                 * @name parameter
+                 * @memberof plat.ui.controls.IBaseportNavigateToOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {any}
+                 * 
+                 * @description
                  * The navigation parameter.
                  */
                 parameter: any;
-
+        
                 /**
+                 * @name parameter
+                 * @memberof plat.ui.controls.IBaseportNavigateToOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.navigation.IBaseNavigationOptions}
+                 * 
+                 * @description
                  * The options used for navigation.
                  */
                 options: navigation.IBaseNavigationOptions;
 
                 /**
-                 * The type of view control to navigate to.
+                 * @name type
+                 * @memberof plat.ui.controls.IBaseportNavigateToOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * The type of {@link plat.ui.IBaseViewControl|IBaseViewControls} to navigate to.
                  */
                 type: string;
             }
 
+            /**
+             * @name Viewport
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.controls.Baseport}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} that can interchangeably swap out 
+             * {@link plat.ui.IViewControl|IViewControls}.
+             */
             export class Viewport extends Baseport {
                 /**
-                 * The evaluated plat-options object.
+                 * @name options
+                 * @memberof plat.ui.controls.Viewport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.observable.IObservableProperty<plat.ui.controls.IViewportOptions>}
+                 * 
+                 * @description
+                 * The evaluated {@link plat.controls.Options|plat-options} object.
                  */
                 options: observable.IObservableProperty<IViewportOptions>;
 
                 /**
-                 * A type of navigator that uses either the ViewControl's 
+                 * @name navigator
+                 * @memberof plat.ui.controls.Viewport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.navigation.INavigatorInstance}
+                 * 
+                 * @description
+                 * A type of navigator that uses either the {@link plat.ui.ViewControl|ViewControl's} 
                  * Constructors or their registered names for navigation 
                  * from one to another.
                  */
                 navigator: navigation.INavigatorInstance;
 
                 /**
-                 * Checks for a defaultView, finds the ViewControl's injector, 
+                 * @name _load
+                 * @memberof plat.ui.controls.Viewport
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Checks for a default view, finds the {@link plat.ui.ViewControl|ViewControl's} injector, 
                  * and initializes the loading of the view.
+                 * 
+                 * @returns {void}
                  */
                 _load(): void {
                     var $exception: IExceptionStatic;
@@ -28332,33 +35179,81 @@ module plat {
             }
 
             /**
-             * The available options for plat.ui.controls.Viewport.
+             * @name IViewportOptions
+             * @memberof plat.ui.controls
+             * @kind interface
+             * 
+             * @description
+             * The available options for a {@link plat.ui.controls.Viewport|Viewport}.
              */
             export interface IViewportOptions {
                 /**
+                 * @name defaultView
+                 * @memberof plat.ui.controls.IViewportOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The registered name of the default 
-                 * ViewControl to initially navigate to.
+                 * {@link plat.ui.IViewControl|IViewControl} to initially navigate to.
                  */
                 defaultView: string;
             }
 
             register.control(__Viewport, Viewport, [__NavigatorInstance]);
 
-            class Routeport extends Baseport {
+            /**
+             * @name Routeport
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.controls.Baseport}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} that can interchangeably swap out 
+             * {@link plat.ui.IWebViewControl|IWebViewControls} based on their defined routes.
+             */
+            export class Routeport extends Baseport {
                 /**
-                 * The evaluated plat-options object.
+                 * @name options
+                 * @memberof plat.ui.controls.Routeport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.observable.IObservableProperty<plat.ui.controls.IRouteportOptions>}
+                 * 
+                 * @description
+                 * The evaluated {@link plat.controls.Options|plat-options} object.
                  */
                 options: observable.IObservableProperty<IRouteportOptions>;
 
                 /**
+                 * @name navigator
+                 * @memberof plat.ui.controls.Routeport
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.navigation.IRoutingNavigator}
+                 * 
+                 * @description
                  * A type of navigator that uses the registered routes 
-                 * for ViewControls to navigate to and from one another.
+                 * for {@link plat.ui.IWebViewControl|IWebViewControls} to navigate to and from one another.
                  */
                 navigator: navigation.IRoutingNavigator;
 
                 /**
-                 * Looks for a defaultRoute and initializes the loading 
+                 * @name _load
+                 * @memberof plat.ui.controls.Routeport
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Looks for a default route and initializes the loading 
                  * of the view.
+                 * 
+                 * @returns {void}
                  */
                 _load(): void {
                     var path = '',
@@ -28375,51 +35270,182 @@ module plat {
             }
 
             /**
-             * The available options for plat.ui.controls.Routeport.
+             * @name IRouteportOptions
+             * @memberof plat.ui.controls
+             * @kind interface
+             * 
+             * @description
+             * The available options for a {@link plat.ui.controls.Routeport|Routeport}.
              */
             export interface IRouteportOptions {
                 /**
+                 * @name defaultRoute
+                 * @memberof plat.ui.controls.IRouteportOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The registered route of the default 
-                 * ViewControl to initially navigate to.
+                 * {@link plat.ui.IWebViewControl|IWebViewControl} to initially navigate to.
                  */
                 defaultRoute: string;
             }
 
             register.control(__Routeport, Routeport, [__RoutingNavigator]);
 
+            /**
+             * @name Template
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.TemplateControl}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} for easily reusing a 
+             * defined HTML template.
+             */
             export class Template extends TemplateControl {
+                /**
+                 * @name $Promise
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.async.IPromise}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+                 */
                 $Promise: async.IPromise = acquire(__Promise);
+                /**
+                 * @name $TemplateCache
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.storage.ITemplateCache}
+                 * 
+                 * @description
+                 * Reference to an injectable for storing HTML templates.
+                 */
                 $TemplateCache: storage.ITemplateCache = acquire(__TemplateCache);
+                /**
+                 * @name $Document
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Document}
+                 * 
+                 * @description
+                 * Reference to the Document injectable.
+                 */
                 $Document: Document = acquire(__Document);
 
                 /**
+                 * @name replaceWith
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * Removes the <plat-template> node from the DOM
                  */
                 replaceWith: string = null;
 
                 /**
-                 * The evaluated plat-options object.
+                 * @name options
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.observable.IObservableProperty<plat.ui.controls.ITemplateOptions>}
+                 * 
+                 * @description
+                 * The evaluated {@link plat.controls.Options|plat-options} object.
                  */
                 options: observable.IObservableProperty<ITemplateOptions>;
-
+        
                 /**
+                 * @name _id
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access protected
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The unique ID used to reference a particular 
                  * template.
                  */
                 _id: string;
-
+        
                 /**
+                 * @name _url
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access protected
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The optional URL associated with this 
                  * particular template.
                  */
                 _url: string;
-
-                private __isFirst: boolean = false;
+        
+                /**
+                 * @name __isFirst
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * Whether or not this is the first instance of the control, 
+                 * specifying that it defines the template to copy.
+                 */
+                private __isFirst = false;
+                /**
+                 * @name __templatePromise
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {plat.async.IThenable<plat.ui.controls.Template>}
+                 * 
+                 * @description
+                 * A promise that resolves when the template is retrieved and ready.
+                 */
                 private __templatePromise: async.IThenable<Template>;
+                /**
+                 * @name __templateControlCache
+                 * @memberof plat.ui.controls.Template
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {plat.storage.ICache<any>}
+                 * 
+                 * @description
+                 * HTML template storage for all instances of this control.
+                 */
                 private __templateControlCache: storage.ICache<any>;
 
                 /**
-                 * Creates the Template control cache
+                 * @name constructor
+                 * @memberof plat.ui.controls.Template
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * The constructor for a {@link plat.ui.controls.Template|Template}. Creates the control cache.
+                 * 
+                 * @returns {plat.ui.controls.Template} A {@link plat.ui.controls.Template|Template} instance.
                  */
                 constructor() {
                     super();
@@ -28428,7 +35454,15 @@ module plat {
                 }
 
                 /**
+                 * @name initialize
+                 * @memberof plat.ui.controls.Template
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Initializes the creation of the template.
+                 * 
+                 * @returns {void}
                  */
                 initialize(): void {
                     var id = this._id = this.options.value.id,
@@ -28449,30 +35483,54 @@ module plat {
                     this.__isFirst = true;
                     this._initializeTemplate();
                 }
-
+        
                 /**
+                 * @name loaded
+                 * @memberof plat.ui.controls.Template
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Decides if this is a template definition or 
                  * a template instance.
+                 * 
+                 * @returns {void}
                  */
                 loaded(): void {
                     if (!this.__isFirst) {
                         this._waitForTemplateControl(this.__templatePromise);
                     }
                 }
-
+        
                 /**
+                 * @name dispose
+                 * @memberof plat.ui.controls.Template
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Removes the template from the template cache.
+                 * 
+                 * @returns {void}
                  */
                 dispose(): void {
                     if (this.__isFirst) {
                         this.__templateControlCache.dispose();
                     }
                 }
-
+        
                 /**
+                 * @name _initializeTemplate
+                 * @memberof plat.ui.controls.Template
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Determines whether a URL or innerHTML is being used, 
                  * creates the bindable template, and stores the template 
                  * in a template cache for later use.
+                 * 
+                 * @returns {void}
                  */
                 _initializeTemplate(): void {
                     var id = this._id;
@@ -28511,14 +35569,22 @@ module plat {
 
                     this.__templateControlCache.put(id, controlPromise);
                 }
-
+        
                 /**
+                 * @name _waitForTemplateControl
+                 * @memberof plat.ui.controls.Template
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Waits for the template promise to resolve, then initializes 
                  * the binding of the bindable template and places it into the 
                  * DOM.
                  * 
-                 * @param templatePromise The promise associated with the first 
-                 * instance of the template with this ID.
+                 * @param {plat.async.IThenable<plat.ui.controls.Template>} templatePromise The promise 
+                 * associated with the first instance of the control with this ID.
+                 * 
+                 * @returns {void}
                  */
                 _waitForTemplateControl(templatePromise: async.IThenable<Template>): void {
                     var $exception: IExceptionStatic;
@@ -28544,25 +35610,61 @@ module plat {
                         });
                     });
                 }
-
+        
+                /**
+                 * @name __mapBindableTemplates
+                 * @memberof plat.ui.controls.Template
+                 * @kind function
+                 * @access private
+                 * 
+                 * @description
+                 * Maps the bindable templates cache and html templates of the first 
+                 * control with the proper ID to this control's bindable templates.
+                 * 
+                 * @param {plat.ui.controls.Template} control The first of the controls 
+                 * with this corresponding ID that defined the HTML template to reuse.
+                 * 
+                 * @returns {void}
+                 */
                 private __mapBindableTemplates(control: Template): void {
-                    (<BindableTemplates>this.bindableTemplates)._cache =
-                        (<BindableTemplates>control.bindableTemplates)._cache;
-                    this.bindableTemplates.templates = control.bindableTemplates.templates;
+                    var bindableTemplates = <BindableTemplates>this.bindableTemplates;
+                    bindableTemplates._cache = (<BindableTemplates>control.bindableTemplates)._cache;
+                    bindableTemplates.templates = control.bindableTemplates.templates;
                 }
             }
 
             /**
-             * The available options for plat.ui.controls.Template.
+             * @name ITemplateOptions
+             * @memberof plat.ui.controls
+             * @kind interface
+             * 
+             * @description
+             * The available {@link plat.controls.Options|options} for the {@link plat.ui.controls.Template|Template} control.
              */
             export interface ITemplateOptions {
                 /**
+                 * @name id
+                 * @memberof plat.ui.controls.ITemplateOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The unique ID used to label a template 
                  * and use it as DOM.
                  */
                 id: string;
 
                 /**
+                 * @name templateUrl
+                 * @memberof plat.ui.controls.ITemplateOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * An optional URL to specify a template 
                  * instead of using the element's innerHTML.
                  */
@@ -28571,16 +35673,43 @@ module plat {
 
             register.control(__Template, Template);
 
+            /**
+             * @name Ignore
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.TemplateControl}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} for inner HTML that contains controls  
+             * and/or markup and not having it bind or evaluate.
+             */
             export class Ignore extends TemplateControl {
                 /**
+                 * @name setTemplate
+                 * @memberof plat.ui.controls.Ignore
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Removes the innerHTML from the DOM and saves it.
+                 * 
+                 * @returns {void}
                  */
                 setTemplate(): void {
                     this.innerTemplate = this.dom.appendChildren(this.element.childNodes);
                 }
 
                 /**
+                 * @name loaded
+                 * @memberof plat.ui.controls.Ignore
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Places the saved innerHTML back into the DOM.
+                 * 
+                 * @returns {void}
                  */
                 loaded(): void {
                     this.element.appendChild(this.innerTemplate.cloneNode(true));
@@ -28589,39 +35718,156 @@ module plat {
 
             register.control(__Ignore, Ignore);
 
+            /**
+             * @name ForEach
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.TemplateControl}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} for repeating a block of 
+             * DOM nodes bound to an array.
+             */
             export class ForEach extends TemplateControl {
-                $Animator: IAnimator = acquire(__Animator);
+                /**
+                 * @name $Animator
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.ui.animations.IAnimator}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
+                 */
+                $Animator: animations.IAnimator = acquire(__Animator);
+                /**
+                 * @name $Promise
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.async.IPromise}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+                 */
                 $Promise: async.IPromise = acquire(__Promise);
 
                 /**
-                 * The required context is an Array.
+                 * @name context
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Array<any>}
+                 * 
+                 * @description
+                 * The required context of the control (must be of type Array).
                  */
                 context: Array<any>;
 
                 /**
-                 * This control needs to load before plat-bind.
+                 * @name priority
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {number}
+                 * 
+                 * @description
+                 * The load priority of the control (needs to load before a {@link plat.controls.Bind|Bind} control).
                  */
                 priority = 120;
 
                 /**
-                 * The child controls
+                 * @name controls
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Array<plat.ui.ITemplateControl>}
+                 * 
+                 * @description
+                 * The child controls of the control. All will be of type {@link plat.ui.ITemplateControl|ITemplateControl}.
                  */
                 controls: Array<ITemplateControl>;
 
                 /**
-                 * Will fulfill whenever all items are loaded.
+                 * @name itemsLoaded
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.async.IThenable<void>}
+                 * 
+                 * @description
+                 * A Promise that fulfills when the items are loaded.
                  */
                 itemsLoaded: async.IThenable<void>;
 
                 /**
-                 * The node length of the element's childNodes (innerHTML)
+                 * @name _blockLength
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access protected
+                 * 
+                 * @type {number}
+                 * 
+                 * @description
+                 * The node length of the element's childNodes (innerHTML).
                  */
                 _blockLength = 0;
 
+                /**
+                 * @name __removeListener
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {plat.IRemoveListener}
+                 * 
+                 * @description
+                 * A function to stop listening for array (context) mutations.
+                 */
                 private __removeListener: IRemoveListener;
-                private __currentAnimations: Array<IAnimationThenable<void>> = [];
+                /**
+                 * @name __currentAnimations
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {Array<plat.ui.animations.IAnimationThenable<void>>}
+                 * 
+                 * @description
+                 * An array to aggregate all current animation promises.
+                 */
+                private __currentAnimations: Array<animations.IAnimationThenable<void>> = [];
+                /**
+                 * @name __resolveFn
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {() => void}
+                 * 
+                 * @description
+                 * The resolve function for the itemsLoaded promise.
+                 */
                 private __resolveFn: () => void;
 
+                /**
+                 * @name constructor
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * The constructor for a {@link plat.ui.controls.ForEach|ForEach}. Creates the itemsLoaded promise.
+                 * 
+                 * @returns {plat.ui.controls.ForEach} A {@link plat.ui.controls.ForEach|ForEach} instance.
+                 */
                 constructor() {
                     super();
                     this.itemsLoaded = new this.$Promise<void>((resolve) => {
@@ -28630,8 +35876,15 @@ module plat {
                 }
 
                 /**
-                 * Creates a bindable template with the element's childNodes (innerHTML) 
-                 * specified for the ForEach.
+                 * @name setTemplate
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Creates a bindable template with the control element's childNodes (innerHTML).
+                 * 
+                 * @returns {void}
                  */
                 setTemplate(): void {
                     var childNodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes);
@@ -28639,11 +35892,19 @@ module plat {
                 }
 
                 /**
+                 * @name contextChanged
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Re-syncs the ForEach children controls and DOM with the new 
                  * array.
                  * 
-                 * @param newValue The new Array
-                 * @param oldValue The old Array
+                 * @param {Array<any>} newValue? The new Array
+                 * @param {Array<any>} oldValue? The old Array
+                 * 
+                 * @returns {void}
                  */
                 contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
                     if (isNull(this.__removeListener)) {
@@ -28669,7 +35930,15 @@ module plat {
                 }
 
                 /**
-                 * Observes the array for changes and adds initial items to the DOM.
+                 * @name loaded
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Observes the Array context for changes and adds initial items to the DOM.
+                 * 
+                 * @returns {void}
                  */
                 loaded(): void {
                     var context = this.context;
@@ -28684,7 +35953,15 @@ module plat {
                 }
 
                 /**
-                 * Removes the Array listener
+                 * @name dispose
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Removes the Array context mutation listener
+                 * 
+                 * @returns {void}
                  */
                 dispose(): void {
                     if (isFunction(this.__removeListener)) {
@@ -28696,10 +35973,18 @@ module plat {
                 }
 
                 /**
-                 * Adds an item to the ForEach's element.
+                 * @name _addItem
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
                  * 
-                 * @param item The document fragment representing a single item
-                 * @param animate Whether to animate the entering item
+                 * @description
+                 * Adds an item to the control's element.
+                 * 
+                 * @param {DocumentFragment} item The HTML fragment representing a single item
+                 * @param {boolean} animate? Whether or not to animate the entering item
+                 * 
+                 * @returns {void}
                  */
                 _addItem(item: DocumentFragment, animate?: boolean): void {
                     if (!isNode(item) ||
@@ -28740,7 +36025,15 @@ module plat {
                 }
 
                 /**
-                 * Removes an item from the ForEach's element.
+                 * @name _removeItem
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Removes an item from the control's element.
+                 * 
+                 * @returns {void}
                  */
                 _removeItem(): void {
                     var controls = this.controls,
@@ -28750,8 +36043,16 @@ module plat {
                 }
 
                 /**
-                 * Updates the ForEach's children resource objects when 
+                 * @name _updateResources
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Updates the control's children resource objects when 
                  * the array changes.
+                 * 
+                 * @returns {void}
                  */
                 _updateResources(): void {
                     var controls = this.controls,
@@ -28763,39 +36064,56 @@ module plat {
                 }
 
                 /**
+                 * @name _setListener
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Sets a listener for the changes to the array.
+                 * 
+                 * @returns {void}
                  */
                 _setListener(): void {
-                    this.__removeListener = this.observeArray(this, 'context', this._arrayChanged);
+                    this.__removeListener = this.observeArray(this, 'context', this._executeEvent);
                 }
 
                 /**
-                 * Receives an event when a method has been called on an array.
+                 * @name _executeEvent
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
                  * 
-                 * @param ev The IArrayMethodInfo
+                 * @description
+                 * Receives an event when a method has been called on an array and maps the array 
+                 * method to its associated method handler.
+                 * 
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                 * 
+                 * @returns {void}
                  */
-                _arrayChanged(ev: observable.IArrayMethodInfo<any>): void {
-                    if (isFunction((<any>this)['_' + ev.method])) {
-                        this._executeEvent(ev);
+                _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
+                    var method = '_' + ev.method;
+                    if (isFunction((<any>this)[method])) {
+                        (<any>this)[method](ev);
                     }
                 }
 
                 /**
-                 * Maps an array method to its associated method handler.
+                 * @name _addItems
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
                  * 
-                 * @param ev The IArrayMethodInfo
-                 */
-                _executeEvent(ev: observable.IArrayMethodInfo<any>): void {
-                    (<any>this)['_' + ev.method](ev);
-                }
-
-                /**
-                 * Adds new items to the ForEach's element when items are added to 
+                 * @description
+                 * Adds new items to the control's element when items are added to 
                  * the array.
                  * 
-                 * @param numberOfItems The number of items to add.
-                 * @param index The point in the array to start adding items.
-                 * @param animate whether to animate the new items
+                 * @param {number} numberOfItems The number of items to add.
+                 * @param {number} index The point in the array to start adding items.
+                 * @param {boolean} animate? Whether or not to animate the new items
+                 * 
+                 * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
                  */
                 _addItems(numberOfItems: number, index: number, animate?: boolean): async.IThenable<void> {
                     var bindableTemplates = this.bindableTemplates,
@@ -28818,7 +36136,6 @@ module plat {
                                 this.__resolveFn();
                                 this.__resolveFn = null;
                             }
-                            return;
                         });
                     } else {
                         if (isFunction(this.__resolveFn)) {
@@ -28834,9 +36151,17 @@ module plat {
                 }
 
                 /**
-                 * Removes items from the ForEach's element.
+                 * @name _removeItems
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
                  * 
-                 * @param numberOfItems The number of items to remove.
+                 * @description
+                 * Removes items from the control's element.
+                 * 
+                 * @param {number} numberOfItems The number of items to remove.
+                 * 
+                 * @returns {void}
                  */
                 _removeItems(numberOfItems: number): void {
                     for (var i = 0; i < numberOfItems; ++i) {
@@ -28849,11 +36174,19 @@ module plat {
                 }
 
                 /**
+                 * @name _getAliases
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Returns a resource alias object for an item in the array. The 
                  * resource object contains index:number, even:boolean, odd:boolean, 
-                 * and first:boolean.
+                 * first:boolean, and last:boolean.
                  * 
-                 * @param index The index used to create the resource aliases.
+                 * @param {number} index The index used to create the resource aliases.
+                 * 
+                 * @returns {plat.IObject<plat.ui.IResource>} An object consisting of {@link plat.ui.IResource|IResources}.
                  */
                 _getAliases(index: number): IObject<IResource> {
                     var isEven = (index & 1) === 0;
@@ -28882,23 +36215,39 @@ module plat {
                 }
 
                 /**
+                 * @name _push
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Handles items being pushed into the array.
                  * 
-                 * @param ev The IArrayMethodInfo
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                 * 
+                 * @returns {void}
                  */
                 _push(ev: observable.IArrayMethodInfo<any>): void {
                     this._addItems(ev.arguments.length, ev.oldArray.length, true);
                 }
 
                 /**
+                 * @name _pop
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Handles items being popped off the array.
                  * 
-                 * @param ev The IArrayMethodInfo
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                 * 
+                 * @returns {void}
                  */
                 _pop(ev: observable.IArrayMethodInfo<any>): void {
                     var blockLength = this._blockLength,
                         startNode: number,
-                        animationPromise: plat.ui.IAnimationThenable<void>;
+                        animationPromise: plat.ui.animations.IAnimationThenable<void>;
 
                     if (blockLength > 0) {
                         startNode = blockLength * ev.newArray.length;
@@ -28916,18 +36265,34 @@ module plat {
                 }
 
                 /**
+                 * @name _shift
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Handles items being shifted off the array.
                  * 
-                 * @param ev The IArrayMethodInfo
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                 * 
+                 * @returns {void}
                  */
                 _shift(ev: observable.IArrayMethodInfo<any>): void {
                     this._removeItems(1);
                 }
 
                 /**
+                 * @name _splice
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Handles adding/removing items when an array is spliced.
                  * 
-                 * @param ev The IArrayMethodInfo
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                 * 
+                 * @returns {void}
                  */
                 _splice(ev: observable.IArrayMethodInfo<any>): void {
                     var oldLength = this.controls.length,
@@ -28941,62 +36306,108 @@ module plat {
                 }
 
                 /**
+                 * @name _unshift
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Handles items being unshifted into the array.
                  * 
-                 * @param ev The IArrayMethodInfo
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                 * 
+                 * @returns {void}
                  */
                 _unshift(ev: observable.IArrayMethodInfo<any>): void {
                     this._addItems(ev.arguments.length, ev.oldArray.length);
                 }
 
                 /**
+                 * @name _sort
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Handles when the array is sorted.
                  * 
-                 * @param ev The IArrayMethodInfo
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                 * 
+                 * @returns {void}
                  */
-                _sort(ev: observable.IArrayMethodInfo<any>): void {
-                }
+                _sort(ev: observable.IArrayMethodInfo<any>): void { }
 
                 /**
+                 * @name _reverse
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Handles when the array is reversed.
                  * 
-                 * @param ev The IArrayMethodInfo
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The Array mutation event information.
+                 * 
+                 * @returns {void}
                  */
-                _reverse(ev: observable.IArrayMethodInfo<any>): void {
-                }
+                _reverse(ev: observable.IArrayMethodInfo<any>): void { }
 
                 /**
-                 * Animate a block of elements
+                 * @name _animateItems
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access protected
                  * 
-                 * @param startNode The starting childNode of the ForEach to animate
-                 * @param endNode The ending childNode of the ForEach to animate
-                 * @param key The animation key/type
-                 * @param cancel Whether or not the animation should cancel all current animations
+                 * @description
+                 * Animates a block of elements.
+                 * 
+                 * @param {number} startNode The starting childNode of the ForEach to animate
+                 * @param {number} endNode The ending childNode of the ForEach to animate
+                 * @param {string} key The animation key/type
+                 * @param {boolean} cancel? Whether or not the animation should cancel all current animations. 
+                 * Defaults to true.
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<void>} A promise that resolves when all animations are complete.
                  */
-                _animateItems(startNode: number, endNode: number, key: string, cancel: boolean = true): IAnimationThenable<void> {
+                _animateItems(startNode: number, endNode: number, key: string, cancel?: boolean): animations.IAnimationThenable<void> {
                     var currentAnimations = this.__currentAnimations,
                         length = currentAnimations.length;
 
-                    if (length === 0 || !cancel) {
+                    if (length === 0 || cancel === false) {
                         return this.__handleAnimation(startNode, endNode, key);
                     }
 
-                    var animationPromises: Array<IAnimationThenable<void>> = [];
+                    var animationPromises: Array<animations.IAnimationThenable<void>> = [];
                     while (length-- > 0) {
                         animationPromises.push(currentAnimations[length].cancel());
                     }
 
-                    return <IAnimationThenable<void>>this.$Promise.all(animationPromises).then(() => {
+                    return <animations.IAnimationThenable<void>>this.$Promise.all(animationPromises).then(() => {
                         return this.__handleAnimation(startNode, endNode, key);
                     });
                 }
 
-                private __handleAnimation(startNode: number, endNode: number, key: string): IAnimationThenable<void> {
+                /**
+                 * @name __handleAnimation
+                 * @memberof plat.ui.controls.ForEach
+                 * @kind function
+                 * @access private
+                 * 
+                 * @description
+                 * Handles the animation of a block of elements.
+                 * 
+                 * @param {number} startNode The starting childNode of the ForEach to animate
+                 * @param {number} endNode The ending childNode of the ForEach to animate
+                 * @param {string} key The animation key/type
+                 * 
+                 * @returns {plat.ui.animations.IAnimationThenable<void>} The last element node's animation promise.
+                 */
+                private __handleAnimation(startNode: number, endNode: number, key: string): animations.IAnimationThenable<void> {
                     var nodes: Array<Node> = Array.prototype.slice.call(this.element.childNodes, startNode, endNode),
                         node: Node,
                         $animator = this.$Animator,
                         currentAnimations = this.__currentAnimations,
-                        animationPromise: IAnimationThenable<void>;
+                        animationPromise: animations.IAnimationThenable<void>;
 
                     while (nodes.length > 0) {
                         node = nodes.shift();
@@ -29014,16 +36425,43 @@ module plat {
 
             register.control(__ForEach, ForEach);
 
+            /**
+             * @name Html
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.TemplateControl}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} for adding HTML to the 
+             * DOM through bound context strings.
+             */
             export class Html extends TemplateControl {
                 /**
-                 * Loads the new HTML String.
+                 * @name contextChanged
+                 * @memberof plat.ui.controls.Html
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Loads the DOM with the new HTML String.
+                 * 
+                 * @returns {void}
                  */
                 contextChanged(): void {
                     this.loaded();
                 }
 
                 /**
-                 * Loads the context as the innerHTML of the element.
+                 * @name loaded
+                 * @memberof plat.ui.controls.Html
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Loads the context string as the innerHTML of the element.
+                 * 
+                 * @returns {void}
                  */
                 loaded(): void {
                     var context = this.context;
@@ -29038,49 +36476,209 @@ module plat {
 
             register.control(__Html, Html);
 
+            /**
+             * @name Select
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.TemplateControl}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} for binding an HTML select element 
+             * to an Array context.
+             */
             export class Select extends TemplateControl {
+                /**
+                 * @name $Promise
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.async.IPromise}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.async.IPromise|IPromise} injectable.
+                 */
                 $Promise: async.IPromise = acquire(__Promise);
+                /**
+                 * @name $Document
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Document}
+                 * 
+                 * @description
+                 * Reference to the Document injectable.
+                 */
                 $Document: Document = acquire(__Document);
 
                 /**
+                 * @name replaceWith
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * Replaces the <plat-select> node with 
                  * a <select> node.
                  */
-                replaceWith: string = 'select';
+                replaceWith = 'select';
 
                 /**
-                 * This control needs to load before plat-bind.
+                 * @name priority
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {number}
+                 * 
+                 * @description
+                 * The load priority of the control (needs to load before a {@link plat.controls.Bind|Bind} control).
                  */
                 priority = 120;
 
                 /**
-                 * Specifies the context as an Array.
+                 * @name context
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Array<any>}
+                 * 
+                 * @description
+                 * The required context of the control (must be of type Array).
                  */
                 context: Array<any>;
 
                 /**
+                 * @name groups
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.IObject<Element>}
+                 * 
+                 * @description
                  * An object that keeps track of unique 
                  * optgroups.
                  */
                 groups: IObject<Element> = {};
 
                 /**
-                 * The evaluated plat-options object.
+                 * @name options
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.observable.IObservableProperty<plat.ui.controls.ISelectOptions>}
+                 * 
+                 * @description
+                 * The evaluated {@link plat.controls.Options|plat-options} object.
                  */
                 options: observable.IObservableProperty<ISelectOptions>;
 
                 /**
-                 * Will fulfill whenever all items are loaded.
+                 * @name itemsLoaded
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.async.IThenable<void>}
+                 * 
+                 * @description
+                 * A Promise that will fulfill whenever all items are loaded.
                  */
                 itemsLoaded: async.IThenable<void>;
 
+                /**
+                 * @name __removeListener
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {plat.IRemoveListener}
+                 * 
+                 * @description
+                 * A function to stop listening to Array context mutations.
+                 */
                 private __removeListener: IRemoveListener;
+                /**
+                 * @name __isGrouped
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {boolean}
+                 * 
+                 * @description
+                 * Whether or not the select is grouped.
+                 */
                 private __isGrouped = false;
+                /**
+                 * @name __isNativeSelect
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {boolean}
+                 * 
+                 * @description
+                 * Whether or not the select should be treated as a 
+                 * native (unbound) select element.
+                 */
                 private __isNativeSelect = false;
+                /**
+                 * @name __group
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * The property used to group the objects.
+                 */
                 private __group: string;
+                /**
+                 * @name __defaultOption
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {HTMLOptionElement}
+                 * 
+                 * @description
+                 * An optional default option specified in the control element's 
+                 * innerHTML.
+                 */
                 private __defaultOption: HTMLOptionElement;
+                /**
+                 * @name __resolveFn
+                 * @memberof plat.ui.controls.Select
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {() => void}
+                 * 
+                 * @description
+                 * The function to resolve the itemsLoaded promise.
+                 */
                 private __resolveFn: () => void;
 
+                /**
+                 * @name constructor
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * The constructor for a {@link plat.ui.controls.Select|Select}. Creates the itemsLoaded promise.
+                 * 
+                 * @returns {plat.ui.controls.Select} A {@link plat.ui.controls.Select|Select} instance.
+                 */
                 constructor() {
                     super();
                     this.itemsLoaded = new this.$Promise<void>((resolve) => {
@@ -29089,8 +36687,16 @@ module plat {
                 }
 
                 /**
+                 * @name setTemplate
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Creates the bindable option template and grouping 
                  * template if necessary.
+                 * 
+                 * @returns {void}
                  */
                 setTemplate(): void {
                     var $document = this.$Document,
@@ -29130,11 +36736,19 @@ module plat {
                 }
 
                 /**
+                 * @name contextChanged
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Re-observes the new array context and modifies 
                  * the options accordingly.
                  * 
-                 * @param newValue The new array context.
-                 * @param oldValue The old array context.
+                 * @param {Array<any>} newValue? The new array context.
+                 * @param {Array<any>} oldValue? The old array context.
+                 * 
+                 * @returns {void}
                  */
                 contextChanged(newValue?: Array<any>, oldValue?: Array<any>): void {
                     if (this.__isNativeSelect || !isArray(newValue)) {
@@ -29161,8 +36775,16 @@ module plat {
                 }
 
                 /**
+                 * @name loaded
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Observes the new array context and adds 
                  * the options accordingly.
+                 * 
+                 * @returns {void}
                  */
                 loaded(): void {
                     if (this.__isNativeSelect) {
@@ -29199,7 +36821,15 @@ module plat {
                 }
 
                 /**
+                 * @name dispose
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Stops observing the array context.
+                 * 
+                 * @returns {void}
                  */
                 dispose(): void {
                     if (isFunction(this.__removeListener)) {
@@ -29212,12 +36842,19 @@ module plat {
                 }
 
                 /**
+                 * @name _addItems
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Adds the options to the select element.
                  * 
-                 * @param numberOfItems The number of items 
-                 * to add.
-                 * @param length The current index of the next 
+                 * @param {number} numberOfItems The number of items to add.
+                 * @param {number} length The current index of the next 
                  * set of items to add.
+                 * 
+                 * @returns {plat.async.IThenable<void>} The itemsLoaded promise.
                  */
                 _addItems(numberOfItems: number, length: number): async.IThenable<void> {
                     var index = length,
@@ -29253,13 +36890,22 @@ module plat {
                 }
 
                 /**
+                 * @name _insertOptions
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The callback used to add an option after 
                  * its template has been bound.
                  * 
-                 * @param index The current index of the item being added.
-                 * @param item The item being added.
-                 * @param optionClone The bound DocumentFragment to be 
+                 * @param {number} index The current index of the item being added.
+                 * @param {any} item The item being added.
+                 * @param {DocumentFragment} optionClone The bound DocumentFragment to be 
                  * inserted into the DOM.
+                 * 
+                 * @returns {plat.async.IThenable<void>} A promise that resolves when the option 
+                 * or optgroup has successfully be inserted.
                  */
                 _insertOptions(index: number, item: any, optionClone: DocumentFragment): async.IThenable<any> {
                     var element = this.element;
@@ -29293,7 +36939,17 @@ module plat {
                 }
 
                 /**
-                 * Removes the last option item from the DOM.
+                 * @name _removeItem
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Removes the specified option item from the DOM.
+                 * 
+                 * @param {number} index The control index to remove.
+                 * 
+                 * @returns {void}
                  */
                 _removeItem(index: number): void {
                     if (index < 0) {
@@ -29304,10 +36960,18 @@ module plat {
                 }
 
                 /**
+                 * @name _removeItems
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Removes a specified number of elements.
                  * 
-                 * @param numberOfItems The number of items 
+                 * @param {number} numberOfItems The number of items 
                  * to remove.
+                 * 
+                 * @returns {void}
                  */
                 _removeItems(numberOfItems: number): void {
                     var controls = this.controls,
@@ -29319,10 +36983,18 @@ module plat {
                 }
 
                 /**
+                 * @name _itemRemoved
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The function called when an item has been removed 
                  * from the array context.
                  * 
-                 * @param ev The array mutation object
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                 * 
+                 * @returns {void}
                  */
                 _itemRemoved(ev: observable.IArrayMethodInfo<any>): void {
                     if (ev.oldArray.length === 0) {
@@ -29336,8 +37008,16 @@ module plat {
                 }
 
                 /**
+                 * @name _resetSelect
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Resets the select element by removing all its 
                  * items and adding them back.
+                 * 
+                 * @returns {void}
                  */
                 _resetSelect(): void {
                     var itemLength = this.context.length,
@@ -29354,40 +37034,72 @@ module plat {
                 }
 
                 /**
+                 * @name _push
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The function called when an element is pushed to 
                  * the array context.
                  * 
-                 * @param ev The array mutation object
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                 * 
+                 * @returns {void}
                  */
                 _push(ev: observable.IArrayMethodInfo<any>): void {
                     this._addItems(ev.arguments.length, ev.oldArray.length);
                 }
 
                 /**
+                 * @name _pop
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The function called when an item is popped 
                  * from the array context.
                  * 
-                 * @param ev The array mutation object
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                 * 
+                 * @returns {void}
                  */
                 _pop(ev: observable.IArrayMethodInfo<any>): void {
                     this._itemRemoved(ev);
                 }
-
+        
                 /**
+                 * @name _shift
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The function called when an item is shifted 
                  * from the array context.
                  * 
-                 * @param ev The array mutation object
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                 * 
+                 * @returns {void}
                  */
                 _shift(ev: observable.IArrayMethodInfo<any>): void {
                     this._itemRemoved(ev);
                 }
-
+        
                 /**
+                 * @name _splice
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The function called when items are spliced 
                  * from the array context.
                  * 
-                 * @param ev The array mutation object
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                 * 
+                 * @returns {void}
                  */
                 _splice(ev: observable.IArrayMethodInfo<any>): void {
                     if (this.__isGrouped) {
@@ -29404,12 +37116,20 @@ module plat {
                         this._removeItems(oldLength - newLength);
                     }
                 }
-
+        
                 /**
+                 * @name _unshift
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The function called when an item is unshifted 
                  * onto the array context.
                  * 
-                 * @param ev The array mutation object
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                 * 
+                 * @returns {void}
                  */
                 _unshift(ev: observable.IArrayMethodInfo<any>): void {
                     if (this.__isGrouped) {
@@ -29419,24 +37139,40 @@ module plat {
 
                     this._addItems(ev.arguments.length, ev.oldArray.length);
                 }
-
+        
                 /**
+                 * @name _sort
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The function called when the array context 
                  * is sorted.
                  * 
-                 * @param ev The array mutation object
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                 * 
+                 * @returns {void}
                  */
                 _sort(ev: observable.IArrayMethodInfo<any>): void {
                     if (this.__isGrouped) {
                         this._resetSelect();
                     }
                 }
-
+        
                 /**
+                 * @name _reverse
+                 * @memberof plat.ui.controls.Select
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * The function called when the array context 
                  * is reversed.
                  * 
-                 * @param ev The array mutation object
+                 * @param {plat.observable.IArrayMethodInfo<any>} ev The array mutation object
+                 * 
+                 * @returns {void}
                  */
                 _reverse(ev: observable.IArrayMethodInfo<any>): void {
                     if (this.__isGrouped) {
@@ -29446,10 +37182,23 @@ module plat {
             }
 
             /**
-             * The available options for plat.ui.controls.Select.
+             * @name ISelectOptions
+             * @memberof plat.ui.controls
+             * @kind interface
+             * 
+             * @description
+             * The available {@link plat.controls.Options|options} for the {@link plat.ui.controls.Select|Select} control.
              */
             export interface ISelectOptions {
                 /**
+                 * @name group
+                 * @memberof plat.ui.controls.ISelectOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The property in your context array 
                  * of objects to use to group the objects 
                  * into optgroups.
@@ -29457,13 +37206,29 @@ module plat {
                 group: string;
 
                 /**
+                 * @name value
+                 * @memberof plat.ui.controls.ISelectOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The property in your context array of 
                  * objects with which to use to bind to the 
                  * option's value.
                  */
                 value: string;
-
+        
                 /**
+                 * @name textContent
+                 * @memberof plat.ui.controls.ISelectOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
                  * The property in your context array of 
                  * objects with which to use to bind to the 
                  * option's textContent.
@@ -29473,30 +37238,145 @@ module plat {
 
             register.control(__Select, Select);
 
+            /**
+             * @name If
+             * @memberof plat.ui.controls
+             * @kind class
+             * 
+             * @extends {plat.ui.TemplateControl}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} conditionally adding or removing 
+             * a block of nodes to or from the DOM.
+             */
             export class If extends TemplateControl {
-                $Animator: IAnimator = acquire(__Animator);
+                /**
+                 * @name $Animator
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.ui.animations.IAnimator}
+                 * 
+                 * @description
+                 * Reference to the {@link plat.ui.animations.IAnimator|IAnimator} injectable.
+                 */
+                $Animator: animations.IAnimator = acquire(__Animator);
 
                 /**
-                 * The evaluated plat-options object.
+                 * @name options
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {plat.observable.IObservableProperty<plat.ui.controls.IIfOptions>}
+                 * 
+                 * @description
+                 * The evaluated {@link plat.controls.Options|plat-options} object.
                  */
                 options: observable.IObservableProperty<IIfOptions>;
 
                 /**
+                 * @name commentNode
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {Comment}
+                 * 
+                 * @description
                  * The Comment used to hold the place of the plat-if element.
                  */
                 commentNode: Comment;
 
                 /**
+                 * @name fragmentStore
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {DocumentFragment}
+                 * 
+                 * @description
                  * The DocumentFragment that stores the plat-if element when hidden.
                  */
                 fragmentStore: DocumentFragment;
 
-                private __condition: boolean = true;
+                /**
+                 * @name __condition
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {boolean}
+                 * 
+                 * @description
+                 * The current evaluated condition (whether or not the 
+                 * control is visible) of the control.
+                 */
+                private __condition = true;
+                /**
+                 * @name __firstTime
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {boolean}
+                 * 
+                 * @description
+                 * A boolean value stating whether or not the condition has already 
+                 * been evaluated.
+                 */
+                private __firstTime = true;
+                /**
+                 * @name __removeListener
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {plat.IRemoveListener}
+                 * 
+                 * @description
+                 * A function to stop listening to changes on the options object.
+                 */
                 private __removeListener: IRemoveListener;
-                private __leaveAnimation: IAnimationThenable<void>;
-                private __enterAnimation: IAnimationThenable<void>;
-                private __firstTime: boolean = true;
+                /**
+                 * @name __leaveAnimation
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {plat.ui.animations.IAnimationThenable<void>}
+                 * 
+                 * @description
+                 * A promise that resolves when the leave animation is finished.
+                 */
+                private __leaveAnimation: animations.IAnimationThenable<void>;
+                /**
+                 * @name __enterAnimation
+                 * @memberof plat.ui.controls.If
+                 * @kind property
+                 * @access private
+                 * 
+                 * @type {plat.ui.animations.IAnimationThenable<void>}
+                 * 
+                 * @description
+                 * A promise that resolves when the entrance animation is finished.
+                 */
+                private __enterAnimation: animations.IAnimationThenable<void>;
 
+                /**
+                 * @name constructor
+                 * @memberof plat.ui.controls.If
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * The constructor for a {@link plat.ui.controls.If|If}. Creates the 
+                 * DocumentFragment for holding the conditional nodes.
+                 * 
+                 * @returns {plat.ui.controls.If} A {@link plat.ui.controls.If|If} instance.
+                 */
                 constructor() {
                     super();
                     var $document: Document = acquire(__Document);
@@ -29505,8 +37385,16 @@ module plat {
                 }
 
                 /**
+                 * @name contextChanged
+                 * @memberof plat.ui.controls.If
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Checks the options and initializes the 
                  * evaluation.
+                 * 
+                 * @returns {void}
                  */
                 contextChanged(): void {
                     var options = this.options.value;
@@ -29519,9 +37407,17 @@ module plat {
                 }
 
                 /**
+                 * @name loaded
+                 * @memberof plat.ui.controls.If
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Sets the visibility to true if no options are 
                  * defined, kicks off the evaluation, and observes 
                  * the options for changes.
+                 * 
+                 * @returns {void}
                  */
                 loaded(): void {
                     if (isNull(this.options)) {
@@ -29542,7 +37438,15 @@ module plat {
                 }
 
                 /**
+                 * @name dispose
+                 * @memberof plat.ui.controls.If
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
                  * Stops listening to the options for changes.
+                 * 
+                 * @returns {void}
                  */
                 dispose(): void {
                     if (isFunction(this.__removeListener)) {
@@ -29555,9 +37459,17 @@ module plat {
                 }
 
                 /**
+                 * @name _setter
+                 * @memberof plat.ui.controls.If
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
                  * Checks the condition and decides 
                  * whether or not to add or remove 
                  * the node from the DOM.
+                 * 
+                 * @returns {void}
                  */
                 _setter(options: IIfOptions): void {
                     var value = !!options.condition;
@@ -29590,8 +37502,15 @@ module plat {
                 }
 
                 /**
-                 * The callback used to add the fragment to the DOM 
-                 * after the bindableTemplate has been created.
+                 * @name _addItem
+                 * @memberof plat.ui.controls.If
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Adds the conditional nodes to the DOM.
+                 * 
+                 * @returns {void}
                  */
                 _addItem(): void {
                     var commentNode = this.commentNode,
@@ -29608,7 +37527,15 @@ module plat {
                 }
 
                 /**
-                 * Removes the node from the DOM.
+                 * @name _removeItem
+                 * @memberof plat.ui.controls.If
+                 * @kind function
+                 * @access protected
+                 * 
+                 * @description
+                 * Removes the conditional nodes from the DOM.
+                 * 
+                 * @returns {void}
                  */
                 _removeItem(): void {
                     var element = this.element;
@@ -29628,21 +37555,79 @@ module plat {
             }
 
             /**
-             * The available options for plat.ui.controls.If.
+             * @name IIfOptions
+             * @memberof plat.ui.controls
+             * @kind interface
+             * 
+             * @description
+             * The available {@link plat.controls.Options|options} for the {@link plat.ui.controls.If|If} control.
              */
             export interface IIfOptions {
                 /**
-                 * A boolean expression to bind to 
-                 * the element's visibility.
+                 * @name condition
+                 * @memberof plat.ui.controls.IIfOptions
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {boolean}
+                 * 
+                 * @description
+                 * A boolean expression to bind to whether or not the conditional 
+                 * nodes are present on the DOM.
                  */
                 condition: boolean;
             }
 
             register.control(__If, If);
 
+            /**
+             * @name Anchor
+             * @memberof plat.ui.controls
+             * @kind class
+             * @exported false
+             * 
+             * @extends {plat.ui.TemplateControl}
+             * 
+             * @description
+             * A {@link plat.ui.TemplateControl|TemplateControl} for adding additonal 
+             * functionality to a native HTML anchor tag.
+             */
             class Anchor extends TemplateControl {
+                /**
+                 * @name replaceWith
+                 * @memberof plat.ui.controls.Anchor
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {string}
+                 * 
+                 * @description
+                 * Replaces the {@link plat.ui.controls.Anchor|Anchor's} element with a native anchor tag.
+                 */
                 replaceWith = 'a';
+                /**
+                 * @name element
+                 * @memberof plat.ui.controls.Anchor
+                 * @kind property
+                 * @access public
+                 * 
+                 * @type {HTMLAnchorElement}
+                 * 
+                 * @description
+                 * The control's anchor element.
+                 */
                 element: HTMLAnchorElement;
+                /**
+                 * @name initialize
+                 * @memberof plat.ui.controls.Anchor
+                 * @kind function
+                 * @access public
+                 * 
+                 * @description
+                 * Prevents default on the anchor tag if the href attribute is left empty.
+                 * 
+                 * @returns {void}
+                 */
                 initialize(): void {
                     var element = this.element;
                     if (isEmpty(element.href)) {
@@ -29658,6 +37643,15 @@ module plat {
             register.control(__Anchor, Anchor);
         }
     }
+    /**
+     * @name processing
+     * @memberof plat
+     * @kind namespace
+     * @access public
+     * 
+     * @description
+     * Holds classes and interfaces related to Document processing in platypus.
+     */
     export module processing {
         /**
          * Responsible for iterating through the DOM and collecting controls.
@@ -29790,21 +37784,70 @@ module plat {
         }
 
         /**
-         * A NodeManager is responsible for data binding a data context to a Node.
+         * @name NodeManager
+         * @memberof plat.processing
+         * @kind class
+         * 
+         * @implements {plat.processing.INodeManager}
+         * 
+         * @description
+         * Responsible for data binding a data context to a Node.
          */
         export class NodeManager implements INodeManager {
-            static $ContextManagerStatic: observable.IContextManagerStatic;
-            static $Parser: expressions.IParser;
-            static $TemplateControlFactory: ui.ITemplateControlFactory;
-
             /**
-             * Given an IParsedExpression array, creates an array of unique identifers
-             * to use with binding. This allows us to avoid creating multiple listeners
-             * for the identifier and node.
-             * 
+             * @name $ContextManagerStatic
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access public
              * @static
-             * @param expressions An IParsedExpression array to search for identifiers.
-             * @returns {Array<string>} An array of identifiers.
+             * 
+             * @type {plat.observable.IContextManagerStatic}
+             * 
+             * @description
+             * Reference to the {@link plat.observable.IContextManagerStatic|IContextManagerStatic} injectable.
+             */
+            static $ContextManagerStatic: observable.IContextManagerStatic;
+            /**
+             * @name $Parser
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access public
+             * @static
+             * 
+             * @type {plat.expressions.IParser}
+             * 
+             * @description
+             * Reference to the {@link plat.expressions.IParser|IParser} injectable.
+             */
+            static $Parser: expressions.IParser;
+            /**
+             * @name $TemplateControlFactory
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access public
+             * @static
+             * 
+             * @type {plat.ui.ITemplateControlFactory}
+             * 
+             * @description
+             * Reference to the {@link ui.ITemplateControlFactory|ITemplateControlFactory} injectable.
+             */
+            static $TemplateControlFactory: ui.ITemplateControlFactory;
+        
+            /**
+             * @name findUniqueIdentifiers
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
+             * Given an {@link plat.expressions.IParsedExpression|IParsedExpression} array, creates an array of unique identifers 
+             * to use with binding. This allows us to avoid creating multiple listeners for the identifier and node.
+             * 
+             * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions to search for identifiers.
+             * 
+             * @returns {Array<string>} An array of unique identifiers.
              */
             static findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string> {
                 var length = expressions.length,
@@ -29834,22 +37877,40 @@ module plat {
 
                 return uniqueIdentifiers;
             }
-
+        
             /**
+             * @name hasMarkup
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Determines if a string has the markup notation.
              * 
-             * @param text The text string in which to search for markup.
-             * @returns {Boolean} Indicates whether or not there is markup.
+             * @param {string} text The text string in which to search for markup.
+             * 
+             * @returns {boolean} Indicates whether or not there is markup.
              */
             static hasMarkup(text: string): boolean {
                 return NodeManager._markupRegex.test(text);
             }
-
+        
             /**
-             * Given a string, finds markup in the string and creates an IParsedExpression array.
-             * 
+             * @name findMarkup
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
              * @static
-             * @param text The text string to parse.
+             * 
+             * @description
+             * Given a string, finds markup in the string and creates an array of 
+             * {@link plat.expressions.IParsedExpression|IParsedExpression}.
+             * 
+             * @param {string} text The text string in which to search for markup.
+             * 
+             * @returns {Array<plat.expressions.IParsedExpression>} An array of parsed expressions that 
+             * composes the output given a proper context.
              */
             static findMarkup(text: string): Array<expressions.IParsedExpression> {
                 var start: number,
@@ -29899,17 +37960,25 @@ module plat {
 
                 return parsedExpressions;
             }
-
+        
             /**
-             * Takes in data context and an IParsedExpression array and outputs a string of the evaluated
-             * expressions.
-             * 
+             * @name build
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
              * @static
-             * @param expressions The IParsedExpression array to evaluate.
-             * @param control The IControl used to parse the expressions.
-             * @returns {string} The evaluated expressions.
+             * 
+             * @description
+             * Takes in a control with a data context and an array of {@link plat.expressions.IParsedExpression|IParsedExpression} 
+             * and outputs a string of the evaluated expressions.
+             * 
+             * @param {Array<plat.expressions.IParsedExpression>} expressions The composition array to evaluate.
+             * @param {plat.ui.ITemplateControl} control? The {@link plat.ui.ITemplateControl|ITemplateControl} used to parse 
+             * the expressions.
+             * 
+             * @returns {string} The output text with all markup bound.
              */
-            static build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl) {
+            static build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string {
                 var text = '',
                     length = expressions.length,
                     resources = {},
@@ -29945,17 +38014,26 @@ module plat {
 
                 return text;
             }
-
+        
             /**
+             * @name observeIdentifiers
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Registers a listener to be notified of a change in any associated identifier.
              * 
-             * @static
-             * @param identifiers An Array of identifiers to observe.
-             * @param control The control associated to the identifiers.
-             * @param listener The listener to call when any identifier property changes.
+             * @param {Array<string>} identifiers An Array of identifiers to observe.
+             * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} associated 
+             * to the identifiers.
+             * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
+             * 
+             * @returns {void}
              */
             static observeIdentifiers(identifiers: Array<string>, control: ui.ITemplateControl,
-                listener: (...args: Array<any>) => void) {
+                listener: (...args: Array<any>) => void): void {
                 var length = identifiers.length,
                     $contextManager = NodeManager.$ContextManagerStatic,
                     rootManager = $contextManager.getManager(Control.getRootControl(control)),
@@ -30024,21 +38102,48 @@ module plat {
                     }
                 }
             }
-
+        
             /**
+             * @name _markupRegex
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access protected
+             * @static
+             * 
+             * @type {RegExp}
+             * 
+             * @description
              * A regular expression for finding markup
              */
             static _markupRegex: RegExp;
-
+        
             /**
+             * @name _newLineRegex
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access protected
+             * @static
+             * 
+             * @type {RegExp}
+             * 
+             * @description
              * A regular expression for finding newline characters.
              */
             static _newLineRegex: RegExp;
-
+        
             /**
-             * Wraps constant text as an IParsedExpression.
+             * @name _wrapExpression
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access protected
+             * @static
              * 
-             * @param text The text to wrap.
+             * @description
+             * Wraps constant text as a static {@link plat.expressions.IParsedExpression|IParsedExpression}.
+             * 
+             * @param text The text to wrap into a static expression.
+             * 
+             * @returns {plat.expressions.IParsedExpression} The wrapped, static expression.
              */
             static _wrapExpression(text: string): expressions.IParsedExpression {
                 return {
@@ -30048,12 +38153,72 @@ module plat {
                     expression: text
                 };
             }
-
+        
+            /**
+             * @name type
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The type of {@link plat.processing.INodeManager|INodeManager}.
+             */
             type: string;
-            isClone: boolean = false;
+            /**
+             * @name nodeMap
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.processing.INodeMap}
+             * 
+             * @description
+             * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.INodeManager|INodeManager}. 
+             * Contains the compiled Node.
+             */
             nodeMap: INodeMap;
+            /**
+             * @name parent
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.processing.IElementManager}
+             * 
+             * @description
+             * The parent {@link plat.processing.IElementManager|IElementManager}.
+             */
             parent: IElementManager;
-
+            /**
+             * @name isClone
+             * @memberof plat.processing.NodeManager
+             * @kind property
+             * @access public
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Whether or not this {@link plat.processing.INodeManager|INodeManager} is a clone.
+             */
+            isClone = false;
+        
+            /**
+             * @name initialize
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Initializes the manager's properties.
+             * 
+             * @param {plat.processing.INodeMap} nodeMap The mapping associated with this manager. We have to use an 
+             * Used to treat all {@link plat.processing.INodeManager|INodeManagers} the same.
+             * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager}.
+             * 
+             * @returns {void}
+             */
             initialize(nodeMap: INodeMap, parent: IElementManager): void {
                 this.nodeMap = nodeMap;
                 this.parent = parent;
@@ -30063,7 +38228,18 @@ module plat {
                     parent.children.push(this);
                 }
             }
-
+        
+            /**
+             * @name getParentControl
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Retrieves the parent control associated with the parent manager.
+             * 
+             * @returns {plat.ui.ITemplateControl} The parent {@link plat.ui.ITemplateControl|ITemplateControl}.
+             */
             getParentControl(): ui.ITemplateControl {
                 var parent = this.parent,
                     control: ui.ITemplateControl;
@@ -30079,11 +38255,37 @@ module plat {
 
                 return control;
             }
-
+        
+            /**
+             * @name clone
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Clones this {@link plat.processing.INodeManager|INodeManager} with the new node.
+             * 
+             * @param {Node} newNode The new node associated with the new manager.
+             * @param {plat.processing.IElementManager} parentManager The parent 
+             * {@link plat.processing.IElementManager|IElementManager} for the clone.
+             * 
+             * @returns {number} The number of nodes to advance while traversing is in progress.
+             */
             clone(newNode: Node, parentManager: IElementManager): number {
                 return 1;
             }
-
+        
+            /**
+             * @name bind
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * The function used for data-binding a data context to the DOM.
+             * 
+             * @returns {void}
+             */
             bind(): void { }
         }
 
@@ -30109,192 +38311,444 @@ module plat {
             __Parser,
             __TemplateControlFactory
         ], __STATIC);
-
+    
         /**
-         * The external interface for the '$NodeManagerStatic' injectable.
+         * @name INodeManagerStatic
+         * @memberof plat.processing
+         * @kind interface
+         * 
+         * @description
+         * Performs essential Node management and binding functions. 
          */
         export interface INodeManagerStatic {
             /**
-             * Given an IParsedExpression array, creates an array of unique identifers
-             * to use with binding. This allows us to avoid creating multiple listeners
-             * for the identifier and node.
-             * 
+             * @name findUniqueIdentifiers
+             * @memberof plat.processing.INodeManagerStatic
+             * @kind function
+             * @access public
              * @static
-             * @param expressions An IParsedExpression array to search for identifiers.
-             * @returns {Array<string>} An array of identifiers.
+             * 
+             * @description
+             * Given an {@link plat.expressions.IParsedExpression|IParsedExpression} array, creates an array of unique identifers 
+             * to use with binding. This allows us to avoid creating multiple listeners for the identifier and node.
+             * 
+             * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions to search for identifiers.
+             * 
+             * @returns {Array<string>} An array of unique identifiers.
              */
             findUniqueIdentifiers(expressions: Array<expressions.IParsedExpression>): Array<string>;
 
             /**
+             * @name hasMarkup
+             * @memberof plat.processing.INodeManagerStatic
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Determines if a string has the markup notation.
              * 
-             * @param text The text string in which to search for markup.
-             * @returns {Boolean} Indicates whether or not there is markup.
+             * @param {string} text The text string in which to search for markup.
+             * 
+             * @returns {boolean} Indicates whether or not there is markup.
              */
             hasMarkup(text: string): boolean;
 
             /**
-             * Given a string, finds markup in the string and creates an IParsedExpression array.
-             * 
+             * @name findMarkup
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
              * @static
-             * @param text The text string to parse.
-             * @returns {Array<IParsedExpression>}
+             * 
+             * @description
+             * Given a string, finds markup in the string and creates an array of 
+             * {@link plat.expressions.IParsedExpression|IParsedExpression}.
+             * 
+             * @param {string} text The text string in which to search for markup.
+             * 
+             * @returns {Array<plat.expressions.IParsedExpression>} An array of parsed expressions that 
+             * composes the output given a proper context.
              */
             findMarkup(text: string): Array<expressions.IParsedExpression>;
 
             /**
-             * Takes in data context and an IParsedExpression array and outputs a string of the evaluated
-             * expressions.
-             * 
+             * @name build
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
              * @static
-             * @param expressions The IParsedExpression array to evaluate.
-             * @param control The IControl used to parse the expressions.
-             * @returns {string} The evaluated expressions.
+             * 
+             * @description
+             * Takes in a control with a data context and an array of {@link plat.expressions.IParsedExpression|IParsedExpression} 
+             * and outputs a string of the evaluated expressions.
+             * 
+             * @param {Array<plat.expressions.IParsedExpression>} expressions The composition array to evaluate.
+             * @param {plat.ui.ITemplateControl} control? The {@link plat.ui.ITemplateControl|ITemplateControl} used to parse 
+             * the expressions.
+             * 
+             * @returns {string} The output text with all markup bound.
              */
             build(expressions: Array<expressions.IParsedExpression>, control?: ui.ITemplateControl): string;
 
             /**
+             * @name observeIdentifiers
+             * @memberof plat.processing.NodeManager
+             * @kind function
+             * @access public
+             * @static
+             * 
+             * @description
              * Registers a listener to be notified of a change in any associated identifier.
              * 
-             * @static
-             * @param identifiers An Array of identifiers to observe.
-             * @param control The control associated to the identifiers.
-             * @param listener The listener to call when any identifier property changes.
+             * @param {Array<string>} identifiers An Array of identifiers to observe.
+             * @param {plat.ui.ITemplateControl} control The {@link plat.ui.ITemplateControl|ITemplateControl} associated 
+             * to the identifiers.
+             * @param {(...args: Array<any>) => void} listener The listener to call when any identifier property changes.
+             * 
+             * @returns {void}
              */
             observeIdentifiers(identifiers: Array<string>,
                 control: ui.ITemplateControl, listener: (...args: Array<any>) => void): void;
         }
-
+    
         /**
+         * @name INodeManager
+         * @memberof plat.processing
+         * @kind interface
+         * 
+         * @description
          * Describes an object that takes a Node and provides a way to data-bind to that node.
          */
         export interface INodeManager {
             /**
-             * The type of INodeManager
+             * @name type
+             * @memberof plat.processing.INodeManager
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The type of {@link plat.processing.INodeManager|INodeManager}.
              */
             type: string;
-
+        
             /**
-             * The INodeMap for this INodeManager. Contains the compiled Node.
+             * @name nodeMap
+             * @memberof plat.processing.INodeManager
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.processing.INodeMap}
+             * 
+             * @description
+             * The {@link plat.processing.INodeMap|INodeMap} for this {@link plat.processing.INodeManager|INodeManager}. 
+             * Contains the compiled Node.
              */
             nodeMap?: INodeMap;
-
+        
             /**
-             * The parent manager for this INodeManager.
+             * @name parent
+             * @memberof plat.processing.INodeManager
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.processing.IElementManager}
+             * 
+             * @description
+             * The parent {@link plat.processing.IElementManager|IElementManager}.
              */
             parent?: IElementManager;
+        
+            /**
+             * @name isClone
+             * @memberof plat.processing.INodeManager
+             * @kind property
+             * @access public
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Whether or not this {@link plat.processing.INodeManager|INodeManager} is a clone.
+             */
+            isClone?: boolean;
 
             /**
+             * @name initialize
+             * @memberof plat.processing.INodeManager
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Initializes the manager's properties.
+             * 
+             * @param {plat.processing.INodeMap} nodeMap The mapping associated with this manager. We have to use an 
+             * Used to treat all {@link plat.processing.INodeManager|INodeManagers} the same.
+             * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager}.
+             * 
+             * @returns {void}
+             */
+            initialize? (nodeMap: INodeMap, parent: IElementManager): void;
+
+            /**
+             * @name getParentControl
+             * @memberof plat.processing.INodeManager
+             * @kind function
+             * @access public
+             * 
+             * @description
              * Retrieves the parent control associated with the parent manager.
+             * 
+             * @returns {plat.ui.ITemplateControl} The parent {@link plat.ui.ITemplateControl|ITemplateControl}.
              */
             getParentControl? (): ui.ITemplateControl;
 
             /**
-             * Clones this NodeManager with the new node.
+             * @name clone
+             * @memberof plat.processing.INodeManager
+             * @kind function
+             * @access public
              * 
-             * @param newNode The node used to clone this NodeManager.
-             * @param parentManager The parent IElementManager for the clone.
+             * @description
+             * Clones this {@link plat.processing.INodeManager|INodeManager} with the new node.
+             * 
+             * @param {Node} newNode The new node associated with the new manager.
+             * @param {plat.processing.IElementManager} parentManager The parent 
+             * {@link plat.processing.IElementManager|IElementManager} for the clone.
+             * 
+             * @returns {number} The number of nodes to advance while traversing is in progress.
              */
             clone? (newNode: Node, parentManager: IElementManager): number;
 
             /**
-             * Initializes the object's properties.
+             * @name bind
+             * @memberof plat.processing.INodeManager
+             * @kind function
+             * @access public
              * 
-             * @param nodeMap The INodeMap associated with this TextManager. We have to use an 
-             * INodeMap instead of an INode so we can treat all INodeManagers the same.
-             * @param parent The parent IElementManager.
-             */
-            initialize?(nodeMap: INodeMap, parent: IElementManager): void;
-
-            /**
+             * @description
              * The function used for data-binding a data context to the DOM.
+             * 
+             * @returns {void}
              */
             bind(): void;
         }
-
+    
         /**
+         * @name INode
+         * @memberof plat.processing
+         * @kind interface
+         * 
+         * @description
          * Describes a compiled Node.
          */
         export interface INode {
             /**
+             * @name control
+             * @memberof plat.processing.INode
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.IControl}
+             * 
+             * @description
              * The control associated with the Node, if one exists.
              */
             control?: IControl;
-
+        
             /**
+             * @name node
+             * @memberof plat.processing.INode
+             * @kind property
+             * @access public
+             * 
+             * @type {Node}
+             * 
+             * @description
              * The Node that is compiled.
              */
             node?: Node;
-
+        
             /**
+             * @name nodeName
+             * @memberof plat.processing.INode
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
              * The name of the Node.
              */
             nodeName?: string;
-
+        
             /**
-             * Any IParsedExpressions contained in the Node.
+             * @name expressions
+             * @memberof plat.processing.INode
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<plat.expressions.IParsedExpression>}
+             * 
+             * @description
+             * Any {@link plat.expressions.IParsedExpressions|IParsedExpressions} contained in the Node.
              */
             expressions?: Array<expressions.IParsedExpression>;
-
+        
             /**
+             * @name identifiers
+             * @memberof plat.processing.INode
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
              * Unique identifiers contained in the Node.
              */
             identifiers?: Array<string>;
-
+        
             /**
+             * @name injector
+             * @memberof plat.processing.INode
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.dependency.IInjector<plat.IControl>}
+             * 
+             * @description
              * The injector for a control associated with the Node, if one exists.
              */
             injector?: dependency.IInjector<IControl>;
         }
 
         /**
+         * @name IUiControlNode
+         * @memberof plat.processing
+         * @kind interface
+         * 
+         * @extends {plat.processing.INode}
+         * 
+         * @description
          * Defines the interface for a compiled Element.
          */
         export interface IUiControlNode extends INode {
             /**
+             * @name control
+             * @memberof plat.processing.IUiControlNode
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.ui.ITemplateControl}
+             * 
+             * @description
              * The control associated with the Element, if one exists.
              */
             control: ui.ITemplateControl;
-
+        
             /**
-             * The resources element defined as the control element's first
+             * @name resourceElement
+             * @memberof plat.processing.IUiControlNode
+             * @kind property
+             * @access public
+             * 
+             * @type {HTMLElement}
+             * 
+             * @description
+             * The resources element, if one exists, defined as the control element's first
              * element child.
              */
             resourceElement?: HTMLElement;
         }
 
         /**
+         * @name INodeMap
+         * @memberof plat.processing
+         * @kind interface
+         * 
+         * @description
          * Describes a compiled Element with all 
          * associated nodes contained within its tag.
          */
         export interface INodeMap {
             /**
+             * @name element
+             * @memberof plat.processing.INodeMap
+             * @kind property
+             * @access public
+             * 
+             * @type {HTMLElement}
+             * 
+             * @description
              * The Element that is compiled.
              */
             element?: HTMLElement;
-
+        
             /**
+             * @name nodes
+             * @memberof plat.processing.INodeMap
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<plat.processing.INode>}
+             * 
+             * @description
              * The compiled attribute Nodes for the Element.
              */
             nodes: Array<INode>;
-
+        
             /**
+             * @name attributes
+             * @memberof plat.processing.INodeMap
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.IObject<string>}
+             * 
+             * @description
              * An object of key/value attribute pairs.
              */
             attributes?: IObject<string>;
-
+        
             /**
-             * The plat-context path for the next UIControl, if specified.
+             * @name childContext
+             * @memberof plat.processing.INodeMap
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * The relative context path for the node's corresponding 
+             * {@link plat.ui.ITemplateControl|ITemplateControl}, if specified.
              */
             childContext?: string;
-
+        
             /**
-             * Indicates whether or not a IControl was found on the Element.
+             * @name hasControl
+             * @memberof plat.processing.INodeMap
+             * @kind property
+             * @access public
+             * 
+             * @type {boolean}
+             * 
+             * @description
+             * Indicates whether or not an {@link plat.IControl|IControl} was found on the Element.
              */
             hasControl?: boolean;
-
+        
             /**
-             * The INode for the UIControl, if one was found for the Element.
+             * @name uiControlNode
+             * @memberof plat.processing.INodeMap
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.processing.IUiControlNode}
+             * 
+             * @description
+             * A type of {@link plat.processing.INode|INode} for a node that contains a {@link plat.ui.ITemplateControl|ITemplateControl}, 
+             * if one was found for the Element.
              */
             uiControlNode?: IUiControlNode;
         }
@@ -31318,14 +39772,14 @@ module plat {
                     key = camelCase(node.nodeName),
                     attribute = <Attr>node.node,
                     value = NodeManager.build(node.expressions, parent),
-                    attributes: ui.IAttributesInstance,
+                    attributes: ui.Attributes,
                     oldValue: any;
 
                 for (var i = 0; i < length; ++i) {
-                    attributes = controls[i].attributes;
+                    attributes = <ui.Attributes>controls[i].attributes;
                     oldValue = (<any>attributes)[key];
                     (<any>attributes)[key] = value;
-                    attributes.attributeChanged(key, value, oldValue);
+                    attributes._attributeChanged(key, value, oldValue);
                 }
 
                 if (!this.replace) {
@@ -31557,16 +40011,35 @@ module plat {
         }
 
         /**
+         * @name TextManager
+         * @memberof plat.processing
+         * @kind class
+         * 
+         * @extends {plat.processing.NodeManager}
+         * @implements {plat.processing.ITextManager}
+         * 
+         * @description
          * The class responsible for initializing and data-binding values to text nodes.
          */
         export class TextManager extends NodeManager implements ITextManager {
             /**
-             * Determines if a text node has markup, and creates a TextManager if it does.
-             * A TextManager or empty TextManager will be added to the managers array.
-             * 
+             * @name create
+             * @memberof plat.processing.TextManager
+             * @kind function
+             * @access public
              * @static
-             * @param node The Node used to find markup.
-             * @param parent The parent ITemplateControl for the node.
+             * 
+             * @description
+             * Determines if a text node has markup, and creates a {@link plat.processing.ITextManager|ITextManager} if it does. 
+             * An {@link plat.processing.ITextManager|ITextManager} responsible for markup in the passed in node or an empty 
+             * {@link plat.processing.ITextManager|ITextManager} if not markup is found will be added to the managers array.
+             * 
+             * @param {Node} node The Node used to find markup.
+             * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager} 
+             * for the node.
+             * 
+             * @returns {plat.processing.TextManager} The newly created {@link plat.processing.ITextManager|ITextManager} 
+             * responsible for the passed in Text Node.
              */
             static create(node: Node, parent: IElementManager): ITextManager {
                 var value = node.nodeValue,
@@ -31592,13 +40065,21 @@ module plat {
 
                 return manager;
             }
-
+        
             /**
-             * Clones an INodeMap with a new text node.
-             * 
+             * @name _cloneNodeMap
+             * @memberof plat.processing.TextManager
+             * @kind function
+             * @access protected
              * @static
-             * @param sourceMap The original INodeMap.
-             * @param newNode The new text node used for cloning.
+             * 
+             * @description
+             * Clones an {@link plat.processing.INodeMap|INodeMap} with a new text node.
+             * 
+             * @param {plat.processing.INodeMap} sourceMap The original {@link plat.processing.INodeMap|INodeMap}.
+             * @param {Node} newNode The new text node used for cloning.
+             * 
+             * @returns {plat.processing.INodeMap} The cloned {@link plat.processing.INodeMap|INodeMap}.
              */
             static _cloneNodeMap(sourceMap: INodeMap, newNode: Node): INodeMap {
                 var node = sourceMap.nodes[0],
@@ -31612,14 +40093,23 @@ module plat {
                     };
                 return nodeMap;
             }
-
+        
             /**
-             * Clones a TextManager with a new text node.
-             * 
+             * @name _clone
+             * @memberof plat.processing.TextManager
+             * @kind function
+             * @access protected
              * @static
-             * @param sourceManager The original INodeManager.
-             * @param node The new text node to associate with the clone.
-             * @param parent The parent IElementManager for the new clone.
+             * 
+             * @description
+             * Clones a {@link plat.processing.ITextManager|ITextManager} with a new text node.
+             * 
+             * @param {plat.processing.INodeManager} sourceManager The original {@link plat.processing.INodeManager|INodeManager}.
+             * @param {Node} node The new text node to associate with the clone.
+             * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager} 
+             * for the new clone.
+             * 
+             * @returns {plat.processing.ITextManager} The cloned {@link plat.processing.ITextManager|ITextManager}.
              */
             static _clone(sourceManager: INodeManager, node: Node, parent: IElementManager): ITextManager {
                 var map = sourceManager.nodeMap,
@@ -31634,17 +40124,51 @@ module plat {
 
                 return manager;
             }
-
+        
             /**
-             * Specifies the type for this INodeManager.
+             * @name type
+             * @memberof plat.processing.TextManager
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
+             * Specifies the type for this {@link plat.processing.INodeManager|INodeManager}.
              */
-            type: string = 'text';
-
+            type = 'text';
+        
+            /**
+             * @name clone
+             * @memberof plat.processing.TextManager
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Clones this {@link plat.processing.ITextManager|ITextManager} with a new node.
+             * 
+             * @param {Node} newNode The new node attached to the cloned {@link plat.processing.ITextManager|ITextManager}.
+             * @param {plat.processing.IElementManager} parentManager The parent {@link plat.processing.IElementManager|IElementManager} 
+             * for the clone.
+             * 
+             * @returns {number} The number of nodes to advance while traversing is in progress (returns 1).
+             */
             clone(newNode: Node, parentManager: IElementManager): number {
                 TextManager._clone(this, newNode, parentManager);
                 return 1;
             }
-
+        
+            /**
+             * @name bind
+             * @memberof plat.processing.TextManager
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * The function used for data-binding a data context to the DOM.
+             * 
+             * @returns {void}
+             */
             bind(): void {
                 var parent = this.getParentControl(),
                     node = this.nodeMap.nodes[0],
@@ -31656,15 +40180,23 @@ module plat {
 
                 this._setText(textNode, parent, expressions);
             }
-
+        
             /**
+             * @name _setText
+             * @memberof plat.processing.TextManager
+             * @kind function
+             * @access protected
+             * 
+             * @description
              * Builds the node expression and sets the value.
              * 
-             * @param Node The associated node whose value will be set.
-             * @param control The control whose context will be used to bind 
+             * @param {Node} Node The associated node whose value will be set.
+             * @param {plat.ui.ITemplateControl} control The control whose context will be used to bind 
              * the data.
-             * @param expressions An array of parsed expressions used to build 
+             * @param {Array<plat.expressions.IParsedExpression>} expressions An array of parsed expressions used to build 
              * the node value.
+             * 
+             * @returns {void}
              */
             _setText(node: Node, control: ui.ITemplateControl, expressions: Array<expressions.IParsedExpression>): void {
                 control = control || <ui.ITemplateControl>{};
@@ -31680,36 +40212,76 @@ module plat {
         }
 
         register.injectable(__TextManagerFactory, ITextManagerFactory, null, __FACTORY);
-
+    
         /**
-         * Creates and manages a class for dealing with Text nodes.
+         * @name ITextManagerFactory
+         * @memberof plat.processing
+         * @kind interface
+         * 
+         * @description
+         * Creates and manages a class for dealing with DOM Text Nodes.
          */
         export interface ITextManagerFactory {
             /**
-             * Determines if a text node has markup, and creates a TextManager if it does.
-             * A TextManager or empty TextManager will be added to the managers array.
-             * 
+             * @name create
+             * @memberof plat.processing.ITextManagerFactory
+             * @kind function
+             * @access public
              * @static
-             * @param node The Node used to find markup.
-             * @param parent The parent ui.ITemplateControl for the node.
+             * 
+             * @description
+             * Determines if a text node has markup, and creates a {@link plat.processing.ITextManager|ITextManager} if it does. 
+             * An {@link plat.processing.ITextManager|ITextManager} responsible for markup in the passed in node or an empty 
+             * {@link plat.processing.ITextManager|ITextManager} if not markup is found will be added to the managers array.
+             * 
+             * @param {Node} node The Node used to find markup.
+             * @param {plat.processing.IElementManager} parent The parent {@link plat.processing.IElementManager|IElementManager} 
+             * for the node.
+             * 
+             * @returns {plat.processing.TextManager} The newly created {@link plat.processing.ITextManager|ITextManager} 
+             * responsible for the passed in Text Node.
              */
             create(node: Node, parent?: IElementManager): ITextManager;
         }
-
+    
         /**
+         * @name ITextManager
+         * @memberof plat.processing
+         * @kind interface
+         * 
+         * @extends {plat.processing.INodeManager}
+         * 
+         * @description
          * An object responsible for initializing and data-binding values to text nodes.
          */
         export interface ITextManager extends INodeManager {
             /**
-             * Clones this ITextManager with a new node.
+             * @name clone
+             * @memberof plat.processing.ITextManager
+             * @kind function
+             * @access public
              * 
-             * @param newNode The new node attached to the cloned ITextManager.
-             * @param parentManager The parent IElementManager for the clone.
+             * @description
+             * Clones this {@link plat.processing.ITextManager|ITextManager} with a new node.
+             * 
+             * @param {Node} newNode The new node attached to the cloned {@link plat.processing.ITextManager|ITextManager}.
+             * @param {plat.processing.IElementManager} parentManager The parent {@link plat.processing.IElementManager|IElementManager} 
+             * for the clone.
+             * 
+             * @returns {number} The number of nodes to advance while traversing is in progress.
              */
             clone(newNode: Node, parentManager: IElementManager): number;
-
+        
             /**
+             * @name bind
+             * @memberof plat.processing.ITextManager
+             * @kind function
+             * @access public
+             * 
+             * @description
              * The function used for data-binding a data context to the DOM.
+             * 
+             * @returns {void}
              */
             bind(): void;
         }
@@ -31786,6 +40358,15 @@ module plat {
             clone(newNode: Node, parentManager: IElementManager): number;
         }
     }
+    /**
+     * @name navigation
+     * @memberof plat
+     * @kind namespace
+     * @access public
+     * 
+     * @description
+     * Holds classes and interfaces related to navigation in platypus.
+     */
     export module navigation {
         /**
          * A class that defines the base Navigation properties and methods.
@@ -33429,12 +42010,12 @@ module plat {
          * @description
          * The method signature for {@link plat.IPropertyChangedListener|IPropertyChangedListener}.
          * 
-         * @param {any} newValue The new value of the observed property.
-         * @param {any} oldValue The previous value of the observed property.
+         * @param {any} newValue? The new value of the observed property.
+         * @param {any} oldValue? The previous value of the observed property.
          * 
          * @returns {void}
          */
-        (newValue: any, oldValue: any): void;
+        (newValue?: any, oldValue?: any): void;
     }
 }
 /* tslint:enable */

@@ -24,7 +24,9 @@ class InterfaceProcedures extends base.ApiProcedures<any> {
             i.remarks,
             i.exported,
             i.registeredtype,
-            i.registeredname
+            i.registeredname,
+            false,
+            '0.1'
         ];
     }
 
