@@ -5,20 +5,21 @@
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
 import model = require('../models/interface.model');
+import DocNodeTypes = require('../../../docnodes');
 
 class InterfaceProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('Interface');
     }
 
-    getArgs(i: model.IInterface) {
+    getArgs(i: DocNodeTypes.IInterfaceNode) {
         if (!utils.isObject(i)) {
             return [];
         }
 
         return [
-            i.namespaceid,
-            i.name,
+            (i.parent ? i.parent.id : null),
+            i.name_,
             i.description,
             i.remarks,
             i.exported,
