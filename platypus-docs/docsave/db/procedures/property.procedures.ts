@@ -37,15 +37,17 @@ class PropertyProcedures extends base.ApiProcedures<any> {
                 break;
         }
 
+        console.log('Property Parent: ' + property.parent.id);
+
         return [
             namespaceid,
             classid,
             interfaceid,
             property.name_,
             property.type,
-            property.classtype.id,
-            property.interfacetype.id,
-            property.methodtype.id,
+            null,//property.classtype.id,
+            null,//property.interfacetype.id,
+            null,//property.methodtype.id,
             property.description,
             property.remarks,
             property.visibility,

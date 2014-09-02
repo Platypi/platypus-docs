@@ -21,8 +21,6 @@ class MethodProcedures extends base.ApiProcedures<any> {
             classid: number = null,
             interfaceid: number = null;
 
-        //console.log('erroneous method name: ' + method.name_);
-
         switch (parent.kind) {
             case 'namespace':
                 namespaceid = parent.id;
@@ -35,7 +33,9 @@ class MethodProcedures extends base.ApiProcedures<any> {
                 break;
         }
 
-        return [
+        //console.log('erroneous method name: ' + method.name_);
+
+        var argsRtn = [
             namespaceid,
             classid,
             interfaceid,
@@ -46,7 +46,7 @@ class MethodProcedures extends base.ApiProcedures<any> {
             method.remarks,
             method.visibility,
             method.static,
-            method.returntype,
+            null, //method.returntype,
             method.returntypedesc,
             (method.returntypemethod ? method.returntypemethod.id : null),
             (method.returntypeinterface ? method.returntypeinterface.id : null),
@@ -57,6 +57,8 @@ class MethodProcedures extends base.ApiProcedures<any> {
             false,
             '0.1'
         ];
+
+        return argsRtn;
     }
 
     read(id: number) {
