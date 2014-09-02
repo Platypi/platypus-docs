@@ -172,7 +172,7 @@ export module DocGen {
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 parentString: (parsedDocTags.extends ? parsedDocTags.extends.type : ''),
-                                namespaceString: (parsedDocTags.namespace ? parsedDocTags.namespace.type : ''),
+                                namespaceString: memberof,
                                 interfaces: {},
                                 memberof: memberof
                             };
@@ -182,7 +182,7 @@ export module DocGen {
                                 for (var k in parsedDocTags.implements) {
                                     var tag = parsedDocTags.implements[k],
                                         newInterface: DocNodeTypes.IInterfaceNode = {
-                                            name_: tag.type,
+                                            name_: tag.name,
                                             kind: 'interface'
                                         };
                                     newClass.interfaces[newInterface.name_] = newInterface;
@@ -269,6 +269,7 @@ export module DocGen {
 
                         this.__findNode(currentInterface, tree, (node) => {
                             parent = node;
+                            currentInterface.parent = parent;
                             this.__appendChild(currentInterface, parent);
                         });
                     }
@@ -279,9 +280,11 @@ export module DocGen {
                             parent = null;
 
                         currentClass.namespace = this.nameHash[currentClass.namespaceString];
+                        currentClass.extends = this.nameHash[currentClass.parentString];
 
                         this.__findNode(currentClass, tree, (node) => {
                             parent = node;
+                            currentClass.parent = parent;
 
                             for (var i in currentClass.interfaces) {
                                 currentClass.interfaces[i] = this.nameHash[currentClass.interfaces[i].name] || currentClass.interfaces[i];
@@ -302,6 +305,7 @@ export module DocGen {
 
                             this.__findNode(currentMethod, tree, (node) => {
                                 parent = node;
+                                currentMethod.parent = parent;
 
                                 for (var j in currentMethod.parameters) {
                                     currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name_).toLowerCase()] || currentMethod.parameters[j];
@@ -319,6 +323,7 @@ export module DocGen {
 
                         this.__findNode(currentProperty, tree, (node) => {
                             parent = node;
+                            currentProperty.parent = parent;
                             this.__appendChild(currentProperty, parent);
                         });
                     }
@@ -330,6 +335,7 @@ export module DocGen {
 
                         this.__findNode(currentEvent, tree, (node) => {
                             parent = node;
+                            currentEvent.parent = parent;
                             this.__appendChild(currentMethod, parent);
                         });
                     }
