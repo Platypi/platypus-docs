@@ -4,6 +4,7 @@
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
 import model = require('../models/property.model');
+import DocNodeTypes = require('../../../docnodes');
 
 class PropertyProcedures extends base.ApiProcedures<any> {
     constructor() {
@@ -14,20 +15,20 @@ class PropertyProcedures extends base.ApiProcedures<any> {
         return this.procedure.substr(0, this.procedure.length - 1) + 'ies';
     }
 
-    getArgs(property: model.IProperty): Array<any> {
+    getArgs(property: DocNodeTypes.IPropertyNode): Array<any> {
         if (!utils.isObject(property)) {
             return [];
         }
 
         return [
-            property.namespaceid,
-            property.classid,
-            property.interfaceid,
-            property.name,
+            property.namespace.id,
+            property.class.id,
+            property.interface.id,
+            property.name_,
             property.type,
-            property.classtypeid,
-            property.interfacetypeid,
-            property.methodtypeid,
+            property.classtype.id,
+            property.interfacetype.id,
+            property.methodtype.id,
             property.description,
             property.remarks,
             property.visibility,
