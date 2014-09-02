@@ -23,7 +23,9 @@ var Promise = PromiseStatic.Promise;
 
 var saveDocTree = (tree: any) => {
     if (utils.isObject(tree)) {
-        saveAndTraverse(tree['plat'], 'namespaces').then(null, (err) => {
+        saveAndTraverse(tree['plat'], 'namespaces').then(() => {
+            console.log('done');
+        }, (err) => {
             if (err) {
                 console.log(err);
             }
@@ -35,21 +37,43 @@ var saveDocTree = (tree: any) => {
 
 var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> => {
     // save node
-    console.log('saving node: ' + node.name_);
-    return submitNode(node).then<void>(() => {
-        // process children
-        if (node[kind]) {
-            var kinds = node[kind],
-                promises = [];
+    console.log('tick');
 
-            utils.forEach(kinds, (value: DocNodeTypes.INode) => {
-                promises.push(saveAndTraverse(value, kind));
+    return new Promise((resolve, reject) => {
+        var fns = [];
+
+        function traverse(fn: () => Thenable<any>, next: () => void) {
+            fn().then(next, (err) => {
+                reject(err);
             });
-            console.log(promises.length);
-            return Promise.all(promises);
-        } else {
-            return <any>node;
         }
+
+        function next() {
+            if (fns.length === 0) {
+                resolve();
+            }
+
+            traverse(fns.shift(), next);
+        }
+
+        submitNode(node).then<void>(() => {
+            // process children
+            utils.forEach(node, (child: DocNodeTypes.INode, key) => {
+                //console.log('tock');
+                if (child && child.kind && !child.saved) {
+                    //console.log('childnode name: ' + child.name_ + ' childnode id: ' + child.id + ' parent node: ' + node.name_);
+                    if (!child.id) {
+                        fns.push(saveAndTraverse.bind(null, child, child.kind));
+                    }
+                } else {
+                    <any>node;
+                }
+            });
+            node.saved = true;
+            next();
+        }, (err) => {
+            reject(err);
+        });
     });
 };
 
@@ -85,7 +109,11 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
         }
 
         if (procedures) {
-            return procedures.create(node);
+            if (!node.saved) {
+                return procedures.create(node);
+            } else {
+                return Promise.resolve(node.id);
+            }
         }
     }
 };
