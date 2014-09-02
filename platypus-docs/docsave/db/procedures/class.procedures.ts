@@ -5,6 +5,7 @@
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
 import model = require('../models/class.model');
+import DocNodeTypes = require('../../../docnodes');
 
 class ClassProcedures extends base.ApiProcedures<any> {
     constructor() {
@@ -15,15 +16,15 @@ class ClassProcedures extends base.ApiProcedures<any> {
         return this.procedure + 'es';
     }
 
-    getArgs(c: model.IClass): Array<any> {
+    getArgs(c: DocNodeTypes.IClassNode): Array<any> {
         if (!utils.isObject(c)) {
             return [];
         }
 
         return [
-            c.parentid,
-            c.namespaceid,
-            c.name,
+            (c.parent ? c.parent.id : null),
+            (c.namespace ? c.namespace.id : null),
+            c.name_,
             c.description,
             c.example,
             c.exampleurl,
