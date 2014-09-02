@@ -37,7 +37,7 @@ var saveDocTree = (tree: any) => {
 
 var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> => {
     // save node
-    console.log('tick');
+    console.log('tick : ' + node.name_);
 
     return new Promise((resolve, reject) => {
         var fns = [];
@@ -55,29 +55,32 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
 
             traverse(fns.shift(), next);
         }
-
-        submitNode(node).then<void>(() => {
-            // process children
-            utils.forEach(node, (child: DocNodeTypes.INode, key) => {
-                //console.log('tock');
-                if (child && child.kind && !child.saved) {
-                    //console.log('childnode name: ' + child.name_ + ' childnode id: ' + child.id + ' parent node: ' + node.name_);
-                    if (!child.id) {
+        
+        try {
+            submitNode(node).then<void>(() => {
+                if (node.name_ === 'initialize') {
+                    console.log(node.memberof);
+                }
+                node.saved = true;
+                // process children
+                utils.forEach(node, (child: DocNodeTypes.INode, key) => {
+                    if (child && child.kind && !child.saved && !child.id) {
+                        console.log('childnode name: ' + child.name_ + ' childnode id: ' + child.id + ' parent node: ' + node.name_);
                         fns.push(saveAndTraverse.bind(null, child, child.kind));
                     }
-                } else {
-                    <any>node;
-                }
+                });
+                next();
+            }).then(null, (err) => {
+                reject(err);
             });
-            node.saved = true;
-            next();
-        }, (err) => {
+        } catch (err) {
             reject(err);
-        });
+        }
     });
 };
 
 var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
+    console.log('parentNodeId: ' + (node.parent ? node.parent.id + ' parentNodeName: ' + node.parent.name_ : null));
     if (node.kind) {
         var procedures: apiprocedures.ApiProcedures<any> = null;
         switch (node.kind) {
@@ -112,7 +115,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
             if (!node.saved) {
                 return procedures.create(node);
             } else {
-                return Promise.resolve(node.id);
+                return Promise.reject(node);
             }
         }
     }
