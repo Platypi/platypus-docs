@@ -4,24 +4,25 @@
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
 import model = require('../models/parameter.model');
+import DocNodeTypes = require('../../../docnodes');
 
 class ParameterProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('Parameter');
     }
 
-    getArgs(parameter: model.IParameter): Array<any> {
+    getArgs(parameter: DocNodeTypes.IParameterNode): Array<any> {
         if (!utils.isObject(parameter)) {
             return [];
         }
 
         return [
-            parameter.methodid,
-            parameter.name,
+            parameter.method.id,
+            parameter.name_,
             parameter.type,
-            parameter.methodtypeid,
-            parameter.classtypeid,
-            parameter.interfacetypeid,
+            parameter.methodtype.id,
+            parameter.classtype.id,
+            parameter.interfacetype.id,
             parameter.description,
             parameter.defaultvalue,
             parameter.optional,
