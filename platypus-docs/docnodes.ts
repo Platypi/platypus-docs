@@ -8,6 +8,7 @@
     parent?: INode;
     visibility?: string;
     id?: number;
+    saved?: boolean;
 }
 
 export interface IHaveExampleNode {
