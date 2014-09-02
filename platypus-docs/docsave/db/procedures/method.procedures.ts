@@ -4,22 +4,23 @@
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
 import model = require('../models/method.model');
+import DocNodeTypes = require('../../../docnodes');
 
 class MethodProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('Method');
     }
 
-    getArgs(method: model.IMethod) {
+    getArgs(method: DocNodeTypes.IMethodNode) {
         if (!utils.isObject(method)) {
             return [];
         }
-
+        
         return [
-            method.namespaceid,
-            method.classid,
-            method.interfaceid,
-            method.name,
+            (method.namespaceNode ? method.namespaceNode.id : null),
+            (method.classNode ? method.classNode.id : null),
+            (method.interfaceNode ? method.interfaceNode.id : null),
+            method.name_,
             method.description,
             method.example,
             method.exampleurl,
@@ -28,12 +29,14 @@ class MethodProcedures extends base.ApiProcedures<any> {
             method.static,
             method.returntype,
             method.returntypedesc,
-            method.returntypemethodid,
-            method.returntypeinterfaceid,
-            method.returntypeclassid,
-            method.returntypenamespaceid,
+            (method.returntypemethod ? method.returntypemethod.id : null),
+            (method.returntypeinterface ? method.returntypeinterface.id : null),
+            (method.returnttypeclass ? method.returnttypeclass.id : null),
+            (method.returntypenamespace ? method.returntypenamespace.id : null),
             method.overrides,
-            method.optional
+            method.optional,
+            false,
+            '0.1'
         ];
     }
 
