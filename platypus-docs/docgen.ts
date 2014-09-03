@@ -49,6 +49,10 @@ export module DocGen {
          * If a node is not found the deepest node found will be returned.
          */
         private __findNode = (node: DocNodeTypes.INode, tree: any, callback: (node: any) => void) => {
+            if (!this.nameHash[node.memberof]) {
+                console.log(this.nameHash);
+                throw new Error(node.memberof + ' not found!');
+            }
             callback(this.nameHash[node.memberof]);
         };
 
@@ -301,7 +305,23 @@ export module DocGen {
                                 parent = null,
                                 returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype.toLowerCase() : '');
 
-                            currentMethod.returntype = (returnTypeName !== '' ? this.nameHash[returnTypeName] : currentMethod.returntype);
+                            //currentMethod.returntype = (returnTypeName !== '' ? this.nameHash[returnTypeName] : currentMethod.returntype);
+
+                            var returnTypeNode = this.nameHash[returnTypeName];
+
+                            if (returnTypeNode) {
+                                switch (returnTypeNode) {
+                                    case 'namespace':
+                                        currentMethod.returntypenamespace = returnTypeNode;
+                                        break;
+                                    case 'class':
+                                        currentMethod.returntypeclass = returnTypeNode;
+                                        break;
+                                    case 'interface':
+                                        currentMethod.returntypeinterface = returnTypeNode;
+                                        break;
+                                }
+                            }
 
                             this.__findNode(currentMethod, tree, (node) => {
                                 parent = node;
