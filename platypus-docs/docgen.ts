@@ -102,15 +102,15 @@ export module DocGen {
                             // if name is blank, the method is an interface
                             var newMethod: DocNodeTypes.IMethodNode = {
                                 name_: (parsedDocTags.name ? parsedDocTags.name.name : ''),
-                                description: parsedDocTags.description.description,
+                                description_: parsedDocTags.description.description,
                                 //kind: parsedDocTags.kind.name,
                                 kind: 'method',
                                 overrides: (parsedDocTags.variation ? true : false),
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
                                 static: (parsedDocTags.static ? true : false),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
-                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
+                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 typeparamaters: (parsedDocTags.typeparam ? parsedDocTags.typeparam.name : ''),
                                 returntype: (parsedDocTags.returns ? parsedDocTags.returns.type : ''),
                                 returntypedesc: (parsedDocTags.returns ? parsedDocTags.returns.name + ' ' + parsedDocTags.returns.description : ''),
@@ -126,7 +126,7 @@ export module DocGen {
                                         name_: parsedDocTags.params[z].name + '_',
                                         memberof: parsedDocTags.params[z].memberof,
                                         kind: parsedDocTags.params[z].kind,
-                                        description: parsedDocTags.params[z].description,
+                                        description_: parsedDocTags.params[z].description.description,
                                         published: true,
                                         exported: (!parsedDocTags.exported ? true : false),
                                     };
@@ -134,7 +134,7 @@ export module DocGen {
                                 }
                             }
 
-                            var methodName = (newMethod.name_ !== '') ? newMethod.name_ : '()';
+                            var methodName = (newMethod.name_ !== '') ? newMethod.name_.toUpperCase() : '()';
 
                             if (!(flat.methods[methodName] instanceof Array)) {
                                 flat.methods[methodName] = [];
@@ -146,10 +146,10 @@ export module DocGen {
                         case 'property':
                             var newProperty: DocNodeTypes.IPropertyNode = {
                                 name_: parsedDocTags.name.name,
-                                description: parsedDocTags.description.description,
+                                description_: parsedDocTags.description.description,
                                 kind: parsedDocTags.kind.name,
-                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
-                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
+                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
                                 type: parsedDocTags.type.type,
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
@@ -165,10 +165,10 @@ export module DocGen {
                         case 'class':
                             var newClass: DocNodeTypes.IClassNode = {
                                 name_: parsedDocTags.name.name,
-                                description: parsedDocTags.description.description,
+                                description_: parsedDocTags.description.description,
                                 kind: parsedDocTags.kind.name,
-                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
-                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
+                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 parentString: (parsedDocTags.extends ? parsedDocTags.extends.type : ''),
@@ -196,10 +196,10 @@ export module DocGen {
                             var newInterface: DocNodeTypes.IInterfaceNode = {
                                 name_: parsedDocTags.name.name,
                                 kind: parsedDocTags.kind.name,
-                                description: parsedDocTags.description.description,
+                                description_: parsedDocTags.description.description,
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
-                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
-                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
+                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 //methods,
                                 memberof: memberof
@@ -211,9 +211,9 @@ export module DocGen {
                             var newEvent: DocNodeTypes.IEvent = {
                                 name_: parsedDocTags.name.name,
                                 kind: parsedDocTags.kind.name,
-                                description: parsedDocTags.description.description,
-                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
-                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                description_: parsedDocTags.description.description,
+                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
+                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 classNameString: parsedDocTags.class.name,
@@ -227,10 +227,10 @@ export module DocGen {
                             var newNamespace: DocNodeTypes.INameSpaceNode = {
                                 name_: parsedDocTags.name.name,
                                 kind: parsedDocTags.kind.name,
-                                description: parsedDocTags.description.description,
+                                description_: parsedDocTags.description.description,
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
-                                published: (!parsedDocTags.published ? true : Boolean(parsedDocTags.published.type)),
-                                exported: (!parsedDocTags.exported ? true : Boolean(parsedDocTags.exported.type)),
+                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
+                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 memberof: memberof
                             };
@@ -317,7 +317,7 @@ export module DocGen {
                         }
                     }
 
-                    //properties
+                    //properties 
                     for (var propertyNode in flat.properties) {
                         var currentProperty = flat.properties[propertyNode],
                             parent = null;
@@ -358,11 +358,13 @@ export module DocGen {
                 console.log(childNode.memberof);
             }
 
-            parent[childNode.name_.toLowerCase()] = childNode;
+            var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_.toLowerCase();
 
-            var namespacePre = childNode.memberof.toLowerCase();
+            parent[name] = childNode;
 
-            this.nameHash[namespacePre + '.' + childNode.name_.toLowerCase()] = childNode;
+            var namespacePre = childNode.memberof;
+
+            this.nameHash[namespacePre + '.' + name] = childNode;
         };
 
         private __buildTags = (tag: any): ParsedDocNode => {
