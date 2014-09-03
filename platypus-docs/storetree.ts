@@ -37,7 +37,7 @@ var saveDocTree = (tree: any) => {
 
 var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> => {
     // save node
-    console.log('tick : ' + node.name_);
+    //console.log('tick : ' + node.name_);
 
     return new Promise((resolve, reject) => {
         var fns = [];
@@ -57,7 +57,9 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
         }
         
         try {
-            submitNode(node).then<void>(() => {
+        //console.log('submitting node: ' + node.name_);
+        submitNode(node).then<void>(() => {
+            //console.log('submitted node: ' + node.name_);
                 if (node.name_ === 'initialize') {
                     console.log(node.memberof);
                 }
@@ -65,7 +67,7 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
                 // process children
                 utils.forEach(node, (child: DocNodeTypes.INode, key) => {
                     if (child && child.kind && !child.saved && !child.id) {
-                        console.log('childnode name: ' + child.name_ + ' childnode id: ' + child.id + ' parent node: ' + node.name_);
+                        //console.log('childnode name: ' + child.name_ + ' childnode id: ' + child.id + ' childnode kind: ' + child.kind + ' parent node: ' + node.name_ + ' parent id: ' + node.id);
                         fns.push(saveAndTraverse.bind(null, child, child.kind));
                     }
                 });
@@ -80,7 +82,6 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
 };
 
 var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
-    console.log('parentNodeId: ' + (node.parent ? node.parent.id + ' parentNodeName: ' + node.parent.name_ : null));
     if (node.kind) {
         var procedures: apiprocedures.ApiProcedures<any> = null;
         switch (node.kind) {
@@ -110,7 +111,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 throw new Error('unknown node type: ' + node.kind);
                 break;
         }
-
+        
         if (procedures) {
             if (!node.saved) {
                 return procedures.create(node);
