@@ -84,7 +84,7 @@ export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     returntypedesc?: string;
     returntypemethod?: IMethodNode;
     returntypeinterface?: IInterfaceNode;
-    returnttypeclass?: IClassNode;
+    returntypeclass?: IClassNode;
     returntypenamespace?: INameSpaceNode;
     optional?: boolean;
     //parameters?: Array<IParameterNode>;
