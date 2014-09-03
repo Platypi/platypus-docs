@@ -1,6 +1,6 @@
 ﻿export interface INode {
     name_: string;
-    description?: string;
+    description_?: string;
     kind: string;
     published?: boolean;
     exported?: boolean;
