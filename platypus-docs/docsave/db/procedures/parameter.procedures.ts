@@ -23,7 +23,7 @@ class ParameterProcedures extends base.ApiProcedures<any> {
             parameter.methodtype.id,
             parameter.classtype.id,
             parameter.interfacetype.id,
-            parameter.description,
+            parameter.description_,
             parameter.defaultvalue,
             parameter.optional,
             parameter.porder

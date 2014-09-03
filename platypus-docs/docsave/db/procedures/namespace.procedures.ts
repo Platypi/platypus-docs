@@ -19,7 +19,7 @@ class NamespaceProcedures extends base.ApiProcedures<any> {
         return [
             (namespace.parent ? namespace.parent.id : null),
             namespace.name_,
-            namespace.description,
+            namespace.description_,
             false,
             '0.1'
         ];

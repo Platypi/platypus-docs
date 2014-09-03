@@ -18,7 +18,7 @@ class EventProcedures extends base.ApiProcedures<any> {
         return [
             ev.class.id,
             ev.name_,
-            ev.description,
+            ev.description_,
             ev.remarks
         ];
     }

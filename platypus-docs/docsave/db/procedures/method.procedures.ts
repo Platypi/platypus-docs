@@ -40,7 +40,7 @@ class MethodProcedures extends base.ApiProcedures<any> {
             classid,
             interfaceid,
             method.name_,
-            method.description,
+            method.description_,
             method.example,
             method.exampleurl,
             method.remarks,

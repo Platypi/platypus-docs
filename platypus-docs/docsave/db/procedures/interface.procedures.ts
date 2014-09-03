@@ -20,7 +20,7 @@ class InterfaceProcedures extends base.ApiProcedures<any> {
         return [
             (i.parent ? i.parent.id : null),
             i.name_,
-            i.description,
+            i.description_,
             i.remarks,
             i.exported,
             i.registeredtype,
