@@ -4,8 +4,3 @@
 
 * strip questionmark from param make optional if exist
 
-
-
-ADDING TO DATABASE
-* test children for 'kind' to determine if they should be traversed
-* strip '__' from names and keys before entering into database.
