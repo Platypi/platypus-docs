@@ -50,7 +50,7 @@ class MethodProcedures extends base.ApiProcedures<any> {
             method.returntypedesc,
             (method.returntypemethod ? method.returntypemethod.id : null),
             (method.returntypeinterface ? method.returntypeinterface.id : null),
-            (method.returnttypeclass ? method.returnttypeclass.id : null),
+            (method.returntypeclass ? method.returntypeclass.id : null),
             (method.returntypenamespace ? method.returntypenamespace.id : null),
             method.overrides,
             method.optional,
