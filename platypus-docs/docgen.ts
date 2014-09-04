@@ -24,7 +24,7 @@ export module DocGen {
                 this.callback = callback;
             }
 
-            fs.readFile(src, {
+            fs.readFile(src, { 
                 encoding: 'utf8'
             }, (err, data) => {
                 this.__parsedCommentsHandler(err, data && parser(data.toString()));
@@ -394,24 +394,24 @@ export module DocGen {
             for (var l in tag.tags) {
                 var t = tag.tags[l];
 
-                // There can be multiple params for a given comment.
-                if (t.tag !== 'param') {
-                    tmpObj[t.tag] = t;
-                } else {
-                    if (tmpObj.params) {
-                        (<Array<ITag>> tmpObj.params).push(t);
-                    } else {
+                // There can be multiple params/implements/typeparams for a given comment.
+                if (t.tag === 'param') {
+                    if (!tmpObj.params) {
                         tmpObj.params = new Array<ITag>();
-                        tmpObj.params.push(t);
                     }
-                }
-
-                // There can be multiple interfaces that a class implements
-                if (t.tag !== 'implements') {
-                    tmpObj[t.tag] = t;
-                } else {
-                    tmpObj.implements = new Array<ITag>();
+                    tmpObj.params.push(t);
+                } else if (t.tag === 'typeparam') {
+                    if (!tmpObj.typeparams) {
+                        tmpObj.typeparams = new Array<ITag>();
+                    }
+                    tmpObj.typeparams.push(t);
+                } else if (t.tag === 'implements') {
+                    if (!tmpObj.implements) {
+                        tmpObj.implements = new Array<ITag>();
+                    }
                     tmpObj.implements.push(t);
+                } else {
+                    tmpObj[t.tag] = t;
                 }
             }
 
