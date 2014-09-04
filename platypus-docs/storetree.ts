@@ -84,15 +84,18 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
 var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
     if (node.kind) {
         var procedures: apiprocedures.ApiProcedures<any> = null;
+        // handle type parameters
         switch (node.kind) {
             case 'namespace':
                 procedures = new namespaceProcedure();
                 break;
             case 'interface':
                 procedures = new interfaceProcedure();
+                // call interface-interface
                 break;
             case 'class':
                 procedures = new classProcedures();
+                // call class-interface procedure
                 break;
             case 'method':
                 procedures = new methodProcedures();
