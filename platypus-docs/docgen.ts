@@ -2,6 +2,7 @@
 /// <reference path="typings/tsd.d.ts" />
 
 import DocNodeTypes = require('./docnodes');
+import fs = require('fs');
 var parser = require('comment-parser');
 
 export module DocGen {
@@ -22,7 +23,12 @@ export module DocGen {
             if (callback) {
                 this.callback = callback;
             }
-            parser.file(src, this.__parsedCommentsHandler);
+
+            fs.readFile(src, {
+                encoding: 'utf8'
+            }, (err, data) => {
+                this.__parsedCommentsHandler(err, data && parser(data.toString()));
+            });
         };
 
         private __parsedCommentsHandler = (err: any, data: any) => {
@@ -50,7 +56,6 @@ export module DocGen {
          */
         private __findNode = (node: DocNodeTypes.INode, tree: any, callback: (node: any) => void) => {
             if (!this.nameHash[node.memberof]) {
-                console.log(this.nameHash);
                 throw new Error(node.memberof + ' not found!');
             }
             callback(this.nameHash[node.memberof]);
