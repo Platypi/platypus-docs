@@ -49,10 +49,6 @@ export module DocGen {
          * If a node is not found the deepest node found will be returned.
          */
         private __findNode = (node: DocNodeTypes.INode, tree: any, callback: (node: any) => void) => {
-            if (!this.nameHash[node.memberof]) {
-                console.log(this.nameHash);
-                throw new Error(node.memberof + ' not found!');
-            }
             callback(this.nameHash[node.memberof]);
         };
 
@@ -369,10 +365,6 @@ export module DocGen {
         private __appendChild = (childNode: DocNodeTypes.INode, parentNode: DocNodeTypes.INode): void => {
             var childContainer = this.__nodeContainer(childNode),
                 parent = parentNode;
-
-            //if (!parentNode[childContainer]) {
-            //    parentNode[childContainer] = {};
-            //}
 
             if (!parent) {
                 console.log(childNode.memberof);
