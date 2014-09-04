@@ -9,7 +9,7 @@
     visibility?: string;
     id?: number;
     saved?: boolean;
-    typeparameters?: {};
+    typeparams?: {};
 }
 
 export interface IHaveExampleNode {
