@@ -9,6 +9,7 @@
     visibility?: string;
     id?: number;
     saved?: boolean;
+    typeparameters?: {};
 }
 
 export interface IHaveExampleNode {
@@ -38,10 +39,6 @@ export interface INameSpaceNode extends INode {
     interfaces?: {};
     methods?: {};
     properties?: {};
-    //namespaces: Array<INameSpaceNode>;
-    //interfaces: Array<IInterfaceNode>;
-    //methods: Array<IMethodNode>;
-    //properties: Array<IPropertyNode>;
 }
 
 export interface IEvent extends INode {
@@ -57,10 +54,8 @@ export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
     extends?: IClassNode;
     exported?: boolean;
     remarks: string;
-    //methods: Array<IMethodNode>;
     methods?: {};
     static?: boolean;
-    //interfaces?: Array<IInterfaceNode>;
     interfaces?: {};
 }
 
@@ -68,7 +63,6 @@ export interface IInterfaceNode extends INode, IRegisteredNode {
     namespace?: INameSpaceNode;
     remarks?: string;
     exported?: boolean;
-    //methods?: Array<IMethodNode>;
     methods?: {};
 }
 
@@ -78,8 +72,6 @@ export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     classNode?: IClassNode;
     remarks?: string;
     static?: boolean;
-    //typeparamaters?: Array<IParameterNode>;
-    typeparameters?: {};
     returntype?: string;
     returntypedesc?: string;
     returntypemethod?: IMethodNode;
@@ -87,7 +79,6 @@ export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     returntypeclass?: IClassNode;
     returntypenamespace?: INameSpaceNode;
     optional?: boolean;
-    //parameters?: Array<IParameterNode>;
     parameters?: {};
 }
 
