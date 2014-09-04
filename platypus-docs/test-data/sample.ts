@@ -1,4 +1,4 @@
-﻿/* tslint:disable */
+/* tslint:disable */
 /**
  * PlatypusTS v0.9.0 (http://getplatypi.com) 
  * Copyright 2014 Platypi, LLC. All rights reserved. 

@@ -375,10 +375,6 @@ export module DocGen {
             var childContainer = this.__nodeContainer(childNode),
                 parent = parentNode;
 
-            //if (!parentNode[childContainer]) {
-            //    parentNode[childContainer] = {};
-            //}
-
             if (!parent) {
                 console.log(childNode.memberof);
             }
