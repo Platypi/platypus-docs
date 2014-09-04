@@ -33,7 +33,6 @@ export interface IHaveOverride {
 }
 
 export interface INameSpaceNode extends INode {
-    //classes: Array<IClassNode>;
     classes?: {};
     namespaces?: {};
     interfaces?: {};
@@ -100,4 +99,14 @@ export interface IPropertyNode extends INode, IHaveTypeNode, IHaveOverride {
     readonly?: boolean;
     returntypedesc?: string;
     optional?: boolean;
+}
+
+export interface ITypeParameterNode extends INode {
+    interface?: IInterfaceNode;
+    class?: IClassNode;
+    method?: IMethodNode;
+    methodtype?: IMethodNode;
+    classtype?: IClassNode;
+    interfacetype?: IInterfaceNode
+    porder?: string;
 }
