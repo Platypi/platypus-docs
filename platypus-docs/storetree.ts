@@ -59,10 +59,6 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
         try {
         //console.log('submitting node: ' + node.name_);
         submitNode(node).then<void>(() => {
-            //console.log('submitted node: ' + node.name_);
-                //if (node.name_ === 'initialize') {
-                //    console.log(node.memberof);
-                //}
                 node.saved = true;
                 // process children
                 utils.forEach(node, (child: DocNodeTypes.INode, key) => {
