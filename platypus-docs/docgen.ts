@@ -213,6 +213,18 @@ export module DocGen {
                                 //methods,
                                 memberof: memberof
                             };
+
+                            //interfaces (implements) treat like params
+                            if (parsedDocTags.implements) {
+                                for (var k in parsedDocTags.implements) {
+                                    var tag = parsedDocTags.implements[k],
+                                        newImplement: DocNodeTypes.IInterfaceNode = {
+                                            name_: tag.name,
+                                            kind: 'interface'
+                                        };
+                                    newInterface.interfaces[newImplement.name_] = newImplement;
+                                }
+                            }
                             flat.interfaces[newInterface.name_] = newInterface;
                             
                             break;
