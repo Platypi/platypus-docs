@@ -180,7 +180,7 @@ export module DocGen {
                                 exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                parentString: (parsedDocTags.extends ? parsedDocTags.extends[0].type : ''),
+                                parentString: (parsedDocTags.extends && parsedDocTags.extends[0] ? parsedDocTags.extends[0].type : ''),
                                 namespaceString: memberof,
                                 interfaces: {},
                                 memberof: memberof
