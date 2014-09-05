@@ -180,7 +180,7 @@ export module DocGen {
                                 exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                parentString: (parsedDocTags.extends ? parsedDocTags.extends.type : ''),
+                                parentString: (parsedDocTags.extends ? parsedDocTags.extends[0].type : ''),
                                 namespaceString: memberof,
                                 interfaces: {},
                                 memberof: memberof
@@ -214,15 +214,15 @@ export module DocGen {
                                 memberof: memberof
                             };
 
-                            //interfaces (implements) treat like params
-                            if (parsedDocTags.implements) {
-                                for (var k in parsedDocTags.implements) {
-                                    var tag = parsedDocTags.implements[k],
-                                        newImplement: DocNodeTypes.IInterfaceNode = {
+                            //interfaces (extends) treat like params
+                            if (parsedDocTags.extends) {
+                                for (var k in parsedDocTags.extends) {
+                                    var tag = parsedDocTags.extends[k],
+                                        newExtends: DocNodeTypes.IInterfaceNode = {
                                             name_: tag.name,
                                             kind: 'interface'
                                         };
-                                    newInterface.interfaces[newImplement.name_] = newImplement;
+                                    newInterface.interfaces[newExtends.name_] = newExtends;
                                 }
                             }
                             flat.interfaces[newInterface.name_] = newInterface;
@@ -406,7 +406,7 @@ export module DocGen {
             for (var l in tag.tags) {
                 var t = tag.tags[l];
 
-                // There can be multiple params/implements/typeparams for a given comment.
+                // There can be multiple params/implements/extends/typeparams for a given comment.
                 if (t.tag === 'param') {
                     if (!tmpObj.params) {
                         tmpObj.params = new Array<ITag>();
@@ -422,6 +422,10 @@ export module DocGen {
                         tmpObj.implements = new Array<ITag>();
                     }
                     tmpObj.implements.push(t);
+                } else if (t.tag === 'extends') {
+                    if (!tmpObj.extends) {
+                        tmpObj.extends = new Array<ITag>();
+                    }
                 } else {
                     tmpObj[t.tag] = t;
                 }
@@ -489,7 +493,7 @@ export module DocGen {
         type?: ITag;
         readonly?: ITag;
         namespace?: ITag;
-        extends?: ITag;
+        extends?: Array<any>;
         class?: ITag;
     }
 }
