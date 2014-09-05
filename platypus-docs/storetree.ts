@@ -79,8 +79,10 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
 
 var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
     if (node.kind) {
-        var procedures: apiprocedures.ApiProcedures<any> = null;
-        // handle type parameters
+        var procedures: apiprocedures.ApiProcedures<any> = null,
+            subprocedures: apiprocedures.ApiProcedures<any> = null,
+            subprocedureType: string = '';
+
         switch (node.kind) {
             case 'namespace':
                 procedures = new namespaceProcedure();
@@ -88,10 +90,14 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
             case 'interface':
                 procedures = new interfaceProcedure();
                 // call interface-interface
+                subprocedureType = 'interfaces';
+                subprocedures = new interfaceInterfaceProcedures();
                 break;
             case 'class':
                 procedures = new classProcedures();
                 // call class-interface procedure
+                subprocedureType = 'interfaces';
+                subprocedures = new classInterfaceProcedures();
                 break;
             case 'method':
                 procedures = new methodProcedures();
@@ -110,10 +116,31 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 throw new Error('unknown node type: ' + node.kind);
                 break;
         }
+
+        // setup type parameters if there are any
         
         if (procedures) {
             if (!node.saved) {
-                return procedures.create(node);
+                if (!subprocedures) {
+                    console.log(node.name_);
+                    return procedures.create(node);
+                }
+                else {
+                    var topProc = procedures.create(node).then((id) => {
+                        for (var t in Object.keys(node[subprocedureType])) {
+                            var currentChild = node[subprocedureType][t],
+                                saveObj = {
+                                    parentId: <number>id,
+                                    childId: <number>currentChild.id
+                                };
+                            if (saveObj.childId) {
+                                subprocedures.create(saveObj).then((subid) => {
+                                    return topProc;
+                                });
+                            }
+                        }
+                    });
+                }
             } else {
                 return Promise.reject(node);
             }
