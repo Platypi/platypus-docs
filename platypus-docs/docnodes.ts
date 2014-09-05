@@ -63,6 +63,7 @@ export interface IInterfaceNode extends INode, IRegisteredNode {
     remarks?: string;
     exported?: boolean;
     methods?: {};
+    interfaces?: {};
 }
 
 export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
