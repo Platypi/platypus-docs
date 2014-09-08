@@ -26,6 +26,8 @@ var saveDocTree = (tree: any) => {
     if (utils.isObject(tree)) {
         return saveAndTraverse(tree['plat'], 'namespaces').then(() => {
             // second traversal to fill in missing ids
+            console.log('referencing sub types');
+            referenceSubTypes();
             console.log('done');
         }, (err) => {
             if (err) {
@@ -126,7 +128,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
         if (procedures) {
             if (!node.saved) {
                 if (!subprocedures) {
-                    console.log(node.name_);
+                    //console.log(node.name_);
                     return procedures.create(node);
                 } else {
                     var topProc = procedures.create(node).then((id) => {
@@ -141,10 +143,10 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
             } else {
                 return Promise.reject(node);
             }
-        }
-        console.log(node.name_ + ' ' + node.kind + ' is a problem');
-        console.log('shouldnt reach here');
     }
+    console.log(node.name_ + ' ' + node.kind + ' is a problem');
+    console.log('shouldnt reach here');
+
 };
 
 var ParentToChildNode = (parentNode: DocNodeTypes.INode, childNode: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
