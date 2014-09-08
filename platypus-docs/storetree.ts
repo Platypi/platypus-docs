@@ -19,7 +19,7 @@ import interfaceInterfaceProcedures = require('./docsave/db/procedures/interface
 import typeParameterProcedures = require('./docsave/db/procedures/type.parameter.procedures');
 
 var Promise = PromiseStatic.Promise,
-    subprocedures = [];
+    subproceduresList = [];
 
 
 var saveDocTree = (tree: any) => {
@@ -131,16 +131,9 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 } else {
                     var topProc = procedures.create(node).then((id) => {
                         for (var t in Object.keys(node[subprocedureType])) {
-                            var currentChild = node[subprocedureType][t],
-                                saveObj = {
-                                    parentId: <number>id,
-                                    childId: <number>currentChild.id
-                                };
-                            if (saveObj.childId) {
-                                subprocedures.create(saveObj).then((subid) => {
-                                    return topProc;
-                                });
-                            }
+                            var currentChild = node[subprocedureType][t];
+
+                            subproceduresList.push(ParentToChildNode.bind(null, node, currentChild));
                         }
                     });
                 }
@@ -154,7 +147,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
     }
 };
 
-var ParentToChildNodes = (parentNode: DocNodeTypes.INode, childNode: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
+var ParentToChildNode = (parentNode: DocNodeTypes.INode, childNode: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
     if (utils.isFunction(procedure)) {
         var saveObj = {
             parentId: <number>parentNode.id,
@@ -162,6 +155,14 @@ var ParentToChildNodes = (parentNode: DocNodeTypes.INode, childNode: DocNodeType
         };
         return procedure.create(saveObj);
     }
+};
+
+var referenceSubTypes = (): Thenable<any> => {
+    var promises = [];
+    for (var i = 0; i < subproceduresList.length; i++) {
+        promises.push(subproceduresList[i]());
+    }
+    return Promise.all(subproceduresList);
 };
 
 //var secondTraversal = (node: DocNodeTypes.INode) => {
