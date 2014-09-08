@@ -24,6 +24,7 @@ var Promise = PromiseStatic.Promise;
 var saveDocTree = (tree: any) => {
     if (utils.isObject(tree)) {
         return saveAndTraverse(tree['plat'], 'namespaces').then(() => {
+            // second traversal to fill in missing ids
             console.log('done');
         }, (err) => {
             if (err) {
