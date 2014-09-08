@@ -18,7 +18,8 @@ import classInterfaceProcedures = require('./docsave/db/procedures/class.interfa
 import interfaceInterfaceProcedures = require('./docsave/db/procedures/interface.interface.procedures');
 import typeParameterProcedures = require('./docsave/db/procedures/type.parameter.procedures');
 
-var Promise = PromiseStatic.Promise;
+var Promise = PromiseStatic.Promise,
+    subprocedures = [];
 
 
 var saveDocTree = (tree: any) => {
@@ -38,7 +39,6 @@ var saveDocTree = (tree: any) => {
 
 var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> => {
     // save node
-    //console.log('tick : ' + node.name_);
 
     return new Promise((resolve, reject) => {
         var fns = [];
@@ -58,23 +58,23 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
         }
         
         try {
-            console.log('Creating: ' + node.name_);
-        submitNode(node)
-            .then<void>(() => {
-                node.saved = true;
-                // process children
-                utils.forEach(node, (child: DocNodeTypes.INode, key) => {
-                    if (child && child.kind && !child.saved && !child.id) {
-                        //console.log('childnode name: ' + child.name_ + ' childnode id: ' + child.id + ' childnode kind: ' + child.kind + ' parent node: ' + node.name_ + ' parent id: ' + node.id);
-                        fns.push(saveAndTraverse.bind(null, child, child.kind));
-                    }
-                });
-                next();
+            //console.log('Creating: ' + node.name_);
+            submitNode(node)
+                .then<void>(() => {
+                    node.saved = true;
+                    // process children
+                    utils.forEach(node, (child: DocNodeTypes.INode, key) => {
+                        if (child && child.kind && !child.saved && !child.id) {
+                            //console.log('childnode name: ' + child.name_ + ' childnode id: ' + child.id + ' childnode kind: ' + child.kind + ' parent node: ' + node.name_ + ' parent id: ' + node.id);
+                            fns.push(saveAndTraverse.bind(null, child, child.kind));
+                        }
+                    });
+                    next();
 
-            })
-            .then(null, (err) => {
-                reject(err);
-            });
+                })
+                .then(null, (err) => {
+                    reject(err);
+                });
         } catch (err) {
             reject(err);
         }
@@ -83,11 +83,9 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
 
 var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
     if (node.kind) {
-        var procedures: apiprocedures.ApiProcedures<any> = null;
-
-
-            //subprocedures: apiprocedures.ApiProcedures<any> = null,
-            //subprocedureType: string = '';
+        var procedures: apiprocedures.ApiProcedures<any> = null,
+            subprocedures: apiprocedures.ApiProcedures<any> = null,
+            subprocedureType: string = '';
 
         switch (node.kind) {
             case 'namespace':
@@ -96,14 +94,14 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
             case 'interface':
                 procedures = new interfaceProcedure();
                 // save interface-interface for future use
-                node['subprocedureType'] = 'interfaces';
-                node['subprocedures'] = new interfaceInterfaceProcedures();
+                subprocedureType = 'interfaces';
+                subprocedures = new interfaceInterfaceProcedures();
                 break;
             case 'class':
                 procedures = new classProcedures();
                 // save class-interface procedure for future use
-                node['subprocedureType'] = 'interfaces';
-                node['subprocedures'] = new classInterfaceProcedures();
+                subprocedureType = 'interfaces';
+                subprocedures = new classInterfaceProcedures();
                 break;
             case 'method':
                 procedures = new methodProcedures();
@@ -127,7 +125,26 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
         
         if (procedures) {
             if (!node.saved) {
-                return procedures.create(node);
+                if (!subprocedures) {
+                    console.log(node.name_);
+                    return procedures.create(node);
+                } else {
+                    var topProc = procedures.create(node).then((id) => {
+                        for (var t in Object.keys(node[subprocedureType])) {
+                            var currentChild = node[subprocedureType][t],
+                                saveObj = {
+                                    parentId: <number>id,
+                                    childId: <number>currentChild.id
+                                };
+                            if (saveObj.childId) {
+                                subprocedures.create(saveObj).then((subid) => {
+                                    return topProc;
+                                });
+                            }
+                        }
+                    });
+                }
+            }  
             } else {
                 return Promise.reject(node);
             }
@@ -136,6 +153,40 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
         console.log('shouldnt reach here');
     }
 };
+
+var ParentToChildNodes = (parentNode: DocNodeTypes.INode, childNode: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
+    if (utils.isFunction(procedure)) {
+        var saveObj = {
+            parentId: <number>parentNode.id,
+            childId: <number>childNode.id
+        };
+        return procedure.create(saveObj);
+    }
+};
+
+//var secondTraversal = (node: DocNodeTypes.INode) => {
+//    for (var k in Object.keys(node)) {
+//        var currentNode = node[k];
+//        if (currentNode.kind) {
+//            var subType = node['subprocedureType'] || '',
+//                subproc = node['subprocedures'] || null;
+
+//            if (subproc) {
+//                for (var sub in currentNode[subType]) {
+//                    var currentChild = currentNode[subType][sub],
+//                        saveObj = {
+//                            parentId: <number>currentNode.id || 0,
+//                            childId: <number>currentChild.id || 0
+//                        };
+
+//                    if (saveObj.childId > 0 && saveObj.parentId > 0) {
+
+//                    }
+//                }
+//            }
+//        }
+//    }
+//};
 
 export = saveDocTree;
 
