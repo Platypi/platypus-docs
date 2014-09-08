@@ -9,7 +9,6 @@ import pool = require('../connection');
 
 var Promise = PromiseStatic.Promise;
 
-
 class BaseProcedures<T extends base.IBaseModel> {
     static query(sql: string): Thenable<any>;
     static query(sql: string, values?: Array<any>): Thenable<any>;

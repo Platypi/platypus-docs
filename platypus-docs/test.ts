@@ -11,8 +11,13 @@ console.log('generating tree');
 gen.buildTreeFromFile(filename, (tree: any) => {
     //console.log(tree);
     console.log('storing tree');
-    store(tree);
-    process.exit(0);
+    store(tree)
+        .then(null, (err) => {
+            console.log(err);
+        })
+        .then(() => {
+            process.exit(0);
+        });
 });
 
 

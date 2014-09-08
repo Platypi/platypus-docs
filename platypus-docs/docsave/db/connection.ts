@@ -9,18 +9,29 @@ var connection = mysql.createConnection({
     password: cfg.database.password,
     database: cfg.database.dbName
 });
-var connected = false;
+var connected = false,
+    connecting = false;
 
 var getConnection = (cb: (err: any, connection: mysql.IConnection) => void) => {
     //console.log('connecting to: ' + cfg.database.host);
 
     if (connected) {
         return cb(null, connection);
+    } else if (connecting) {
+        var interval = setInterval(() => {
+            if (connected) {
+                clearInterval(interval);
+                cb(null, connection);
+            }
+        }, 100);
+        return;
     }
 
-    connected = true;
+    connecting = true;
     connection.connect(() => {
         console.log('connected');
+        connecting = true;
+        connected = true;
         cb(null, connection);
     });
 

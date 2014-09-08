@@ -23,7 +23,7 @@ var Promise = PromiseStatic.Promise;
 
 var saveDocTree = (tree: any) => {
     if (utils.isObject(tree)) {
-        saveAndTraverse(tree['plat'], 'namespaces').then(() => {
+        return saveAndTraverse(tree['plat'], 'namespaces').then(() => {
             console.log('done');
         }, (err) => {
             if (err) {
@@ -31,7 +31,7 @@ var saveDocTree = (tree: any) => {
             }
         });
     } else {
-        throw new Error('Invalid Doc Tree: ' + tree);
+        return Promise.reject(new Error('Invalid Doc Tree: ' + tree));
     }
 };
 
@@ -57,8 +57,9 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
         }
         
         try {
-        //console.log('submitting node: ' + node.name_);
-        submitNode(node).then<void>(() => {
+            console.log('Creating: ' + node.name_);
+        submitNode(node)
+            .then<void>(() => {
                 node.saved = true;
                 // process children
                 utils.forEach(node, (child: DocNodeTypes.INode, key) => {
@@ -68,7 +69,9 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
                     }
                 });
                 next();
-            }).then(null, (err) => {
+
+            })
+            .then(null, (err) => {
                 reject(err);
             });
         } catch (err) {
@@ -79,9 +82,11 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
 
 var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
     if (node.kind) {
-        var procedures: apiprocedures.ApiProcedures<any> = null,
-            subprocedures: apiprocedures.ApiProcedures<any> = null,
-            subprocedureType: string = '';
+        var procedures: apiprocedures.ApiProcedures<any> = null;
+
+
+            //subprocedures: apiprocedures.ApiProcedures<any> = null,
+            //subprocedureType: string = '';
 
         switch (node.kind) {
             case 'namespace':
@@ -89,15 +94,15 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 break;
             case 'interface':
                 procedures = new interfaceProcedure();
-                // call interface-interface
-                subprocedureType = 'interfaces';
-                subprocedures = new interfaceInterfaceProcedures();
+                // save interface-interface for future use
+                node['subprocedureType'] = 'interfaces';
+                node['subprocedures'] = new interfaceInterfaceProcedures();
                 break;
             case 'class':
                 procedures = new classProcedures();
-                // call class-interface procedure
-                subprocedureType = 'interfaces';
-                subprocedures = new classInterfaceProcedures();
+                // save class-interface procedure for future use
+                node['subprocedureType'] = 'interfaces';
+                node['subprocedures'] = new classInterfaceProcedures();
                 break;
             case 'method':
                 procedures = new methodProcedures();
@@ -121,30 +126,13 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
         
         if (procedures) {
             if (!node.saved) {
-                if (!subprocedures) {
-                    console.log(node.name_);
-                    return procedures.create(node);
-                }
-                else {
-                    var topProc = procedures.create(node).then((id) => {
-                        for (var t in Object.keys(node[subprocedureType])) {
-                            var currentChild = node[subprocedureType][t],
-                                saveObj = {
-                                    parentId: <number>id,
-                                    childId: <number>currentChild.id
-                                };
-                            if (saveObj.childId) {
-                                subprocedures.create(saveObj).then((subid) => {
-                                    return topProc;
-                                });
-                            }
-                        }
-                    });
-                }
+                return procedures.create(node);
             } else {
                 return Promise.reject(node);
             }
         }
+        console.log(node.name_ + ' ' + node.kind + ' is a problem');
+        console.log('shouldnt reach here');
     }
 };
 
