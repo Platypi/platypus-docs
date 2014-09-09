@@ -14,8 +14,8 @@ class InterfaceInterfaceProcedures extends base.ApiProcedures<any> {
         }
 
         return [
-            i.interfaceid,
-            i.extendsinterfaceid
+            i.id,
+            i.extendedId
         ];
     }
 
