@@ -1,46 +1,24 @@
 ﻿/// <reference path="../../typings/tsd.d.ts" />
 import mysql = require('mysql');
+import utils = require('../../utils/utils');
 
 var cfg = require('../../../dbconnection.json') || {};
 
-var connection = mysql.createConnection({
+var pool = mysql.createPool({
     host: cfg.database.host,
     user: cfg.database.user,
     password: cfg.database.password,
-    database: cfg.database.dbName
+    database: cfg.database.dbName,
+    connectionLimit: 5
 });
-var connected = false,
-    connecting = false;
 
-var getConnection = (cb: (err: any, connection: mysql.IConnection) => void) => {
-    //console.log('connecting to: ' + cfg.database.host);
-
-    if (connected) {
-        return cb(null, connection);
-    } else if (connecting) {
-        var interval = setInterval(() => {
-            if (connected) {
-                clearInterval(interval);
-                cb(null, connection);
-            }
-        }, 100);
-        return;
-    }
-
-    connecting = true;
-    connection.connect(() => {
-        console.log('connected');
-        connecting = true;
-        connected = true;
-        cb(null, connection);
-    });
-
+pool.on('connection', (connection: mysql.IConnection) => {
     connection.on('error', (err: mysql.IError) => {
-        if (err) {
+        if (utils.isObject(err)) {
+            console.log(err);
             connection.destroy();
-            cb(err, null);
         }
     });
-};
+});
 
-export = getConnection;
+export = pool;
