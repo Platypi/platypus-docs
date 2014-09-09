@@ -27,9 +27,10 @@ var saveDocTree = (tree: any) => {
         return saveAndTraverse(tree['plat'], 'namespaces').then(() => {
             // second traversal to fill in missing ids
             console.log('referencing sub types');
-            referenceSubTypes();
-            console.log('done');
-        }, (err) => {
+            return referenceSubTypes().then(() => {
+                console.log('done');
+            });
+        }).then(null, (err) => {
             if (err) {
                 console.log(err);
             }
@@ -131,11 +132,14 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                     //console.log(node.name_);
                     return procedures.create(node);
                 } else {
-                    var topProc = procedures.create(node).then((id) => {
-                        for (var t in Object.keys(node[subprocedureType])) {
-                            var currentChild = node[subprocedureType][t];
-
-                            subproceduresList.push(ParentToChildNode.bind(null, node, currentChild));
+                    return procedures.create(node).then((id) => {
+                        if (utils.isObject(node[subprocedureType])) {
+                            utils.forEach(node[subprocedureType], (value: any) => {
+                                if (utils.isNull(value.kind)) {
+                                    return;
+                                }
+                                subproceduresList.push(ParentToChildNode.bind(null, node, value, subprocedures));
+                            });
                         }
                     });
                 }
@@ -149,47 +153,36 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
 
 };
 
-var ParentToChildNode = (parentNode: DocNodeTypes.INode, childNode: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
-    if (utils.isFunction(procedure)) {
+var ParentToChildNode = (node: DocNodeTypes.INode, extendedNode: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
+    if (utils.isObject(procedure) && utils.isFunction(procedure.create)) {
+        console.log('Creating subtype for node: ' + node.name_);
+        if (utils.isNull(node.id)) {
+            console.log('Node: ' + node.name_ + ' has no id.');
+            return;
+        }
+
+        if (utils.isNull(extendedNode.id)) {
+            console.log('Extended node: ' + extendedNode.name_ + ' has no id.');
+            return;
+        }
+
         var saveObj = {
-            parentId: <number>parentNode.id,
-            childId: <number>childNode.id
+            id: <number>node.id,
+            extendedId: <number>extendedNode.id
         };
         return procedure.create(saveObj);
     }
 };
 
 var referenceSubTypes = (): Thenable<any> => {
+    console.log('number of left over references: ' + subproceduresList.length);
     var promises = [];
+    console.log(subproceduresList.length);
     for (var i = 0; i < subproceduresList.length; i++) {
         promises.push(subproceduresList[i]());
     }
     return Promise.all(subproceduresList);
 };
-
-//var secondTraversal = (node: DocNodeTypes.INode) => {
-//    for (var k in Object.keys(node)) {
-//        var currentNode = node[k];
-//        if (currentNode.kind) {
-//            var subType = node['subprocedureType'] || '',
-//                subproc = node['subprocedures'] || null;
-
-//            if (subproc) {
-//                for (var sub in currentNode[subType]) {
-//                    var currentChild = currentNode[subType][sub],
-//                        saveObj = {
-//                            parentId: <number>currentNode.id || 0,
-//                            childId: <number>currentChild.id || 0
-//                        };
-
-//                    if (saveObj.childId > 0 && saveObj.parentId > 0) {
-
-//                    }
-//                }
-//            }
-//        }
-//    }
-//};
 
 export = saveDocTree;
 
