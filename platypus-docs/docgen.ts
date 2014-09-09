@@ -191,9 +191,10 @@ export module DocGen {
                                 for (var k in parsedDocTags.implements) {
                                     var tag = parsedDocTags.implements[k],
                                         newInterface: DocNodeTypes.IInterfaceNode = {
-                                            name_: tag.name,
+                                            name_: tag.type,
                                             kind: 'interface'
                                         };
+
                                     newClass.interfaces[newInterface.name_] = newInterface;
                                 }
                             }
@@ -211,7 +212,8 @@ export module DocGen {
                                 exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 //methods,
-                                memberof: memberof
+                                memberof: memberof,
+                                interfaces: {}
                             };
 
                             //interfaces (extends) treat like params
@@ -219,9 +221,10 @@ export module DocGen {
                                 for (var k in parsedDocTags.extends) {
                                     var tag = parsedDocTags.extends[k],
                                         newExtends: DocNodeTypes.IInterfaceNode = {
-                                            name_: tag.name,
+                                            name_: tag.type,
                                             kind: 'interface'
                                         };
+
                                     newInterface.interfaces[newExtends.name_] = newExtends;
                                 }
                             }
@@ -257,127 +260,134 @@ export module DocGen {
                             };
 
                             flat.namespaces[newNamespace.name_] = newNamespace;
-                            
+                            if (!!newNamespace.memberof) {
+                                this.nameHash[newNamespace.memberof + '.' + newNamespace.name_] = newNamespace;
+                            } else {
+                                this.nameHash[newNamespace.name_] = newNamespace;
+                            }
                             break;
                     }
-
-                    // start building the tree with namespaces
-                    for (var namespace in flat.namespaces) {
-                        var currentNamespace = flat.namespaces[namespace],
-                            parent = null;
-
-                        if (currentNamespace.memberof) {
-                            this.__findNode(currentNamespace, tree, (node) => {
-                                parent = node;
-                                currentNamespace.parent = parent;
-
-                                if (!parent) {
-                                    return;
-                                }
-
-                                this.__appendChild(currentNamespace, parent);
-                            });
-                        } else {
-                            this.nameHash[currentNamespace.name_] = currentNamespace;
-                            tree[currentNamespace.name_] = currentNamespace;
-                        }
-                    }
-
-                    //interfaces
-                    for (var interfaceNode in flat.interfaces) {
-                        var currentInterface = flat.interfaces[interfaceNode],
-                            parent = null;
-
-                        this.__findNode(currentInterface, tree, (node) => {
-                            parent = node;
-                            currentInterface.parent = parent;
-                            this.__appendChild(currentInterface, parent);
-                        });
-                    }
-
-                    //classes
-                    for (var classNode in flat.classes) {
-                        var currentClass = flat.classes[classNode],
-                            parent = null;
-
-                        currentClass.namespace = this.nameHash[currentClass.namespaceString];
-                        currentClass.extends = this.nameHash[currentClass.parentString];
-
-                        this.__findNode(currentClass, tree, (node) => {
-                            parent = node;
-                            currentClass.parent = parent;
-
-                            for (var i in currentClass.interfaces) {
-                                currentClass.interfaces[i] = this.nameHash[currentClass.interfaces[i].name] || currentClass.interfaces[i];
-                            }
-
-                            this.__appendChild(currentClass, parent);
-                        });
-                    }
-
-                    //methods
-                    for (var methodArrayNode in flat.methods) {
-                        for (var methodNode in flat.methods[methodArrayNode]) {
-                            var currentMethod = flat.methods[methodArrayNode][methodNode],
-                                parent = null,
-                                returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype.toLowerCase() : '');
-
-                            //currentMethod.returntype = (returnTypeName !== '' ? this.nameHash[returnTypeName] : currentMethod.returntype);
-
-                            var returnTypeNode = this.nameHash[returnTypeName];
-
-                            if (returnTypeNode) {
-                                switch (returnTypeNode) {
-                                    case 'namespace':
-                                        currentMethod.returntypenamespace = returnTypeNode;
-                                        break;
-                                    case 'class':
-                                        currentMethod.returntypeclass = returnTypeNode;
-                                        break;
-                                    case 'interface':
-                                        currentMethod.returntypeinterface = returnTypeNode;
-                                        break;
-                                }
-                            }
-
-                            this.__findNode(currentMethod, tree, (node) => {
-                                parent = node;
-                                currentMethod.parent = parent;
-
-                                for (var j in currentMethod.parameters) {
-                                    currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name_).toLowerCase()] || currentMethod.parameters[j];
-                                    currentMethod.parameters[j].method = currentMethod;
-                                }
-
-                                this.__appendChild(currentMethod, parent);
-                            });
-                        }
-                    }
-
-                    //properties 
-                    for (var propertyNode in flat.properties) {
-                        var currentProperty = flat.properties[propertyNode],
-                            parent = null;
-
-                        this.__findNode(currentProperty, tree, (node) => {
-                            parent = node;
-                            currentProperty.parent = parent;
-                            this.__appendChild(currentProperty, parent);
-                        });
-                    }
-
-                    //events
-                    for (var eventNode in flat.events) {
-                        var currentEvent = flat.events[eventNode],
-                            parent = null;
-
-                        this.__findNode(currentEvent, tree, (node) => {
-                            parent = node;
-                            currentEvent.parent = parent;
-                            this.__appendChild(currentMethod, parent);
-                        });
-                    }
                 }
+            }
+
+            // start building the tree with namespaces
+            for (var namespace in flat.namespaces) {
+                var currentNamespace = flat.namespaces[namespace],
+                    parent = null;
+
+                if (currentNamespace.memberof) {
+                    this.__findNode(currentNamespace, tree, (node) => {
+                        parent = node;
+                        currentNamespace.parent = parent;
+
+                        if (!parent) {
+                            return;
+                        }
+
+                        this.__appendChild(currentNamespace, parent);
+                    });
+                } else {
+                    tree[currentNamespace.name_] = currentNamespace;
+                }
+            }
+            //interfaces
+            for (var interfaceNode in flat.interfaces) {
+                var currentInterface = flat.interfaces[interfaceNode],
+                    parent = null;
+
+                this.__findNode(currentInterface, tree, (node) => {
+                    parent = node;
+                    currentInterface.parent = parent;
+
+                    for (var i in currentInterface.interfaces) {
+                        currentInterface.interfaces[i] = this.nameHash[currentInterface.interfaces[i].name_] || currentInterface.interfaces[i];
+                    }
+
+                    this.__appendChild(currentInterface, parent);
+                });
+            }
+
+            //classes
+            for (var classNode in flat.classes) {
+                var currentClass = flat.classes[classNode],
+                    parent = null;
+
+                currentClass.namespace = this.nameHash[currentClass.namespaceString];
+                currentClass.extends = this.nameHash[currentClass.parentString];
+
+                this.__findNode(currentClass, tree, (node) => {
+                    parent = node;
+                    currentClass.parent = parent;
+
+                    for (var i in currentClass.interfaces) {
+                        currentClass.interfaces[i] = this.nameHash[currentClass.interfaces[i].name_] || currentClass.interfaces[i];
+                    }
+
+                    this.__appendChild(currentClass, parent);
+                });
+            }
+
+            //methods
+            for (var methodArrayNode in flat.methods) {
+                for (var methodNode in flat.methods[methodArrayNode]) {
+                    var currentMethod = flat.methods[methodArrayNode][methodNode],
+                        parent = null,
+                        returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype.toLowerCase() : '');
+
+                    //currentMethod.returntype = (returnTypeName !== '' ? this.nameHash[returnTypeName] : currentMethod.returntype);
+
+                    var returnTypeNode = this.nameHash[returnTypeName];
+
+                    if (returnTypeNode) {
+                        switch (returnTypeNode) {
+                            case 'namespace':
+                                currentMethod.returntypenamespace = returnTypeNode;
+                                break;
+                            case 'class':
+                                currentMethod.returntypeclass = returnTypeNode;
+                                break;
+                            case 'interface':
+                                currentMethod.returntypeinterface = returnTypeNode;
+                                break;
+                        }
+                    }
+
+                    this.__findNode(currentMethod, tree, (node) => {
+                        parent = node;
+                        currentMethod.parent = parent;
+
+                        for (var j in currentMethod.parameters) {
+                            currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name_).toLowerCase()] || currentMethod.parameters[j];
+                            currentMethod.parameters[j].method = currentMethod;
+                        }
+
+                        this.__appendChild(currentMethod, parent);
+                    });
+                }
+            }
+
+            //properties 
+            for (var propertyNode in flat.properties) {
+                var currentProperty = flat.properties[propertyNode],
+                    parent = null;
+
+                this.__findNode(currentProperty, tree, (node) => {
+                    parent = node;
+                    currentProperty.parent = parent;
+                    this.__appendChild(currentProperty, parent);
+                });
+            }
+
+            //events
+            for (var eventNode in flat.events) {
+                var currentEvent = flat.events[eventNode],
+                    parent = null;
+
+                this.__findNode(currentEvent, tree, (node) => {
+                    parent = node;
+                    currentEvent.parent = parent;
+                    this.__appendChild(currentMethod, parent);
+                });
             }
 
             callback(tree);
@@ -426,6 +436,7 @@ export module DocGen {
                     if (!tmpObj.extends) {
                         tmpObj.extends = new Array<ITag>();
                     }
+                    tmpObj.extends.push(t);
                 } else {
                     tmpObj[t.tag] = t;
                 }
