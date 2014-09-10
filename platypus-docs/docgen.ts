@@ -56,7 +56,8 @@ export module DocGen {
          */
         private __findNode = (node: DocNodeTypes.INode, tree: any, callback: (node: any) => void) => {
             if (!this.nameHash[node.memberof]) {
-                throw new Error(node.memberof + ' not found!');
+                console.log(JSON.stringify(this.nameHash, censor(this.nameHash), 4));
+                throw new Error(node.memberof + ' not found! Node: ' + node.name_);
             }
             callback(this.nameHash[node.memberof]);
         };
@@ -104,7 +105,7 @@ export module DocGen {
 
                 if (parsedDocTags.kind) {
                     var kind: string = (<string>parsedDocTags.kind.name).trim().toLowerCase(),
-                        memberof: string = (parsedDocTags.memberof ? (<string>parsedDocTags.memberof.name).trim().toLowerCase() : '');
+                        memberof: string = (parsedDocTags.memberof ? (<string>parsedDocTags.memberof.name).trim() : '');
 
                     switch (kind) {
                         case 'function':
@@ -352,7 +353,7 @@ export module DocGen {
                 for (var methodNode in flat.methods[methodArrayNode]) {
                     var currentMethod = flat.methods[methodArrayNode][methodNode],
                         parent = null,
-                        returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype.toLowerCase() : '');
+                        returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype : '');
 
                     //currentMethod.returntype = (returnTypeName !== '' ? this.nameHash[returnTypeName] : currentMethod.returntype);
 
@@ -377,7 +378,7 @@ export module DocGen {
                         currentMethod.parent = parent;
 
                         for (var j in currentMethod.parameters) {
-                            currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name_).toLowerCase()] || currentMethod.parameters[j];
+                            currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name_)] || currentMethod.parameters[j];
                             currentMethod.parameters[j].method = currentMethod;
                         }
 
@@ -421,7 +422,9 @@ export module DocGen {
                 console.log(childNode.memberof);
             }
 
-            var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_.toLowerCase();
+            console.log('added ' + childNode.name_ + ' to ' + parentNode.name_);
+
+            var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_;
 
             parent[name] = childNode;
 
