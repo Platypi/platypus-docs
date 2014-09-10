@@ -66,12 +66,19 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
                 .then<void>(() => {
                     node.saved = true;
                     // process children
+                    var namespaces: Array<any> = [],
+                        fn: any = null;
                     utils.forEach(node, (child: DocNodeTypes.INode, key) => {
                         if (child && child.kind && !child.saved && !child.id) {
-                            //console.log('childnode name: ' + child.name_ + ' childnode id: ' + child.id + ' childnode kind: ' + child.kind + ' parent node: ' + node.name_ + ' parent id: ' + node.id);
-                            fns.push(saveAndTraverse.bind(null, child, child.kind));
+                            fn = saveAndTraverse.bind(null, child, child.kind);
+                            if (child.kind === 'namespace') {
+                                namespaces.push(fn)
+                            } else {
+                                fns.push(fn);
+                            }
                         }
                     });
+                    fns = fns.concat(namespaces);
                     next();
 
                 })
@@ -144,9 +151,9 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                     });
                 }
             }  
-            } else {
-                return Promise.reject(node);
-            }
+        } else {
+            return Promise.reject(node);
+        }
     }
     console.log(node.name_ + ' ' + node.kind + ' is a problem');
     console.log('shouldnt reach here');
