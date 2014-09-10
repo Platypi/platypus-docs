@@ -143,13 +143,14 @@ export module DocGen {
                                 }
                             }
 
-                            var methodName = (newMethod.name_ !== '') ? newMethod.name_.toUpperCase() : '()';
+                            var methodName = (newMethod.name_ !== '') ? memberof.toUpperCase() + '.' + newMethod.name_.toUpperCase() : '()';
 
                             if (!(flat.methods[methodName] instanceof Array)) {
                                 flat.methods[methodName] = [];
                             }
 
                             flat.methods[methodName].push(newMethod);
+                            this.nameHash[methodName] = flat.methods[methodName];
                             
                             break;
                         case 'property':
@@ -168,7 +169,10 @@ export module DocGen {
                                 memberof: memberof
                             };
 
-                            flat.properties[newProperty.name_] = newProperty;
+                            var propertyName = memberof + '.' + newProperty.name_;
+
+                            flat.properties[propertyName] = newProperty;
+                            this.nameHash[propertyName] = flat.properties[propertyName];
 
                             break;
                         case 'class':
@@ -199,7 +203,10 @@ export module DocGen {
                                 }
                             }
 
-                            flat.classes[newClass.name_] = newClass;
+                            var className = memberof + '.' + newClass.name_;
+
+                            flat.classes[className] = newClass;
+                            this.nameHash[className] = flat.classes[className];
                             
                             break;
                         case 'interface':
@@ -228,7 +235,11 @@ export module DocGen {
                                     newInterface.interfaces[newExtends.name_] = newExtends;
                                 }
                             }
-                            flat.interfaces[newInterface.name_] = newInterface;
+
+                            var interfaceName = memberof + '.' + newInterface.name_;
+
+                            flat.interfaces[interfaceName] = newInterface;
+                            this.nameHash[interfaceName] = flat.interfaces[interfaceName];
                             
                             break;
                         case 'event':
@@ -244,7 +255,11 @@ export module DocGen {
                                 memberof: memberof
                             };
 
-                            flat.events[newEvent.name_] = newEvent;
+                            var eventName = memberof + '.' + newEvent.name_;
+
+                            flat.events[eventName] = newEvent;
+                            this.nameHash[eventName] = flat.events[eventName];
+                            
                             
                             break;
                         case 'namespace':
@@ -259,12 +274,17 @@ export module DocGen {
                                 memberof: memberof
                             };
 
-                            flat.namespaces[newNamespace.name_] = newNamespace;
+                            var namespaceName = '';
+
                             if (!!newNamespace.memberof) {
-                                this.nameHash[newNamespace.memberof + '.' + newNamespace.name_] = newNamespace;
+                                namespaceName = newNamespace.memberof + '.' + newNamespace.name_;
                             } else {
-                                this.nameHash[newNamespace.name_] = newNamespace;
+                                namespaceName = newNamespace.name_;
                             }
+
+                            flat.namespaces[namespaceName] = newNamespace;
+                            this.nameHash[namespaceName] = flat.namespaces[namespaceName];
+
                             break;
                     }
                 }
@@ -407,7 +427,8 @@ export module DocGen {
 
             var namespacePre = childNode.memberof;
 
-            this.nameHash[namespacePre + '.' + name] = childNode;
+            // old way of populating namehash
+            //this.nameHash[namespacePre + '.' + name] = childNode;
         };
 
         private __buildTags = (tag: any): ParsedDocNode => {
