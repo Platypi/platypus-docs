@@ -3,6 +3,7 @@
 
 import DocNodeTypes = require('./docnodes');
 import fs = require('fs');
+import ds = require('./datastructures');
 var parser = require('comment-parser');
 
 export module DocGen {
@@ -12,7 +13,7 @@ export module DocGen {
      */
     export class DocGenerator {
 
-        nameHash = {};
+        nameHash = ds.nameHashTable;
 
         callback = (tree) => { };
 
@@ -66,32 +67,14 @@ export module DocGen {
          * Generate a tree structure of tags as they appear in code.
          */
         private __treeGen = (tags: any, callback: (tree: any) => void) => {
-            var tree: {
-                [index: string]: DocNodeTypes.INameSpaceNode
-            } = {};
+            var tree = ds.tree;
 
             /*
              * First run through will generate a flat 
              * data structure as we may not yet have all the tags
              * need to reference each other in memory.
              */
-            var flat: {
-                namespaces: { [name: string]: DocNodeTypes.INameSpaceNode };
-                interfaces: { [name: string]: DocNodeTypes.IInterfaceNode };
-                classes: { [name: string]: DocNodeTypes.IClassNode };
-                methods: { [name:string]: Array<DocNodeTypes.IMethodNode> };
-                properties: { [name: string]: DocNodeTypes.IPropertyNode };
-                parameters: { [name: string]: DocNodeTypes.IParameterNode };
-                events: {[name:string]: DocNodeTypes.IEvent};
-            } = {
-                namespaces: {},
-                interfaces: {},
-                classes: {},
-                methods: {},
-                parameters: {},
-                properties: {},
-                events: {}
-            };
+            var flat = ds.flat;
 
             /**
              * Two loops are needed as the output of the parser 

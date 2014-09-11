@@ -17,6 +17,7 @@ import eventProcedures = require('./docsave/db/procedures/event.procedures');
 import classInterfaceProcedures = require('./docsave/db/procedures/class.interface.procedures');
 import interfaceInterfaceProcedures = require('./docsave/db/procedures/interface.interface.procedures');
 import typeParameterProcedures = require('./docsave/db/procedures/type.parameter.procedures');
+import ds = require('./datastructures');
 
 var Promise = PromiseStatic.Promise,
     subproceduresList = [],
@@ -141,16 +142,12 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
         if (procedures) {
             if (!node.saved) {
                 if (!subprocedures) {
-                    //console.log(node.name_);
                     return procedures.create(node);
                 } else {
                     return procedures.create(node).then(null, (err) => {
                         console.log(node.name_);
                         console.log((<any>node).parentString);
                         console.log((<any>node).extends.id);
-                        //if (utils.isObject(err) && utils.isString(err.code) && err.code === 'ER_NO_REFERENCED_ROW_') {
-
-                        //}
                         throw err;
                     }).then((id) => {
                             if (utils.isObject(node[subprocedureType])) {
