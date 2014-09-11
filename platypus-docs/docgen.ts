@@ -336,16 +336,13 @@ export module DocGen {
                 currentClass.namespace = this.nameHash[currentClass.namespaceString];
                 currentClass.extends = this.nameHash[currentClass.parentString];
 
-                this.__findNode(currentClass, tree, (node) => {
-                    parent = node;
-                    currentClass.parent = parent;
+                parent = currentClass.parent = currentClass.namespace;
 
-                    for (var i in currentClass.interfaces) {
-                        currentClass.interfaces[i] = this.nameHash[currentClass.interfaces[i].name_] || currentClass.interfaces[i];
-                    }
+                for (var i in currentClass.interfaces) {
+                    currentClass.interfaces[i] = this.nameHash[currentClass.interfaces[i].name_] || currentClass.interfaces[i];
+                }
 
-                    this.__appendChild(currentClass, parent);
-                });
+                this.__appendChild(currentClass, parent);
             }
 
             //methods
@@ -421,8 +418,6 @@ export module DocGen {
             if (!parent) {
                 console.log(childNode.memberof);
             }
-
-            console.log('added ' + childNode.name_ + ' to ' + parentNode.name_);
 
             var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_;
 
