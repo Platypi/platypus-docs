@@ -14,7 +14,6 @@ class BaseProcedures<T extends base.IBaseModel> {
     static query(sql: string, values?: Array<any>): Thenable<any> {
         return new Promise((resolve, reject) => {
             pool.getConnection((err: any, connection: mysql.IConnection) => {
-                //console.log('Connection obtained');
                 if (utils.isObject(err)) {
                     return reject(err);
                 } else if (utils.isArray(values)) {
@@ -22,7 +21,6 @@ class BaseProcedures<T extends base.IBaseModel> {
                 }
 
                 connection.query(sql, (err: any, response: Array<any>) => {
-                    //console.log('Connection released');
                     connection.release();
                     if (utils.isObject(err)) {
                         return reject(err);

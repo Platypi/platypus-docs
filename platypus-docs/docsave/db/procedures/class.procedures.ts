@@ -21,24 +21,6 @@ class ClassProcedures extends base.ApiProcedures<any> {
             return [];
         }
 
-        //var args = [
-        //    (c.extends ? c.extends.id : null),
-        //    (c.namespace ? c.namespace.id : null),
-        //    c.name_,
-        //    c.description_,
-        //    c.example,
-        //    c.exampleurl,
-        //    c.remarks,
-        //    c.exported,
-        //    c.static,
-        //    c.registeredtype,
-        //    c.registeredname
-        //];
-
-        //if (c.name_ === 'WebViewControl') {
-        //    console.log(args);
-        //}
-
         return [
             (c.extends ? c.extends.id : null),
             (c.namespace ? c.namespace.id : null),

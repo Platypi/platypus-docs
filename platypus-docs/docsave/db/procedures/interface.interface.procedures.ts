@@ -13,16 +13,19 @@ class InterfaceInterfaceProcedures extends base.ApiProcedures<any> {
             return [];
         }
 
-        return [
-            i.id,
-            i.extendedId
+        var toRtn = [
+            Number(i.id),
+            Number(i.extendedId)
         ];
+        
+        return toRtn;
     }
 
     create(obj: any): Thenable<number> {
         if (!utils.isObject(obj)) {
             return Promise.resolve(null);
         }
+
         return this.callProcedure('Insert' + this.procedure, this.getArgs(obj)).then(() => {
             return obj;
         });
