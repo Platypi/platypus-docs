@@ -17,6 +17,7 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="datastructures.ts" />
     <TypeScriptCompile Include="docgen.ts" />
     <TypeScriptCompile Include="docmarkdown.ts" />
     <TypeScriptCompile Include="docnodes.ts" />
