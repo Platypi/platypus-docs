@@ -19,7 +19,8 @@ import interfaceInterfaceProcedures = require('./docsave/db/procedures/interface
 import typeParameterProcedures = require('./docsave/db/procedures/type.parameter.procedures');
 
 var Promise = PromiseStatic.Promise,
-    subproceduresList = [];
+    subproceduresList = [],
+    failedClassesList = [];
 
 
 var saveDocTree = (tree: any) => {
@@ -69,6 +70,10 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
                     var namespaces: Array<any> = [],
                         fn: any = null;
                     utils.forEach(node, (child: DocNodeTypes.INode, key) => {
+                        if (key === 'parent' || key === 'extends' || key === 'namespace') {
+                            return;
+                        }
+
                         if (child && child.kind && !child.saved && !child.id) {
                             fn = saveAndTraverse.bind(null, child, child.kind);
                             if (child.kind === 'namespace') {
@@ -139,18 +144,28 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                     //console.log(node.name_);
                     return procedures.create(node);
                 } else {
-                    return procedures.create(node).then((id) => {
-                        if (utils.isObject(node[subprocedureType])) {
-                            utils.forEach(node[subprocedureType], (value: any) => {
-                                if (utils.isNull(value.kind)) {
-                                    return;
-                                }
-                                subproceduresList.push(ParentToChildNode.bind(null, node, value, subprocedures));
-                            });
-                        }
-                    });
+                    return procedures.create(node).then(null, (err) => {
+                        console.log(node.name_);
+                        console.log((<any>node).parentString);
+                        console.log((<any>node).extends.id);
+                        //if (utils.isObject(err) && utils.isString(err.code) && err.code === 'ER_NO_REFERENCED_ROW_') {
+
+                        //}
+                        throw err;
+                    }).then((id) => {
+                            if (utils.isObject(node[subprocedureType])) {
+                                utils.forEach(node[subprocedureType], (value: any) => {
+                                    if (utils.isNull(value.kind)) {
+                                        return;
+                                    }
+                                    subproceduresList.push(ParentToChildNode.bind(null, node, value, subprocedures));
+                                });
+                            }
+                        });
                 }
-            }  
+            } else {
+                return Promise.resolve();
+            } 
         } else {
             return Promise.reject(node);
         }
@@ -162,7 +177,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
 
 var ParentToChildNode = (node: DocNodeTypes.INode, extendedNode: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
     if (utils.isObject(procedure) && utils.isFunction(procedure.create)) {
-        console.log('Creating subtype for node: ' + node.name_);
+
         if (utils.isNull(node.id)) {
             console.log('Node: ' + node.name_ + ' has no id.');
             return;
@@ -182,13 +197,11 @@ var ParentToChildNode = (node: DocNodeTypes.INode, extendedNode: DocNodeTypes.IN
 };
 
 var referenceSubTypes = (): Thenable<any> => {
-    console.log('number of left over references: ' + subproceduresList.length);
     var promises = [];
-    console.log(subproceduresList.length);
     for (var i = 0; i < subproceduresList.length; i++) {
         promises.push(subproceduresList[i]());
     }
-    return Promise.all(subproceduresList);
+    return Promise.all(promises);
 };
 
 export = saveDocTree;
