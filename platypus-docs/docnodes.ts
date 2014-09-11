@@ -10,6 +10,7 @@
     id?: number;
     saved?: boolean;
     typeparams?: {};
+    remarks?: string;
 }
 
 export interface IHaveExampleNode {
@@ -52,7 +53,7 @@ export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
     namespaceString?: string;
     extends?: IClassNode;
     exported?: boolean;
-    remarks: string;
+    remarks?: string;
     methods?: {};
     static?: boolean;
     interfaces?: {};
