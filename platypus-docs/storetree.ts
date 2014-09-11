@@ -71,6 +71,9 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
 
                     // add links to remarks & description
                     node.description_ = markdown(node.description_, '/', node.id);
+                    node.remarks = markdown(node.remarks, '/', node.id);
+
+                    //update node
 
                     // process children
                     var namespaces: Array<any> = [],
