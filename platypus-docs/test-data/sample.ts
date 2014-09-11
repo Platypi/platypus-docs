@@ -1,4 +1,4 @@
-﻿/* tslint:disable */
+/* tslint:disable */
 /**
  * PlatypusTS v0.9.0 (http://getplatypi.com) 
  * Copyright 2014 Platypi, LLC. All rights reserved. 
@@ -537,7 +537,7 @@ module plat {
             return str;
         }
     
-        str = str.charAt(0).toLowerCase() + str.substr(1);
+        str = str.charAt(0).toLowerCase() + str.slice(1);
         camelCaseRegex = camelCaseRegex || (<plat.expressions.IRegex>plat.acquire(__Regex)).camelCaseRegex;
     
         return str.replace(camelCaseRegex,
@@ -1914,7 +1914,7 @@ module plat {
                     }
 
                     throw new TypeError('Could not resolve dependency ' +
-                        dependency.substring(9, dependency.indexOf('(')) +
+                        dependency.slice(9, dependency.indexOf('(')) +
                         ' for ' +
                         name +
                         '. Are you using a static injectable Type?');
@@ -3187,13 +3187,52 @@ module plat {
         vendorPrefix: IVendorPrefix;
 
         /**
+         * @name IE
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of Internet Explorer being used. If not Internet Explorer, the value is undefined.
+         */
+        IE: number;
+
+        /**
+         * @name ANDROID
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of Android being used. If not Android, the value is undefined.
+         */
+        ANDROID: number;
+
+        /**
+         * @name __events
+         * @memberof plat.Compat
+         * @kind property
+         * @access public
+         * 
+         * @type {plat.IObject<boolean>}
+         * 
+         * @description
+         * An object containing all event lookups.
+         */
+        private __events: IObject<boolean> = {};
+
+        /**
          * @name constructor
          * @memberof plat.Compat
          * @kind function
          * @access public
          * 
          * @description
-         * Define everything
+         * Define everything.
          * 
          * @returns {void}
          */
@@ -3203,6 +3242,35 @@ module plat {
             this.__defineAnimationEvents();
             this.__determineCss();
         }
+        
+        /**
+         * @name hasEvent
+         * @memberof plat.Compat
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Check whether or not an event exists.
+         * 
+         * @param {string} event The event to check the existence of.
+         * 
+         * @returns {boolean} Whether or not the event exists.
+         */
+        hasEvent(event: string): boolean {
+            var events = this.__events,
+                eventExists = events[event];
+
+            if (isUndefined(eventExists)) {
+                var element = this.$Document.createElement('div');
+                if (event === 'input' && this.IE === 9) {
+                    eventExists = events[event] = false;
+                } else {
+                    eventExists = events[event] = !isUndefined((<any>element)[('on' + event)]);
+                }
+            }
+
+            return eventExists;
+        }
 
         /**
          * @name __defineBooleans
@@ -3211,16 +3279,18 @@ module plat {
          * @access private
          * 
          * @description
-         * Define booleans
+         * Define booleans.
          * 
          * @returns {void}
          */
         private __defineBooleans(): void {
             var $window = this.$Window,
-                navigator = $window.navigator,
+                navigator = $window.navigator || <Navigator>{},
+                userAgent = (navigator.userAgent || '').toLowerCase(),
                 history = $window.history,
                 def = (<any>$window).define,
-                msA = (<any>$window).MSApp;
+                msA = (<any>$window).MSApp,
+                android = parseInt((<any>/android (\d+)/.exec(userAgent) || [])[1], 10);
 
             this.isCompatible = isFunction(Object.defineProperty) && isFunction(this.$Document.querySelector);
             this.cordova = !isNull((<any>$window).cordova);
@@ -3235,6 +3305,17 @@ module plat {
             this.hasTouchEvents = !isUndefined((<any>$window).ontouchstart);
             this.hasPointerEvents = !!navigator.pointerEnabled;
             this.hasMsPointerEvents = !!navigator.msPointerEnabled;
+
+            if (isNumber(android)) {
+                this.ANDROID = android;
+                return;
+            }
+
+            var ie = parseInt((<any>/msie (\d+)/.exec(userAgent) || [])[1], 10) ||
+                parseInt((<any>(/trident\/.*; rv:(\d+)/.exec(userAgent) || []))[1], 10);
+            if (isNumber(ie)) {
+                this.IE = ie;
+            }
         }
 
         /**
@@ -3306,7 +3387,7 @@ module plat {
             this.vendorPrefix = {
                 lowerCase: prefix,
                 css: prefix === '' ? '' : '-' + prefix + '-',
-                js: prefix[0].toUpperCase() + prefix.substr(1)
+                js: prefix[0].toUpperCase() + prefix.slice(1)
             };
 
             if (prefix === 'webkit') {
@@ -3648,6 +3729,47 @@ module plat {
          * An object containing information regarding any potential vendor prefix.
          */
         vendorPrefix: IVendorPrefix;
+
+        /**
+         * @name IE
+         * @memberof plat.ICompat
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of Internet Explorer being used. If not Internet Explorer, the value is undefined.
+         */
+        IE: number;
+
+        /**
+         * @name ANDROID
+         * @memberof plat.ICompat
+         * @kind property
+         * @access public
+         * 
+         * @type {number}
+         * 
+         * @description
+         * The version of Android being used. If not Android, the value is undefined.
+         */
+        ANDROID: number;
+
+        /**
+         * @name hasEvent
+         * @memberof plat.ICompat
+         * @kind function
+         * @access public
+         * 
+         * @description
+         * Check whether or not an event exists.
+         * 
+         * @param {string} event The event to check the existence of.
+         * 
+         * @returns {boolean} Whether or not the event exists.
+         */
+        hasEvent(event: string): boolean;
     }
 
     /**
@@ -6022,7 +6144,7 @@ module plat {
              * Takes in an expression string and outputs a tokenized collection of 
              * {@link plat.expressions.IToken|ITokens}.
              * 
-             * @param {string} input The expression string to tokenize.
+             * @param {string} input The JavaScript expression string to tokenize.
              * 
              * @returns {Array<plat.expressions.IToken>} The tokenized collection of 
              * {@link plat.expressions.IToken|ITokens}.
@@ -6275,7 +6397,7 @@ module plat {
              * 
              * @description
              * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
-             * is equal to a particular character.
+             * is present in a particular character string.
              * 
              * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
              * with the "val" property to compare.
@@ -6293,14 +6415,14 @@ module plat {
             }
         
             /**
-             * @name _isValEqual
+             * @name _isValUnequal
              * @memberof plat.expressions.Tokenizer
              * @kind function
              * @access protected
              * 
              * @description
              * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
-             * is not equal to a particular character.
+             * is not present in a particular character string.
              * 
              * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
              * with the "val" property to compare.
@@ -6939,18 +7061,20 @@ module plat {
                     operatorStack = this.__operatorStack,
                     outputQueue = this.__outputQueue,
                     firstArrayOperator: ITokenDetails,
-                    firstArrayVal: any,
-                    firstArrayObj: IToken;
+                    firstArrayVal: any;
 
-                while (!determined) {
-                    firstArrayObj = operatorStack[0];
+                if (operatorStack.length === 0) {
+                    operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
+                    return;
+                }
 
-                    if (isNull(firstArrayObj)) {
-                        operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
-                        return;
+                do {
+                    firstArrayVal = operatorStack[0].val;
+                    if (firstArrayVal === '.') {
+                        outputQueue.push(operatorStack.shift());
+                        continue;
                     }
 
-                    firstArrayVal = operatorStack[0].val;
                     firstArrayOperator = OPERATORS[firstArrayVal];
                     if (!(isNull(firstArrayOperator) ||
                         !(firstArrayOperator.precedence < operatorPrecedence ||
@@ -6958,9 +7082,11 @@ module plat {
                         outputQueue.push(operatorStack.shift());
                     } else {
                         operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
-                        determined = true;
+                        return;
                     }
-                }
+                } while (operatorStack.length > 0);
+
+                operatorStack.unshift({ val: operator, args: operatorFn.fn.length - 2 });
             }
             /**
              * @name __removeFnFromStack
@@ -6989,10 +7115,10 @@ module plat {
                 while (!isNull(topOperator) &&
                     isValUnequal(topOperator, '([') &&
                     (this._isStringValidVariable(topOperator.val) ||
-                    isValEqual(topOperator.val, '[].') ||
+                    isValEqual(topOperator.val, '.[]') ||
                     isAccessor(topOperator.val))) {
                     fnToken = operatorStack.shift();
-                    if (!(fnToken.args !== -1 || isValEqual(fnToken, '[].'))) {
+                    if (!(fnToken.args !== -1 || isValEqual(fnToken, '.[]'))) {
                         fnToken.args = -2;
                     }
                     outputQueue.push(fnToken);
@@ -7037,7 +7163,7 @@ module plat {
              * Takes in an expression string and outputs a tokenized collection of 
              * {@link plat.expressions.IToken|ITokens}.
              * 
-             * @param {string} input The expression string to tokenize.
+             * @param {string} input The JavaScript expression string to tokenize.
              * 
              * @returns {Array<plat.expressions.IToken>} The tokenized collection of 
              * {@link plat.expressions.IToken|ITokens}.
@@ -7144,67 +7270,199 @@ module plat {
         }
 
         /**
-         * Parses javascript expression strings and creates IParsedExpressions.
+         * @name Parser
+         * @memberof plat.expressions
+         * @kind class
+         * 
+         * @implements {plat.expressions.IParser}
+         * 
+         * @description
+         * A class for parsing JavaScript expression strings and creating 
+         * {@link plat.expressions.IParsedExpression|IParsedExpressions}.
          */
         export class Parser implements IParser {
+            /**
+             * @name $Tokenizer
+             * @memberof plat.expressions.Parser
+             * @kind property
+             * @access public
+             * 
+             * @type {plat.expressions.ITokenizer}
+             * 
+             * @description
+             * Reference to the {@link plat.expressions.ITokenizer|ITokenizer} injectable.
+             */
             $Tokenizer: ITokenizer = acquire(__Tokenizer);
 
             /**
-             * A single expression's token representation created by the Tokenizer.
+             * @name _tokens
+             * @memberof plat.expressions.Parser
+             * @kind property
+             * @access protected
+             * 
+             * @type {Array<plat.expressions.IToken>}
+             * 
+             * @description
+             * A single expression's token representation created by a {@link plat.expressions.ITokenizer|ITokenizer}.
              */
             _tokens: Array<IToken> = [];
+        
+            /**
+             * @name __cache
+             * @memberof plat.expressions.Parser
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.IObject<plat.expressions.IParsedExpression>}
+             * 
+             * @description
+             * An expression cache. Used so that a JavaScript expression is only ever parsed once.
+             */
             private __cache: IObject<IParsedExpression> = {};
+            /**
+             * @name __codeArray
+             * @memberof plat.expressions.Parser
+             * @kind property
+             * @access private
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
+             * A dynamically built string array that represents the evaluation function.
+             */
             private __codeArray: Array<string> = [];
+            /**
+             * @name __identifiers
+             * @memberof plat.expressions.Parser
+             * @kind property
+             * @access private
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
+             * A list of all the identifiers discovered in the JavaScript expression string.
+             */
             private __identifiers: Array<string> = [];
+            /**
+             * @name __tempIdentifiers
+             * @memberof plat.expressions.Parser
+             * @kind property
+             * @access private
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
+             * A temporary list of identifiers found used to build and evaluate each actual identifier.
+             */
             private __tempIdentifiers: Array<string> = [];
-            private __aliases: Array<string> = [];
-            private __uniqueAliases: IObject<boolean> = {};
+            /**
+             * @name __aliases
+             * @memberof plat.expressions.Parser
+             * @kind property
+             * @access private
+             * 
+             * @type {plat.IObject<boolean>}
+             * 
+             * @description
+             * An object whose keys represent a list of all unique aliases found in the JavaScript expression string.
+             */
+            private __aliases: IObject<boolean> = {};
 
-            parse(input: string): IParsedExpression {
-                var parsedObject = this.__cache[input];
+            /**
+             * @name parse
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * Parses a JavaScript expression string.
+             * 
+             * @param {string} expression The JavaScript expression string to parse.
+             * 
+             * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed 
+             * information about the expression as well as a way to evaluate its value.
+             */
+            parse(expression: string): IParsedExpression {
+                var parsedObject = this.__cache[expression];
 
                 if (!isNull(parsedObject)) {
                     return parsedObject;
                 }
 
-                this._tokens = this.$Tokenizer.createTokens(input);
+                this._tokens = this.$Tokenizer.createTokens(expression);
 
-                parsedObject = this._evaluate(input);
+                parsedObject = this._evaluate(expression);
 
                 var identifiers = parsedObject.identifiers;
                 if (identifiers.length === 0) {
                     var noModel = parsedObject.evaluate(null);
-                    parsedObject.evaluate = function evaluateNoContext() { return noModel; };
+                    parsedObject.evaluate = () => noModel;
                 }
 
-                this.__cache[input] = parsedObject;
+                this.__cache[expression] = parsedObject;
 
                 return parsedObject;
             }
-
+        
             /**
-             * Evaluate the current token array.
+             * @name clearCache
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access public
              * 
-             * @param input The input string to evaluate.
+             * @description
+             * If a key is passed in, it clears that single value in the expression cache. If no 
+             * key is present, the entire expression cache will be cleared.
+             * 
+             * @param {string} key? An optional key that will clear its stored value in the expression 
+             * cache if passed in.
+             * 
+             * @returns {void}
              */
-            _evaluate(input: string): IParsedExpression {
+            clearCache(key?: string): void {
+                if (isString(key)) {
+                    deleteProperty(this.__cache, key);
+                    return;
+                }
+
+                this.__cache = {};
+            }
+        
+            /**
+             * @name _evaluate
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Evaluate the current {@link plat.expressions.IToken|IToken} array.
+             * 
+             * @param {string} expression The JavaScript expression to evaluate.
+             * 
+             * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed 
+             * information about the expression as well as a way to evaluate its value.
+             */
+            _evaluate(expression: string): IParsedExpression {
                 var tokens = this._tokens,
                     length = tokens.length,
                     tempIdentifiers = this.__tempIdentifiers,
                     codeArray = this.__codeArray,
                     codeStr = '',
-                    useLocalContext = false;
+                    useLocalContext = false,
+                    tokenObj: IToken,
+                    token: any,
+                    args: number;
 
-                for (var i = 0; i < length; i++) {
-                    var tokenObj = tokens[i],
-                        token = tokenObj.val,
-                        args = tokenObj.args;
+                for (var index = 0; index < length; index++) {
+                    tokenObj = tokens[index];
+                    token = tokenObj.val;
+                    args = tokenObj.args;
 
                     // check if its an accessor
                     if (isAccessor(token)) {
                         switch (token) {
                             case '()':
-                                useLocalContext = this.__handleFunction(i, args, useLocalContext);
+                                useLocalContext = this.__handleFunction(index, args, useLocalContext);
                                 break;
                             case '{}':
                                 codeArray.push(this.__convertObject(args));
@@ -7215,16 +7473,16 @@ module plat {
                                 if (args < 0) {
                                     codeArray.push('[]');
                                     tempIdentifiers.push('.');
-                                    // handle array literal
+                                // handle array literal
                                 } else if (args > 0) {
                                     codeArray.push(this.__convertArrayLiteral(args));
                                     tempIdentifiers.push('.');
                                 } else {
-                                    useLocalContext = this.__indexIntoObject(i, useLocalContext);
+                                    useLocalContext = this.__indexIntoObject(index, token, useLocalContext);
                                 }
                                 break;
                         }
-                        // check if its an operator
+                    // check if its an operator
                     } else if (isOperator(token)) {
                         switch (token) {
                             case '?':
@@ -7242,7 +7500,7 @@ module plat {
                             default:
                                 // check if string literal
                                 if (args === 0) {
-                                    codeStr = this.__convertPrimitive(i, token, args);
+                                    codeStr = this.__convertPrimitive(index, token, args);
                                     codeArray.push(codeStr);
                                     break;
                                 }
@@ -7250,14 +7508,14 @@ module plat {
                                 this.__handleOperator(token, args);
                                 break;
                         }
-                        // its either function, object, or primitive
+                    // its either function, object, or primitive
                     } else {
                         // potential function or object to index into
                         if (args < 0) {
-                            codeStr = this.__convertFunction(i, token, useLocalContext);
-                            // primitive
+                            codeStr = this.__convertFunction(index, token, useLocalContext);
+                        // primitive
                         } else {
-                            codeStr = this.__convertPrimitive(i, token, args);
+                            codeStr = this.__convertPrimitive(index, token, args);
                         }
                         codeArray.push(codeStr);
                     }
@@ -7271,10 +7529,10 @@ module plat {
                 var parsedExpression: IParsedExpression = {
                     evaluate: <(context: any, aliases?: any) => any>new Function('context', 'aliases',
                         'var initialContext;' +
-                        'return ' + (codeArray.length === 0 ? ('"' + input + '"') : codeArray.join('')) + ';'),
-                    expression: input,
+                        'return ' + (codeArray.length === 0 ? ('"' + expression + '"') : codeArray.join('')) + ';'),
+                    expression: expression,
                     identifiers: this.__identifiers.slice(0),
-                    aliases: this.__aliases.slice(0)
+                    aliases: Object.keys(this.__aliases)
                 };
 
                 // reset parser's properties
@@ -7282,57 +7540,82 @@ module plat {
 
                 return parsedExpression;
             }
-
-            // parse cases
+        
+            /**
+             * @name __convertPrimitive
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles a token that is a primitive value.
+             * 
+             * @param {number} index The current index in the {@link plat.expressions.IToken|IToken} array.
+             * @param {string} token The current {@link plat.expressions.IToken|IToken} value.
+             * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
+             * 
+             * @returns {string} The correctly evaluated primitive.
+             */
             private __convertPrimitive(index: number, token: string, args: number): string {
-                var tempIdentifiers = this.__tempIdentifiers;
-
                 if (args > 0) {
-                    tempIdentifiers.push('.');
+                    this.__tempIdentifiers.push('.');
                     return token;
-                } else {
-                    var castToken = Number(token),
-                        castTokenIsNumberLike = isNumber(castToken),
-                        peek1 = this._peek(index),
-                        isPeekIndexer = peek1 && peek1.args < 1;
+                }
 
-                    if (isKeyword(token) ||
-                        (isString(token) &&
-                        (castTokenIsNumberLike ||
-                        this._isValUnequal(peek1, '[]()') ||
-                        (this._isValEqual(peek1, '[]') &&
-                        !isPeekIndexer)))) {
-                        tempIdentifiers.push('.');
-                        return '"' + token + '"';
+                var castTokenIsNumberLike = isNumber(Number(token)),
+                    peek = this._peek(index),
+                    isPeekIndexer = !(isNull(peek) || peek.args >= 1),
+                    isValEqual = this._isValEqual;
+
+                if (isKeyword(token) ||
+                    (isString(token) &&
+                    (castTokenIsNumberLike ||
+                    this._isValUnequal(peek, '[]()') ||
+                    (isValEqual(peek, '[]') &&
+                    !isPeekIndexer)))) {
+                    this.__tempIdentifiers.push('.');
+                    return '"' + token + '"';
+                } else {
+                    if (!castTokenIsNumberLike ||
+                        (isValEqual(peek, '.[]') &&
+                        isPeekIndexer)) {
+                        this.__tempIdentifiers.push(token);
                     } else {
-                        if (!castTokenIsNumberLike ||
-                            (this._isValEqual(peek1, '[].') &&
-                            isPeekIndexer)) {
-                            tempIdentifiers.push(token);
-                        } else {
-                            tempIdentifiers.push('.');
-                        }
-                        return token;
+                        this.__tempIdentifiers.push('.');
                     }
+                    return token;
                 }
             }
+            /**
+             * @name __convertFunction
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles a potential function or object that needs to be indexed into.
+             * 
+             * @param {number} index The current index in the {@link plat.expressions.IToken|IToken} array.
+             * @param {string} token The current {@link plat.expressions.IToken|IToken} value.
+             * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
+             * 
+             * @returns {string} The correctly evaluated object or function represented as a string.
+             */
             private __convertFunction(index: number, token: string, useLocalContext: boolean): string {
-                var tokens = this._tokens,
-                    tempIdentifiers = this.__tempIdentifiers,
-                    nextToken = this._peek(index);
-
-                if (token[0] === '@' && isNull(this.__uniqueAliases[token])) {
-                    this.__uniqueAliases[token] = true;
-                    this.__aliases.push(token.slice(1));
+                if (token[0] === '@') {
+                    this.__aliases[token.slice(1)] = true;
                 } else if (isKeyword(token)) {
-                    tempIdentifiers.push('.');
+                    this.__tempIdentifiers.push('.');
                     return token;
                 }
 
-                if (this._isValEqual(tokens[index - 1], '()') && this._isValEqual(nextToken, '[].')) {
-                    tempIdentifiers.push('.');
+                var nextToken = this._peek(index),
+                    isValEqual = this._isValEqual;
+
+                if (isValEqual(this._tokens[index - 1], '()') && isValEqual(nextToken, '.[]')) {
+                    this.__tempIdentifiers.push('.');
                 } else {
-                    tempIdentifiers.push(token);
+                    this.__tempIdentifiers.push(token);
                 }
 
                 if (!isNull(nextToken)) {
@@ -7350,6 +7633,19 @@ module plat {
                     return '(initialContext = (' + this.__findInitialContext.toString() + ')(context,aliases,"' + token + '"))';
                 }
             }
+            /**
+             * @name __convertObject
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles an object literal.
+             * 
+             * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
+             * 
+             * @returns {string} The correctly evaluated object literal represented as a string.
+             */
             private __convertObject(args: number): string {
                 var identifiers = this.__identifiers,
                     tempIdentifiers = this.__tempIdentifiers,
@@ -7377,13 +7673,25 @@ module plat {
 
                 return codeStr.replace(',', '') + '}';
             }
+            /**
+             * @name __convertArrayLiteral
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles an Array literal.
+             * 
+             * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
+             * 
+             * @returns {string} The correctly evaluated Array literal represented as a string.
+             */
             private __convertArrayLiteral(args: number): string {
                 var identifiers = this.__identifiers,
                     tempIdentifiers = this.__tempIdentifiers,
                     codeArray = this.__codeArray,
                     j = 0,
                     tempStr = '',
-                    codeStr = '[',
                     tempIdentifier: string;
 
                 while (j++ < args) {
@@ -7397,21 +7705,31 @@ module plat {
                     }
                 }
 
-                codeStr += tempStr.slice(0, tempStr.length - 1) + ']';
-
-                return codeStr;
+                return '[' + tempStr.slice(0, -1) + ']';
             }
 
-            // accessors
+            /**
+             * @name __handleFunction
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles an accessor type function token "()".
+             * 
+             * @param {number} index The current index in the {@link plat.expressions.IToken|IToken} array.
+             * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
+             * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
+             * 
+             * @returns {boolean} Whether we need to use the current parsed object as the new current context.
+             */
             private __handleFunction(index: number, args: number, useLocalContext: boolean): boolean {
-                var tokens = this._tokens,
-                    identifiers = this.__identifiers,
+                var identifiers = this.__identifiers,
                     tempIdentifiers = this.__tempIdentifiers,
                     codeArray = this.__codeArray,
                     j = 0,
-                    previousToken = tokens[index - 1],
-                    previousTokenIsFnName = (previousToken.args === -2),
-                    grabFnName = previousTokenIsFnName || this._isValEqual(previousToken, '[].'),
+                    previousToken = this._lookBack(index),
+                    grabFnName = !isNull(previousToken) && (previousToken.args === -2 || this._isValEqual(previousToken, '.[]')),
                     tempStr = '',
                     tempIdentifier: string,
                     fnName = '',
@@ -7445,13 +7763,13 @@ module plat {
                 if (useLocalContext) {
                     useLocalContext = false;
                     if (codeArray.length > 0) {
-                        var context = codeArray.pop();
+                        var context = codeArray.pop(),
+                            lastIndex = tempIdentifiers.length - 1;
 
-                        var lastIndex = tempIdentifiers.length - 1;
                         if (!(lastIndex < 0 || tempIdentifiers[lastIndex] === '.' || identifierFnName === '')) {
                             tempIdentifiers[lastIndex] += '.' + identifierFnName;
                             identifiers.push(tempIdentifiers.pop());
-                            // check fn name is not null, pushed an identifier, and the context is not an array literal
+                        // check fn name is not null, pushed an identifier, and the context is not an array literal
                         } else if (!(identifierFnName === '' ||
                             !pushedIdentifier ||
                             context[0] === '[' ||
@@ -7478,49 +7796,58 @@ module plat {
                         codeStr = codeArray.pop() + codeStr;
                     }
                 }
+
                 codeArray.push(codeStr);
 
-                var peek = this._peek(index),
-                    length = tempIdentifiers.length;
-                if (this._isValEqual(peek, '[]') && length > 0) {
-                    var lastIdentifier = tempIdentifiers[length - 1];
-                    if (lastIdentifier !== '.') {
-                        identifiers.push(tempIdentifiers.pop());
-                    }
+                var length = tempIdentifiers.length;
+                if (this._isValEqual(this._peek(index), '[]') && length > 0 && tempIdentifiers[length - 1] !== '.') {
+                    identifiers.push(tempIdentifiers.pop());
                 }
 
                 return useLocalContext;
             }
-            private __indexIntoObject(index: number, useLocalContext: boolean): boolean {
-                var tokens = this._tokens,
-                    identifiers = this.__identifiers,
-                    tempIdentifiers = this.__tempIdentifiers,
-                    codeArray = this.__codeArray,
-                    nextChar = this._peek(index),
-                    lastIndex: number;
+            /**
+             * @name __indexIntoObject
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles an accessor type token that is for indexing (i.e. "." or "[]").
+             * 
+             * @param {number} index The current index in the {@link plat.expressions.IToken|IToken} array.
+             * @param {string} token The current {@link plat.expressions.IToken|IToken} value.
+             * @param {boolean} useLocalContext Whether or not we need to use an already parsed object as the current context.
+             * 
+             * @returns {boolean} Whether we need to use the current parsed object as the new current context.
+             */
+            private __indexIntoObject(index: number, token: string, useLocalContext: boolean): boolean {
+                var isValEqual = this._isValEqual;
 
-                if (this._isValEqual(nextChar, '()')) {
+                if (isValEqual(this._peek(index), '()')) {
                     return true;
                 }
 
-                var codeStr = codeArray.pop(),
-                    previousToken = tokens[index - 1],
+                var codeArray = this.__codeArray,
+                    codeStr = codeArray.pop(),
+                    identifiers = this.__identifiers,
+                    tempIdentifiers = this.__tempIdentifiers,
+                    previousToken = this._lookBack(index),
                     identifierIndexer = tempIdentifiers.pop(),
                     hasIdentifierIndexer = !isNull(identifierIndexer),
-                    context = codeArray.pop(),
-                    token = tokens[index];
+                    lastIndex: number;
 
                 if (hasIdentifierIndexer && identifierIndexer[0] === '@') {
-                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
                     identifiers.push(identifierIndexer);
                     if (tempIdentifiers.length > 0) {
                         identifiers.push(tempIdentifiers.pop());
                     }
-                } else if (this._isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
-                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+                } else if (isValEqual(previousToken, '++--()[]*/%?:>=<=&&||!===')) {
+                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
                     tempIdentifiers.push('.');
-                } else if (previousToken.args < 0 && this._isValEqual(token, '[]')) {
-                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',' + codeStr + ')';
+                } else if (token === '[]' && !(isNull(previousToken) || previousToken.args >= 0)) {
+                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',' + codeStr + ')';
 
                     lastIndex = tempIdentifiers.length - 1;
                     if (lastIndex >= 0) {
@@ -7531,14 +7858,14 @@ module plat {
 
                     identifiers.push(identifierIndexer);
                 } else {
-                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + context + ',"' + codeStr + '")';
+                    codeStr = '(' + this.__indexIntoContext.toString() + ')(' + codeArray.pop() + ',"' + codeStr + '")';
 
                     lastIndex = tempIdentifiers.length - 1;
                     if (lastIndex >= 0) {
                         if (tempIdentifiers[lastIndex] !== '.') {
                             tempIdentifiers[lastIndex] += '.' + identifierIndexer;
                         }
-                    } else if (hasIdentifierIndexer && identifierIndexer !== '.' && this._isValUnequal(token, '.')) {
+                    } else if (hasIdentifierIndexer && identifierIndexer !== '.' && token !== '.') {
                         identifiers.push(identifierIndexer);
                     }
                 }
@@ -7547,14 +7874,23 @@ module plat {
 
                 return useLocalContext;
             }
-
-            // operators
+        
+            /**
+             * @name __handleQuestion
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles the "?" operator.
+             * 
+             * @returns {void}
+             */
             private __handleQuestion(): void {
                 var identifiers = this.__identifiers,
                     tempIdentifiers = this.__tempIdentifiers,
                     codeArray = this.__codeArray,
                     temp = codeArray.pop(),
-                    codeStr = codeArray.pop() + '?' + temp,
                     tempIdentifier: string;
 
                 for (var i = 0; i < 2; i++) {
@@ -7568,14 +7904,24 @@ module plat {
                     }
                 }
 
-                codeArray.push(codeStr);
+                codeArray.push(codeArray.pop() + '?' + temp);
             }
+            /**
+             * @name __handleColon
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles the ":" operator.
+             * 
+             * @returns {void}
+             */
             private __handleColon(): void {
                 var identifiers = this.__identifiers,
                     tempIdentifiers = this.__tempIdentifiers,
                     codeArray = this.__codeArray,
                     temp = codeArray.pop(),
-                    codeStr = codeArray.pop() + ':' + temp,
                     tempIdentifier: string;
 
                 for (var i = 0; i < 2; i++) {
@@ -7589,15 +7935,28 @@ module plat {
                     }
                 }
 
-                codeArray.push(codeStr);
+                codeArray.push(codeArray.pop() + ':' + temp);
             }
+            /**
+             * @name __handleOperator
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Handles all other operators.
+             * 
+             * @param {string} token The current {@link plat.expressions.IToken|IToken} value.
+             * @param {number} args The current {@link plat.expressions.IToken|IToken} args.
+             * 
+             * @returns {void}
+             */
             private __handleOperator(token: string, args: number): void {
                 var identifiers = this.__identifiers,
                     tempIdentifiers = this.__tempIdentifiers,
                     codeArray = this.__codeArray,
                     j = 0,
                     tempStr = '',
-                    codeStr = '(' + OPERATORS[token].fn.toString() + ')(context, aliases,',
                     tempIdentifier: string;
 
                 while (j++ < args) {
@@ -7611,12 +7970,27 @@ module plat {
                     }
                 }
 
-                codeStr += tempStr.slice(0, tempStr.length - 1) + ')';
-
-                codeArray.push(codeStr);
+                codeArray.push(
+                    '(' + OPERATORS[token].fn.toString() + ')(context, aliases,' + tempStr.slice(0, tempStr.length - 1) + ')'
+                );
             }
-
-            // private helper functions
+        
+            /**
+             * @name __findInitialContext
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Safely finds an initial context.
+             * 
+             * @param {any} context The context object.
+             * @param {any} aliases Any aliases that may exist.
+             * @param {string} token The property used to find the initial context.
+             * @param {any} undefined An undefined argument.
+             * 
+             * @returns {any} The correct initial context.
+             */
             private __findInitialContext(context: any, aliases: any, token: string, undefined?: any): any {
                 if (token[0] === '@' && aliases !== null && typeof aliases === 'object') {
                     return aliases[token];
@@ -7625,6 +7999,21 @@ module plat {
                 }
                 return undefined;
             }
+            /**
+             * @name __indexIntoContext
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access private
+             * 
+             * @description
+             * Safely drills down into a specified context with a given token.
+             * 
+             * @param {any} context The context object.
+             * @param {string} token The property used to drill into the context.
+             * @param {any} undefined An undefined argument.
+             * 
+             * @returns {any} The property of the context denoted by the token.
+             */
             private __indexIntoContext(context: any, token: string, undefined?: any): any {
                 if (context !== null && typeof context === 'object') {
                     return context[token];
@@ -7632,18 +8021,54 @@ module plat {
                 return undefined;
             }
 
-            // protected helper functions
             /**
-             * Peek at the next token.
+             * @name _peek
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
              * 
-             * @param index The current index.
+             * @description
+             * Peek at the next {@link plat.expressions.IToken|IToken}.
+             * 
+             * @param {number} index The index before the desired {@link plat.expressions.IToken|IToken} 
+             * in the array.
+             * 
+             * @returns {plat.expressions.IToken} The next {@link plat.expressions.IToken|IToken} 
+             * in the {@link plat.expressions.IToken|IToken} array.
              */
             _peek(index: number): IToken {
                 return this._tokens[index + 1];
             }
-
+        
             /**
+             * @name _lookBack
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Look back at the previous {@link plat.expressions.IToken|IToken}.
+             * 
+             * @param {number} index The index after the desired {@link plat.expressions.IToken|IToken} 
+             * in the array.
+             * 
+             * @returns {plat.expressions.IToken} The previous {@link plat.expressions.IToken|IToken} 
+             * in the {@link plat.expressions.IToken|IToken} array.
+             */
+            _lookBack(index: number): IToken {
+                return this._tokens[index - 1];
+            }
+        
+            /**
+             * @name _popRemainingIdentifiers
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
+             * 
+             * @description
              * Evaluate and remove the leftover identifiers.
+             * 
+             * @returns {void}
              */
             _popRemainingIdentifiers(): void {
                 var identifiers = this.__identifiers,
@@ -7657,9 +8082,17 @@ module plat {
                     }
                 }
             }
-
+        
             /**
+             * @name _makeIdentifiersUnique
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
+             * 
+             * @description
              * Remove duplicate identifiers.
+             * 
+             * @returns {void}
              */
             _makeIdentifiersUnique(): void {
                 var identifiers = this.__identifiers,
@@ -7669,7 +8102,7 @@ module plat {
 
                 while (identifiers.length > 0) {
                     identifier = identifiers.pop();
-                    if (isNull(uniqueIdentifierObject[identifier])) {
+                    if (!uniqueIdentifierObject[identifier]) {
                         uniqueIdentifierObject[identifier] = true;
                         uniqueIdentifiers.push(identifier);
                     }
@@ -7677,14 +8110,24 @@ module plat {
 
                 this.__identifiers = uniqueIdentifiers;
             }
-
+        
             /**
-             * Check if the 'val' property is equal to a particular character.
+             * @name _isValEqual
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
              * 
-             * @param obj The obj whose 'val' property to compare
-             * @param char The char to compare with
+             * @description
+             * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
+             * is present in a particular character string.
+             * 
+             * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
+             * with the "val" property to compare.
+             * @param {string} char The char to compare with.
+             * 
+             * @returns {boolean} Whether or not the val is equal to the input character.
              */
-            _isValEqual(obj: any, char: string): boolean {
+            _isValEqual(obj: IToken, char: string): boolean {
                 if (isNull(obj) || isNull(obj.val)) {
                     return isNull(char);
                 } else if (obj.val === '') {
@@ -7692,12 +8135,22 @@ module plat {
                 }
                 return char.indexOf(obj.val) !== -1;
             }
-
+        
             /**
-             * Check if the 'val' property is not equal to a particular character.
+             * @name _isValUnequal
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
              * 
-             * @param obj The obj whose 'val' property to compare
-             * @param char The char to compare with
+             * @description
+             * Check if the "val" property on an {@link plat.expressions.IToken|IToken} 
+             * is not present in a particular character string.
+             * 
+             * @param {plat.expressions.IToken} obj The {@link plat.expressions.IToken|IToken} 
+             * with the "val" property to compare.
+             * @param {string} char The char to compare with.
+             * 
+             * @returns {boolean} Whether or not the val is not equal to the input character.
              */
             _isValUnequal(obj: any, char: string): boolean {
                 if (isNull(obj) || isNull(obj.val)) {
@@ -7707,23 +8160,38 @@ module plat {
                 }
                 return char.indexOf(obj.val) === -1;
             }
-
+        
             /**
-             * Reset the parser's properties.
+             * @name _resetParser
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
+             * 
+             * @description
+             * Resets all the parser's properties.
+             * 
+             * @returns {void}
              */
             _resetParser(): void {
                 this._tokens = [];
                 this.__codeArray = [];
                 this.__identifiers = [];
                 this.__tempIdentifiers = [];
-                this.__aliases = [];
-                this.__uniqueAliases = {};
+                this.__aliases = {};
             }
-
+        
             /**
-             * Throw an exception in the case of an error.
+             * @name _throwError
+             * @memberof plat.expressions.Parser
+             * @kind function
+             * @access protected
              * 
-             * @param error The error message to throw
+             * @description
+             * Throws a fatal exception in the case of an error.
+             * 
+             * @param {string} error The error message to throw.
+             * 
+             * @returns {void}
              */
             _throwError(error: string): void {
                 var $exception: IExceptionStatic = acquire(__ExceptionStatic);
@@ -7739,53 +8207,130 @@ module plat {
         }
 
         register.injectable(__Parser, IParser);
-
+    
         /**
-         * Describes an object that can parse an expression string and turn it into an
-         * IParsedExpression. The intended external interface for the '$Parser' 
-         * injectable.
+         * @name IParser
+         * @memberof plat.expressions
+         * @kind interface
+         * 
+         * @description
+         * Describes an object that can parse a JavaScript expression string and turn it into an
+         * {@link plat.expressions.IParsedExpression|IParsedExpression}.
          */
         export interface IParser {
             /**
-             * Takes in an expression string and outputs an IParsedExpression.
+             * @name parse
+             * @memberof plat.expressions.IParser
+             * @kind function
+             * @access public
              * 
-             * @param input An expression string to parse.
+             * @description
+             * Parses a JavaScript expression string.
+             * 
+             * @param {string} expression The JavaScript expression string to parse.
+             * 
+             * @returns {plat.expressions.IParsedExpression} The parsed expression containing detailed 
+             * information about the expression as well as a way to evaluate its value.
              */
             parse(expression: string): IParsedExpression;
-        }
 
+            /**
+             * @name clearCache
+             * @memberof plat.expressions.IParser
+             * @kind function
+             * @access public
+             * 
+             * @description
+             * If a key is passed in, it clears that single value in the expression cache. If no 
+             * key is present, the entire expression cache will be cleared.
+             * 
+             * @param {string} key? An optional key that will clear its stored value in the expression 
+             * cache if passed in.
+             * 
+             * @returns {void}
+             */
+            clearCache(key?: string): void;
+        }
+    
         /**
-         * Describes an object that is the result of parsing an expression string. Provides a
-         * way to evaluate the expression with a context.
+         * @name IParsedExpression
+         * @memberof plat.expressions
+         * @kind interface
+         * 
+         * @description
+         * Describes an object that is the result of parsing a JavaScript expression string. It contains detailed 
+         * information about the expression as well as a way to evaluate the expression with a context.
          */
         export interface IParsedExpression {
             /**
+             * @name evaluate
+             * @memberof plat.expressions.IParsedExpression
+             * @kind function
+             * @access public
+             * 
+             * @description
              * A method for evaluating an expression with a context.
              * 
-             * @param context The primary context for evaluation.
-             * @param aliases An object containing resource alias values. All keys must begin with '@'.
+             * @param {any} context? The primary context for evaluation.
+             * @param {any} aliases? An object containing resource alias values. All keys must begin with '@'.
+             * 
+             * @returns {any} The evaluated object or primitive.
              */
             evaluate(context?: any, aliases?: any): any;
 
             /**
+             * @name expression
+             * @memberof plat.expressions.IParsedExpression
+             * @kind property
+             * @access public
+             * 
+             * @type {string}
+             * 
+             * @description
              * The original expression string.
              */
             expression: string;
-
+        
             /**
-             * Contains all the identifiers found in an expression.  Useful for determining
+             * @name identifiers
+             * @memberof plat.expressions.IParsedExpression
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
+             * Contains all the identifiers found in an expression. Useful for determining
              * properties to watch on a context.
              */
             identifiers: Array<string>;
-
+        
             /**
-             * Contains all the aliases (denoted by an identifier with '@' as the first character) for this IParsedExpression.
+             * @name aliases
+             * @memberof plat.expressions.IParsedExpression
+             * @kind property
+             * @access public
+             * 
+             * @type {Array<string>}
+             * 
+             * @description
+             * Contains all the aliases (denoted by an identifier with '@' as the first character) for this 
+             * {@link plat.expressions.IParsedExpression|IParsedExpression}.
              */
             aliases: Array<string>;
-
+        
             /**
+             * @name oneTime
+             * @memberof plat.expressions.IParsedExpression
+             * @kind property
+             * @access public
+             * 
+             * @type {boolean}
+             * 
+             * @description
              * Specifies whether or not you want to do a one-time binding on identifiers 
-             * for this expression. Typically this is added to a clone of the IParsedExpression.
+             * for this expression. Typically this is added to a clone of this 
+             * {@link plat.expressions.IParsedExpression|IParsedExpression}.
              */
             oneTime?: boolean;
         }
@@ -8488,10 +9033,10 @@ module plat {
              * @returns {string} The base URL.
              */
             private static __getBaseUrl(url: string): string {
-                var colon = url.substring(url.indexOf(':')),
-                    next = colon.substring(colon.search(/\w+/));
+                var colon = url.slice(url.indexOf(':')),
+                    next = colon.slice(colon.search(/\w+/));
 
-                return url.substring(0, url.indexOf('/', url.indexOf(next))) + '/';
+                return url.slice(0, url.indexOf('/', url.indexOf(next))) + '/';
             }
 
             /**
@@ -8762,7 +9307,7 @@ module plat {
 
                 // always make local urls relative to start page.
                 if (url[0] === '/') {
-                    url = url.substr(1);
+                    url = url.slice(1);
                 }
 
                 element.setAttribute('href', url);
@@ -9557,7 +10102,7 @@ module plat {
                     return;
                 } else {
                     if (route[0] === '/') {
-                        route = (<string>route).substr(1);
+                        route = (<string>route).slice(1);
                     }
                     routeParameters = this._getRouteParameters(route);
                     routeParameters.injector = injector;
@@ -9603,12 +10148,12 @@ module plat {
                     var length = regexArgs.length;
 
                     for (var i = 0; i < length; ++i) {
-                        args.push(regexArgs[i].substr(1));
+                        args.push(regexArgs[i].slice(1));
                     }
                 }
 
                 if (!isNull(wildcard)) {
-                    var wildCardName = wildcard[0].substr(1);
+                    var wildCardName = wildcard[0].slice(1);
 
                     if (isEmpty(wildCardName)) {
                         wildCardName = 'wildcard';
@@ -11462,10 +12007,10 @@ module plat {
                         }
 
                         $document.head.removeChild(scriptTag);
-                        if (!isUndefined(oldValue)) {
-                            $window[jsonpCallback] = oldValue;
-                        } else {
+                        if (isUndefined(oldValue)) {
                             deleteProperty($window, jsonpCallback);
+                        } else {
+                            $window[jsonpCallback] = oldValue;
                         }
 
                         // call callback
@@ -20060,7 +20605,7 @@ module plat {
                 if (identifier.indexOf('this') === 0) {
                     identifier = identifier.slice(5);
                 } else if (identifier[0] === '@') {
-                    alias = split[0].substr(1);
+                    alias = split[0].slice(1);
                     identifier = identifier.replace('@' + alias, 'resources.' + alias + '.value');
 
                     if (!isNull(resources[alias])) {
@@ -21560,7 +22105,7 @@ module plat {
 
                     if (arg[0] === '@') {
                         exec = $regex.aliasRegex.exec(arg);
-                        aliases[!isNull(exec) ? exec[0] : arg.substr(1)] = true;
+                        aliases[!isNull(exec) ? exec[0] : arg.slice(1)] = true;
                     }
                 }
 
@@ -21603,7 +22148,7 @@ module plat {
         /**
          * @name ISimpleEventControl
          * @memberof plat.controls
-         * @kind class
+         * @kind interface
          * 
          * @extends {plat.controls.IAttributeControl}
          * 
@@ -22925,7 +23470,7 @@ module plat {
         /**
          * @name ISetAttributeControl
          * @memberof plat.controls
-         * @kind class
+         * @kind interface
          * 
          * @extends {plat.controls.IAttributeControl}
          * 
@@ -23370,6 +23915,20 @@ module plat {
             $ContextManagerStatic: observable.IContextManagerStatic = acquire(__ContextManagerStatic);
 
             /**
+             * @name $Compat
+             * @memberof plat.controls.Bind
+             * @kind property
+             * @access public
+             * @static
+             * 
+             * @type {plat.ICompat}
+             * 
+             * @description
+             * Reference to the {@link plat.ICompat|ICompat} injectable.
+             */
+            $Compat: ICompat = acquire(__Compat);
+
+            /**
              * @name $document
              * @memberof plat.controls.Bind
              * @kind property
@@ -23648,6 +24207,7 @@ module plat {
              */
             _addTextEventListener(): void {
                 var element = this.element,
+                    $compat = this.$Compat,
                     composing = false,
                     timeout: IRemoveListener,
                     eventListener = () => {
@@ -23668,23 +24228,34 @@ module plat {
                         });
                     };
 
-                this.addEventListener(element, 'compositionstart', () => composing = true, false);
-                this.addEventListener(element, 'compositionend', () => composing = false, false);
-                this.addEventListener(element, 'keydown', (ev: Event) => {
-                    var key = (<KeyboardEvent>ev).keyCode,
-                        codes = KeyCodes;
+                if (isUndefined($compat.ANDROID)) {
+                    this.addEventListener(element, 'compositionstart', () => (composing = true), false);
+                    this.addEventListener(element, 'compositionend', () => {
+                        composing = false;
+                        eventListener();
+                    }, false);
+                }
 
-                    if (key === codes.lwk ||
-                        key === codes.rwk ||
-                        (key > 15 && key < 28) ||
-                        (key > 32 && key < 41)) {
-                        return;
-                    }
+                if ($compat.hasEvent('input')) {
+                    this.addEventListener(element, 'input', eventListener, false);
+                } else {
+                    this.addEventListener(element, 'keydown', (ev: KeyboardEvent) => {
+                        var key = ev.keyCode,
+                            codes = KeyCodes;
 
-                    postponedEventListener();
-                }, false);
-                this.addEventListener(element, 'cut', postponedEventListener, false);
-                this.addEventListener(element, 'paste', postponedEventListener, false);
+                        if (key === codes.lwk ||
+                            key === codes.rwk ||
+                            (key >= codes.shift && key <= codes.escape) ||
+                            (key > codes.space && key <= codes.down)) {
+                            return;
+                        }
+
+                        postponedEventListener();
+                    }, false);
+                    this.addEventListener(element, 'cut', postponedEventListener, false);
+                    this.addEventListener(element, 'paste', postponedEventListener, false);
+                }
+
                 this.addEventListener(element, 'change', eventListener, false);
             }
 
@@ -25025,7 +25596,7 @@ module plat {
                     alias = aliases[i];
 
                     if (alias[0] === '@') {
-                        alias = alias.substr(1);
+                        alias = alias.slice(1);
                     }
 
                     if (!isNull(resources[alias])) {
@@ -25085,7 +25656,7 @@ module plat {
                 }
 
                 if (alias[0] === '@') {
-                    alias = alias.substr(1);
+                    alias = alias.slice(1);
                 }
 
                 if (alias === 'rootContext') {
@@ -39526,17 +40097,17 @@ module plat {
 
                 while ((start = text.indexOf(__startSymbol)) !== -1 && (end = text.indexOf(__endSymbol)) !== -1) {
                     if (start !== 0) {
-                        parsedExpressions.push(wrapExpression(text.substring(0, start)));
+                        parsedExpressions.push(wrapExpression(text.slice(0, start)));
                     }
 
                     // incremement with while loop instead of just += 2 for nested object literal case.
                     while (text[++end] === '}') { }
 
-                    substring = text.substring(start + 2, end - 2);
+                    substring = text.slice(start + 2, end - 2);
 
                     // check for one-time databinding
                     if (substring[0] === '=') {
-                        substring = substring.substr(1).trim();
+                        substring = substring.slice(1).trim();
                         expression = $parser.parse(substring);
                         expression = {
                             expression: expression.expression,
@@ -39550,11 +40121,11 @@ module plat {
                         parsedExpressions.push($parser.parse(substring.trim()));
                     }
 
-                    text = text.substr(end);
+                    text = text.slice(end);
                 }
 
                 if (start > -1 && end >= 0) {
-                    parsedExpressions.push(wrapExpression(text.substring(end)));
+                    parsedExpressions.push(wrapExpression(text.slice(end)));
                 } else if (text !== '') {
                     parsedExpressions.push(wrapExpression(text));
                 }
@@ -39665,7 +40236,7 @@ module plat {
                     if (identifier[0] === '@') {
                         // we found an alias
                         split = identifier.split('.');
-                        alias = split.shift().substr(1);
+                        alias = split.shift().slice(1);
 
                         if (split.length > 0) {
                             absoluteIdentifier = '.' + split.join('.');
@@ -41308,7 +41879,7 @@ module plat {
                     if (inheritsContext && !isNull(childContext)) {
                         if (childContext[0] === '@') {
                             var split = childContext.split('.'),
-                                alias = split.shift().substr(1),
+                                alias = split.shift().slice(1),
                                 resourceObj = $TemplateControlFactory.findResource(uiControl, alias),
                                 $exception: IExceptionStatic;
 
