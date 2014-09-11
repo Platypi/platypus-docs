@@ -18,6 +18,7 @@ import classInterfaceProcedures = require('./docsave/db/procedures/class.interfa
 import interfaceInterfaceProcedures = require('./docsave/db/procedures/interface.interface.procedures');
 import typeParameterProcedures = require('./docsave/db/procedures/type.parameter.procedures');
 import ds = require('./datastructures');
+import markdown = require('./docmarkdown');
 
 var Promise = PromiseStatic.Promise,
     subproceduresList = [],
@@ -67,6 +68,10 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
             submitNode(node)
                 .then<void>(() => {
                     node.saved = true;
+
+                    // add links to remarks & description
+                    node.description_ = markdown(node.description_, '/', node.id);
+
                     // process children
                     var namespaces: Array<any> = [],
                         fn: any = null;
