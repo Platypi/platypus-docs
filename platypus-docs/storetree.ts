@@ -22,7 +22,8 @@ import markdown = require('./docmarkdown');
 
 var Promise = PromiseStatic.Promise,
     subproceduresList = [],
-    failedClassesList = [];
+    failedClassesList = [],
+    pendingLinks = [];
 
 
 var saveDocTree = (tree: any) => {
@@ -31,6 +32,7 @@ var saveDocTree = (tree: any) => {
             // second traversal to fill in missing ids
             console.log('referencing sub types');
             return referenceSubTypes().then(() => {
+                // replace links
                 console.log('done');
             });
         }).then(null, (err) => {
@@ -69,12 +71,18 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
                 .then<void>(() => {
                     node.saved = true;
 
-                    // add links to remarks & description
-                    node.description_ = markdown(node.description_, '/', node.id);
-                    node.remarks = markdown(node.remarks, '/', node.id);
+                    // if the description or remark has links to be replaced
+                    // push to an array so that they can be replaced after all
+                    // nodes have been saved.
 
-                    //update node
+                    if (node.description_ || node.remarks) {
+                        if ((node.description_.indexOf('@link') > -1) || (node.remarks.indexOf('@link') > -1) {
+                            pendingLinks.push(node);
+                        }
+                    }
 
+
+                    
                     // process children
                     var namespaces: Array<any> = [],
                         fn: any = null;
@@ -207,6 +215,16 @@ var referenceSubTypes = (): Thenable<any> => {
         promises.push(subproceduresList[i]());
     }
     return Promise.all(promises);
+};
+
+
+var linkToMarkdown(content: string, baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>) {
+    // add links to remarks & description
+    node.description_ = markdown(node.description_, '/');
+    node.remarks = markdown(node.remarks, '/');
+
+    //update node
+    procedure.update(node);
 };
 
 export = saveDocTree;
