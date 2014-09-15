@@ -70,18 +70,6 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
             submitNode(node)
                 .then<void>(() => {
                     node.saved = true;
-
-                    // if the description or remark has links to be replaced
-                    // push to an array so that they can be replaced after all
-                    // nodes have been saved.
-
-                    if (node.description_ || node.remarks) {
-                        if ((node.description_.indexOf('@link') > -1) || (node.remarks.indexOf('@link') > -1) {
-                            pendingLinks.push(node);
-                        }
-                    }
-
-
                     
                     // process children
                     var namespaces: Array<any> = [],
@@ -157,6 +145,17 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
         
         if (procedures) {
             if (!node.saved) {
+
+                // if the description or remark has links to be replaced
+                // push to an array so that they can be replaced after all
+                // nodes have been saved.
+
+                if (node.description_ || node.remarks) {
+                    if ((node.description_.indexOf('@link') > -1) || (node.remarks.indexOf('@link') > -1) {
+                        pendingLinks.push(linkToMarkdown.bind(null, '/', node, procedures));
+                    }
+                }
+
                 if (!subprocedures) {
                     return procedures.create(node);
                 } else {
@@ -226,7 +225,7 @@ var updatePendingLinks = (): Thenable<any> => {
 };
 
 
-var linkToMarkdown(content: string, baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>) {
+var linkToMarkdown(baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>) {
     // add links to remarks & description
     node.description_ = markdown(node.description_, '/');
     node.remarks = markdown(node.remarks, '/');
