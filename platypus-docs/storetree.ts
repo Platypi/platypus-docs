@@ -230,7 +230,9 @@ var updatePendingLinks = (): Thenable<any> => {
 
 var linkToMarkdown = (baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>): Thenable<any> => {
     // add links to remarks & description
+    var old = node.description_;
     node.description_ = markdown(node.description_, '/');
+    console.log('changed ' + old + ' to ' + node.description_);
     node.remarks = markdown(node.remarks, '/');
 
     //update node
