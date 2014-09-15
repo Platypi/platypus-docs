@@ -217,6 +217,14 @@ var referenceSubTypes = (): Thenable<any> => {
     return Promise.all(promises);
 };
 
+var updatePendingLinks = (): Thenable<any> => {
+    var promises = [];
+    for (var i = 0; i < pendingLinks.length; i++) {
+        promises.push(pendingLinks[i]());
+    }
+    return Promise.all(promises);
+};
+
 
 var linkToMarkdown(content: string, baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>) {
     // add links to remarks & description
