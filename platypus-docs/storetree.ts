@@ -33,7 +33,9 @@ var saveDocTree = (tree: any) => {
             console.log('referencing sub types');
             return referenceSubTypes().then(() => {
                 // replace links
-                console.log('done');
+                return updatePendingLinks().then(() => {
+                    console.log('done');
+                });
             });
         }).then(null, (err) => {
             if (err) {
