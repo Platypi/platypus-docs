@@ -153,7 +153,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 // nodes have been saved.
 
                 if (node.description_ || node.remarks) {
-                    if ((node.description_.indexOf('@link') > -1) || (node.remarks.indexOf('@link') > -1) {
+                    if ((node.description_.indexOf('@link') > -1) || (node.remarks.indexOf('@link') > -1)) {
                         pendingLinks.push(linkToMarkdown.bind(null, '/', node, procedures));
                     }
                 }
@@ -219,6 +219,7 @@ var referenceSubTypes = (): Thenable<any> => {
 };
 
 var updatePendingLinks = (): Thenable<any> => {
+    console.log('updating pending links number: ' + pendingLinks.length);
     var promises = [];
     for (var i = 0; i < pendingLinks.length; i++) {
         promises.push(pendingLinks[i]());
@@ -227,13 +228,13 @@ var updatePendingLinks = (): Thenable<any> => {
 };
 
 
-var linkToMarkdown(baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>) {
+var linkToMarkdown = (baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>): Thenable<any> => {
     // add links to remarks & description
     node.description_ = markdown(node.description_, '/');
     node.remarks = markdown(node.remarks, '/');
 
     //update node
-    procedure.update(node);
+    return procedure.update(node);
 };
 
 export = saveDocTree;
