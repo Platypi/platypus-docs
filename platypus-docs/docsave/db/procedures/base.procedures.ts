@@ -5,10 +5,11 @@ import utils = require('../../../utils/utils');
 import PromiseStatic = require('es6-promise');
 import base = require('../models/base.model');
 import pool = require('../connection');
+import types = require('../../../docnodes');
 
 var Promise = PromiseStatic.Promise;
 
-class BaseProcedures<T extends base.IBaseModel> {
+class BaseProcedures<T extends types.INode> {
     static query(sql: string): Thenable<any>;
     static query(sql: string, values?: Array<any>): Thenable<any>;
     static query(sql: string, values?: Array<any>): Thenable<any> {

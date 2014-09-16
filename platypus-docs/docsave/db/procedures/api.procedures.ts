@@ -4,8 +4,9 @@
 import BaseProcedures = require('./base.procedures');
 import docModel = require('../models/api.model');
 import utils = require('../../../utils/utils');
+import types = require('../../../docnodes');
 
-export class ApiProcedures<T extends docModel.IBaseDoc> extends BaseProcedures<T> {
+export class ApiProcedures<T extends types.INode> extends BaseProcedures<T> {
     static readDocTree(descriptions?: boolean) {
         return BaseProcedures.callProcedure('GetDocTree' + (!!descriptions ? 'WithDesc' : ''), []).then<any>((tree: db.docs.api.rowsets.IDocTreeRowSets) => {
             ApiProcedures.tree = tree;
