@@ -3,7 +3,6 @@
 
 import utils = require('../../../utils/utils');
 import PromiseStatic = require('es6-promise');
-import base = require('../models/base.model');
 import pool = require('../connection');
 import types = require('../../../docnodes');
 

@@ -3,7 +3,6 @@
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import model = require('../models/property.model');
 import DocNodeTypes = require('../../../docnodes');
 
 class PropertyProcedures extends base.ApiProcedures<any> {

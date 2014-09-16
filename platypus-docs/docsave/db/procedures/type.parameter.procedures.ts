@@ -2,14 +2,14 @@
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import model = require('../models/type.parameter.model');
+import types = require('../../../docnodes');
 
 class TypeParameterProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('TypeParameter');
     }
 
-    getArgs(parameter: model.ITypeParameter): Array<any> {
+    getArgs(parameter: any): Array<any> {
         if (!utils.isObject(parameter)) {
             return [];
         }

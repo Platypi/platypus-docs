@@ -2,7 +2,6 @@
 
 
 import BaseProcedures = require('./base.procedures');
-import docModel = require('../models/api.model');
 import utils = require('../../../utils/utils');
 import types = require('../../../docnodes');
 

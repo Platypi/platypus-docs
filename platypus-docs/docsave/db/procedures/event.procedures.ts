@@ -2,7 +2,6 @@
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import model = require('../models/event.model');
 import DocNodeTypes = require('../../../docnodes');
 
 class EventProcedures extends base.ApiProcedures<any> {

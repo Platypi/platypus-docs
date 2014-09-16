@@ -4,7 +4,6 @@
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import model = require('../models/class.model');
 import DocNodeTypes = require('../../../docnodes');
 
 class ClassProcedures extends base.ApiProcedures<any> {

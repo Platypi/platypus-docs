@@ -3,7 +3,6 @@
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import model = require('../models/namespace.model');
 import DocNodeTypes = require('../../../docnodes');
 
 class NamespaceProcedures extends base.ApiProcedures<any> {

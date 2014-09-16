@@ -22,19 +22,6 @@
     <TypeScriptCompile Include="docmarkdown.ts" />
     <TypeScriptCompile Include="docnodes.ts" />
     <TypeScriptCompile Include="docsave\db\connection.ts" />
-    <TypeScriptCompile Include="docsave\db\models\api.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\base.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\class.interface.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\class.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\error.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\event.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\interface.interface.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\interface.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\method.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\namespace.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\parameter.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\property.model.ts" />
-    <TypeScriptCompile Include="docsave\db\models\type.parameter.model.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\api.procedures.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\base.procedures.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\class.interface.procedures.ts" />
@@ -50,7 +37,6 @@
     <TypeScriptCompile Include="globals.ts" />
     <TypeScriptCompile Include="plat-docs.ts" />
     <TypeScriptCompile Include="storegraph.ts" />
-    <TypeScriptCompile Include="test.ts" />
     <TypeScriptCompile Include="docsave\db\db.d.ts" />
     <TypeScriptCompile Include="typings\node\node.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
