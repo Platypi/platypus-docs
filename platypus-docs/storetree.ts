@@ -6,6 +6,7 @@ import utils = require('./utils/utils');
 import PromiseStatic = require('es6-promise');
 
 // procedure types
+import globals = require('./globals');
 import apiprocedures = require('./docsave/db/procedures/api.procedures');
 import namespaceProcedure = require('./docsave/db/procedures/namespace.procedures');
 import interfaceProcedure = require('./docsave/db/procedures/interface.procedures');
@@ -27,6 +28,9 @@ var Promise = PromiseStatic.Promise,
 
 
 var saveDocTree = (tree: any) => {
+    if (Object.keys(ds.nameHashTable).length < 1) {
+        throw new Error('namehash is empty');
+    }
     if (utils.isObject(tree)) {
         return saveAndTraverse(tree['plat'], 'namespaces').then(() => {
             // second traversal to fill in missing ids
@@ -231,8 +235,8 @@ var updatePendingLinks = (): Thenable<any> => {
 var linkToMarkdown = (baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>): Thenable<any> => {
     if (node.id && node.id > 0) {
         // add links to remarks & description
-        node.description_ = markdown(node.description_, '/');
-        node.remarks = markdown(node.remarks, '/');
+        node.description_ = markdown(node.description_, globals.linkBase);
+        node.remarks = markdown(node.remarks, globals.linkBase);
 
         //update node
         return procedure.update(node);

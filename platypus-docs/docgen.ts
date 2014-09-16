@@ -47,6 +47,7 @@ export module DocGen {
             }
 
             if (this.callback) {
+                ds.nameHashTable = this.nameHash;
                 this.callback(tree);
             }
         };
