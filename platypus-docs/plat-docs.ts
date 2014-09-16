@@ -26,3 +26,13 @@ if (process.argv[4]) {
 }
 
 // Build the graph of nodes
+console.log('Generating Graph from source comments.');
+generator.buildGraphFromFile(filename, (graph: any) => {
+    console.log('Storing graph to Database');
+    storage(graph).then(null, (err) => {
+        throw new Error(err);
+    }).then(() => {
+        // done
+        process.exit(0);
+    });
+});
