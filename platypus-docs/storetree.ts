@@ -229,14 +229,17 @@ var updatePendingLinks = (): Thenable<any> => {
 
 
 var linkToMarkdown = (baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>): Thenable<any> => {
-    // add links to remarks & description
-    var old = node.description_;
-    node.description_ = markdown(node.description_, '/');
-    console.log('changed ' + old + ' to ' + node.description_);
-    node.remarks = markdown(node.remarks, '/');
+    if (node.id && node.id > 0) {
+        // add links to remarks & description
+        node.description_ = markdown(node.description_, '/');
+        node.remarks = markdown(node.remarks, '/');
 
-    //update node
-    return procedure.update(node);
+        //update node
+        return procedure.update(node);
+    } else {
+        console.log(node.name_ + ' has no id!!!!');
+        return Promise.reject(null);
+    }
 };
 
 export = saveDocTree;
