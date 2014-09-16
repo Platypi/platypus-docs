@@ -2,7 +2,7 @@
 
 export var nameHashTable = {};
 
-export var tree: {
+export var graph: {
     [index: string]: types.INameSpaceNode
 } = {};
 

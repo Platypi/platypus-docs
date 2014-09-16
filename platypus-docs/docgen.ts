@@ -41,14 +41,14 @@ export module DocGen {
         };
 
 
-        private __graphHandler = (tree: any) => {
+        private __graphHandler = (graph: any) => {
             if (this.debug) {
-                console.log(JSON.stringify(tree, censor(tree), 4));
+                console.log(JSON.stringify(graph, censor(graph), 4));
             }
 
             if (this.callback) {
                 ds.nameHashTable = this.nameHash;
-                this.callback(tree);
+                this.callback(graph);
             }
         };
 
@@ -56,7 +56,7 @@ export module DocGen {
          * Return a node by its fully qualified name
          * If a node is not found the deepest node found will be returned.
          */
-        private __findNode = (node: DocNodeTypes.INode, tree: any, callback: (node: any) => void) => {
+        private __findNode = (node: DocNodeTypes.INode, graph: any, callback: (node: any) => void) => {
             if (!this.nameHash[node.memberof]) {
                 console.log(JSON.stringify(this.nameHash, censor(this.nameHash), 4));
                 throw new Error(node.memberof + ' not found! Node: ' + node.name_);
@@ -68,7 +68,7 @@ export module DocGen {
          * Generate a graph of tags as they appear in code.
          */
         private __graphGen = (tags: any, callback: (graph: any) => void) => {
-            var graph = ds.tree;
+            var graph = ds.graph;
 
             /*
              * First run through will generate a flat 
