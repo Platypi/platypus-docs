@@ -1,4 +1,9 @@
-﻿export interface INode {
+﻿/*
+ * docnodes
+ * A collection of interfaces used throughout the application.
+ */
+
+export interface INode {
     name_: string;
     description_?: string;
     kind: string;

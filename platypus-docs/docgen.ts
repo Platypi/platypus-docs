@@ -1,6 +1,11 @@
 ﻿/// <reference path="docnodes.ts" />
 /// <reference path="typings/tsd.d.ts" />
 
+/*
+ * DocGen
+ * Generates the document graph.
+ */
+
 import DocNodeTypes = require('./docnodes');
 import fs = require('fs');
 import ds = require('./datastructures');
@@ -404,6 +409,10 @@ export module DocGen {
             parent[name] = childNode;
         };
 
+        /*
+         * buildTags
+         * Build an array of tags used to assemble the full graph of nodes.
+         */
         private __buildTags = (tag: any): ParsedDocNode => {
             var tmpObj: any = {};
 
@@ -503,6 +512,9 @@ export module DocGen {
     }
 }
 
+/* 
+ * Used for debugging.
+ */
 function censor(censor) {
     var i = 0;
 

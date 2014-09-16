@@ -1,6 +1,11 @@
 ﻿/// <reference path="typings/tsd.d.ts" />
 /// <reference path="docsave/db/db.d.ts" />
 
+/*
+ * storegraph
+ * Traverses the graph and stores the nodes in the database.
+ */
+
 import DocNodeTypes = require('./docnodes');
 import utils = require('./utils/utils');
 import PromiseStatic = require('es6-promise');

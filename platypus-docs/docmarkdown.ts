@@ -1,4 +1,9 @@
-﻿import ds = require('./datastructures');
+﻿/*
+ * docmarkdown
+ * Uses a regular expression to replace the {@link } tags with markdown links.
+ */
+
+import ds = require('./datastructures');
 import types = require('./docnodes');
 
 var linkReg = /\{@link (.*?)[|](.*?)\}/g;
