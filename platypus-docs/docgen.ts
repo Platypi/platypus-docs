@@ -15,11 +15,11 @@ export module DocGen {
 
         nameHash = ds.nameHashTable;
 
-        callback = (tree) => { };
+        callback = (graph) => { };
 
         debug = false;
 
-        buildTreeFromFile = (src: string, callback: (tree) => void, debug: boolean = false) => {
+        buildGraphFromFile = (src: string, callback: (graph) => void, debug: boolean = false) => {
             this.debug = debug;
             if (callback) {
                 this.callback = callback;
@@ -34,14 +34,14 @@ export module DocGen {
 
         private __parsedCommentsHandler = (err: any, data: any) => {
             if (!err) {
-                this.__treeGen(data, this.__treeHandler);
+                this.__graphGen(data, this.__graphHandler);
             } else {
                 console.log(new Error(err));
             }
         };
 
 
-        private __treeHandler = (tree: any) => {
+        private __graphHandler = (tree: any) => {
             if (this.debug) {
                 console.log(JSON.stringify(tree, censor(tree), 4));
             }
@@ -65,10 +65,10 @@ export module DocGen {
         };
 
         /**
-         * Generate a tree structure of tags as they appear in code.
+         * Generate a graph of tags as they appear in code.
          */
-        private __treeGen = (tags: any, callback: (tree: any) => void) => {
-            var tree = ds.tree;
+        private __graphGen = (tags: any, callback: (graph: any) => void) => {
+            var graph = ds.tree;
 
             /*
              * First run through will generate a flat 
@@ -275,13 +275,13 @@ export module DocGen {
                 }
             }
 
-            // start building the tree with namespaces
+            // start building the graph with namespaces
             for (var namespace in flat.namespaces) {
                 var currentNamespace = flat.namespaces[namespace],
                     parent = null;
 
                 if (currentNamespace.memberof) {
-                    this.__findNode(currentNamespace, tree, (node) => {
+                    this.__findNode(currentNamespace, graph, (node) => {
                         parent = node;
                         currentNamespace.parent = parent;
 
@@ -292,7 +292,7 @@ export module DocGen {
                         this.__appendChild(currentNamespace, parent);
                     });
                 } else {
-                    tree[currentNamespace.name_] = currentNamespace;
+                    graph[currentNamespace.name_] = currentNamespace;
                 }
             }
             //interfaces
@@ -300,7 +300,7 @@ export module DocGen {
                 var currentInterface = flat.interfaces[interfaceNode],
                     parent = null;
 
-                this.__findNode(currentInterface, tree, (node) => {
+                this.__findNode(currentInterface, graph, (node) => {
                     parent = node;
                     currentInterface.parent = parent;
 
@@ -354,7 +354,7 @@ export module DocGen {
                         }
                     }
 
-                    this.__findNode(currentMethod, tree, (node) => {
+                    this.__findNode(currentMethod, graph, (node) => {
                         parent = node;
                         currentMethod.parent = parent;
 
@@ -373,7 +373,7 @@ export module DocGen {
                 var currentProperty = flat.properties[propertyNode],
                     parent = null;
 
-                this.__findNode(currentProperty, tree, (node) => {
+                this.__findNode(currentProperty, graph, (node) => {
                     parent = node;
                     currentProperty.parent = parent;
                     this.__appendChild(currentProperty, parent);
@@ -385,32 +385,23 @@ export module DocGen {
                 var currentEvent = flat.events[eventNode],
                     parent = null;
 
-                this.__findNode(currentEvent, tree, (node) => {
+                this.__findNode(currentEvent, graph, (node) => {
                     parent = node;
                     currentEvent.parent = parent;
                     this.__appendChild(currentMethod, parent);
                 });
             }
 
-            callback(tree);
+            callback(graph);
         };
 
         private __appendChild = (childNode: DocNodeTypes.INode, parentNode: DocNodeTypes.INode): void => {
             var childContainer = this.__nodeContainer(childNode),
                 parent = parentNode;
 
-            if (!parent) {
-                console.log(childNode.memberof);
-            }
-
             var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_;
 
             parent[name] = childNode;
-
-            var namespacePre = childNode.memberof;
-
-            // old way of populating namehash
-            //this.nameHash[namespacePre + '.' + name] = childNode;
         };
 
         private __buildTags = (tag: any): ParsedDocNode => {

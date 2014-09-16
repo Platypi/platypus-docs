@@ -55,7 +55,7 @@ class MethodProcedures extends base.ApiProcedures<any> {
             method.overrides,
             method.optional,
             false,
-            '0.1'
+            method.version
         ];
 
         return argsRtn;

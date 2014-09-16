@@ -21,7 +21,7 @@ class NamespaceProcedures extends base.ApiProcedures<any> {
             namespace.name_,
             namespace.description_,
             false,
-            '0.1'
+            namespace.version
         ];
     }
 

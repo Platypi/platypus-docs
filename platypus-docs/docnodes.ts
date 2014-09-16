@@ -11,6 +11,7 @@
     saved?: boolean;
     typeparams?: {};
     remarks?: string;
+    version?: string;
 }
 
 export interface IHaveExampleNode {

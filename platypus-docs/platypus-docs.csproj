@@ -47,7 +47,9 @@
     <TypeScriptCompile Include="docsave\db\procedures\parameter.procedures.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\property.procedures.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\type.parameter.procedures.ts" />
-    <TypeScriptCompile Include="storetree.ts" />
+    <TypeScriptCompile Include="globals.ts" />
+    <TypeScriptCompile Include="plat-docs.ts" />
+    <TypeScriptCompile Include="storegraph.ts" />
     <TypeScriptCompile Include="test.ts" />
     <TypeScriptCompile Include="docsave\db\db.d.ts" />
     <TypeScriptCompile Include="typings\node\node.d.ts" />

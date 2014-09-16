@@ -2,13 +2,13 @@
 /// <reference path="docgen.ts" />
 
 import DocGen = require('./docgen');
-import store = require('./storetree');
+import store = require('./storegraph');
 
 var filename = process.argv[2] || './test-data/sample.ts',
     gen = new DocGen.DocGen.DocGenerator();
 
-console.log('generating tree');
-gen.buildTreeFromFile(filename, (tree: any) => {
+console.log('generating graph');
+gen.buildGraphFromFile(filename, (tree: any) => {
     //console.log(tree);
     console.log('storing tree');
     store(tree)

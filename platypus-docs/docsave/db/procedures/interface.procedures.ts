@@ -26,7 +26,7 @@ class InterfaceProcedures extends base.ApiProcedures<any> {
             i.registeredtype,
             i.registeredname,
             false,
-            '0.1'
+            i.version
         ];
     }
 

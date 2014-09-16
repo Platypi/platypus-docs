@@ -27,12 +27,12 @@ var Promise = PromiseStatic.Promise,
     pendingLinks = [];
 
 
-var saveDocTree = (tree: any) => {
+var saveDocGraph = (graph: any) => {
     if (Object.keys(ds.nameHashTable).length < 1) {
         throw new Error('namehash is empty');
     }
-    if (utils.isObject(tree)) {
-        return saveAndTraverse(tree['plat'], 'namespaces').then(() => {
+    if (utils.isObject(graph)) {
+        return saveAndTraverse(graph['plat'], 'namespaces').then(() => {
             // second traversal to fill in missing ids
             console.log('referencing sub types');
             return referenceSubTypes().then(() => {
@@ -47,7 +47,7 @@ var saveDocTree = (tree: any) => {
             }
         });
     } else {
-        return Promise.reject(new Error('Invalid Doc Tree: ' + tree));
+        return Promise.reject(new Error('Invalid Doc Graph: ' + graph));
     }
 };
 
@@ -246,7 +246,7 @@ var linkToMarkdown = (baseUri: string, node: DocNodeTypes.INode, procedure: apip
     }
 };
 
-export = saveDocTree;
+export = saveDocGraph;
 
 
 function censor(censor) {
