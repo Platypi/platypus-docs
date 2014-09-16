@@ -1,5 +1,4 @@
 # Platypus-Docs
-=============
 
 An in house documentation generator for TypeScript. This generator will produce a graph of code comments that can then be stored in a database.
 
