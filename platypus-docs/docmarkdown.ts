@@ -10,7 +10,13 @@ var linkReg = /\{@link (.*?)[|](.*?)\}/g;
 
 var linkToMarkup = (content: string, baseURI: string): string => {
     return content.replace(linkReg, (value: string, qualifiedPath: string, linkValue: string, index) => {
-        // build path using id/kind/name
+        // account for Type<Type>
+        var typeParamStart = qualifiedPath.indexOf('<');
+
+        if (typeParamStart && typeParamStart > 0) {
+            qualifiedPath = qualifiedPath.slice(0, typeParamStart);
+        }
+
         var node: types.INode = ds.nameHashTable[qualifiedPath],
             keyCount: number = Object.keys(ds.nameHashTable).length;
 
@@ -20,6 +26,7 @@ var linkToMarkup = (content: string, baseURI: string): string => {
 
         if (keyCount > 0) {
             if (node && node.id) {
+                // build path using id/kind/name
                 var path: string = baseURI + node.id + '/' + node.kind + '/' + node.name_;
 
                 return '[' + linkValue + '](' + path + ')';
