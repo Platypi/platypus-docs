@@ -122,13 +122,21 @@ export module DocGen {
                             if (parsedDocTags.params) {
                                 for (var z = 0; z < parsedDocTags.params.length; z++) {
                                     var newParameter: DocNodeTypes.IParameterNode = {
-                                        name_: parsedDocTags.params[z].name + '_',
+                                        name_: parsedDocTags.params[z].name,
                                         memberof: parsedDocTags.params[z].memberof,
-                                        kind: parsedDocTags.params[z].kind,
-                                        description_: parsedDocTags.params[z].description.description,
+                                        kind: 'parameter',
+                                        type: parsedDocTags.params[z].type,
+                                        description_: parsedDocTags.params[z].description,
                                         published: true,
                                         exported: (!parsedDocTags.exported ? true : false),
                                     };
+
+                                    // determine if the parameter is optional 
+                                    if (newParameter.name_.indexOf('?') > 0) {
+                                        newParameter.name_ = newParameter.name_.slice(0, newParameter.name_.indexOf('?'));
+                                        newParameter.optional = true;
+                                    }
+
                                     newMethod.parameters[newParameter.name_ + '_'] = newParameter;
                                 }
                             }
@@ -364,10 +372,28 @@ export module DocGen {
                         currentMethod.parent = parent;
 
                         for (var j in currentMethod.parameters) {
-                            currentMethod.parameters[j] = this.nameHash[(<string>currentMethod.parameters[j].name_)] || currentMethod.parameters[j];
-                            currentMethod.parameters[j].method = currentMethod;
+                            var param: DocNodeTypes.IParameterNode = currentMethod.parameters[j],
+                                resolvedType: DocNodeTypes.INode = null;
+                            if (param.type) {
+                                resolvedType = this.nameHash[param.type];
+                            }
+                            if (resolvedType) {
+                                switch (resolvedType.kind) {
+                                    case 'method':
+                                        param.methodtype = resolvedType;
+                                        break;
+                                    case 'class':
+                                        param.classtype = resolvedType;
+                                        break;
+                                    case 'interface':
+                                        param.interfacetype = resolvedType;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            param.method = currentMethod;
                         }
-
                         this.__appendChild(currentMethod, parent);
                     });
                 }
