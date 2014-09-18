@@ -38,21 +38,22 @@ var saveDocGraph = (graph: any) => {
         throw new Error('namehash is empty');
     }
     if (utils.isObject(graph)) {
-        return saveAndTraverse(graph['plat'], 'namespaces').then(() => {
-            resolveParameters().then(() => {
+        return saveAndTraverse(graph['plat'], 'namespaces')
+            .then(() => {
+                return resolveParameters();
+            }).then(() => {
                 console.log('referencing sub types');
-                return referenceSubTypes().then(() => {
-                    // replace links
-                    return updatePendingLinks().then(() => {
-                        console.log('done');
-                    });
-                });
+                return referenceSubTypes();
+            }).then(() => {
+                // replace links
+                return updatePendingLinks();
+            }).then(() => {
+                console.log('done');
+            }, (err) => {
+                if (err) {
+                    console.log(err);
+                }
             });
-        }).then(null, (err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
     } else {
         return Promise.reject(new Error('Invalid Doc Graph: ' + graph));
     }
@@ -164,8 +165,8 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 // nodes have been saved.
 
                 if (node.description_ || node.remarks) {
-                    if ((node.description_.indexOf('@link') > -1) || (node.remarks.indexOf('@link') > -1)) {
-                        pendingLinks.push(linkToMarkdown.bind(null, '/', node, procedures));
+                    if ((node.description_.indexOf('@link') > -1) || (node.remarks && node.remarks.indexOf('@link') > -1)) {
+                        pendingLinks.push(linkToMarkdown.bind(null, node, procedures));
                     }
                 }
 
@@ -247,7 +248,7 @@ var updatePendingLinks = (): Thenable<any> => {
 };
 
 var resolveParameters = (): Thenable<any> => {
-    console.log('storing parameters for methods, count: ' + parametersList);
+    console.log('storing parameters for methods, count: ' + parametersList.length);
     var promises = [];
     for (var i = 0; i < parametersList.length; i++) {
         promises.push(parametersList[i]());
@@ -256,11 +257,16 @@ var resolveParameters = (): Thenable<any> => {
 };
 
 
-var linkToMarkdown = (baseUri: string, node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>): Thenable<any> => {
+var linkToMarkdown = (node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>): Thenable<any> => {
     if (node.id && node.id > 0) {
         // add links to remarks & description
-        node.description_ = markdown(node.description_, globals.linkBase);
-        node.remarks = markdown(node.remarks, globals.linkBase);
+        if (node.description_) {
+            node.description_ = markdown(node.description_, globals.linkBase);
+        }
+
+        if (node.remarks) {
+            node.remarks = markdown(node.remarks, globals.linkBase);
+        }
 
         //update node
         return procedure.update(node);
