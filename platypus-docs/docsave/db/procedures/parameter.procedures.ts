@@ -16,12 +16,12 @@ class ParameterProcedures extends base.ApiProcedures<any> {
         }
 
         return [
-            parameter.method.id,
+            (parameter.method ? parameter.method.id : null),
             parameter.name_,
             parameter.type,
-            parameter.methodtype.id,
-            parameter.classtype.id,
-            parameter.interfacetype.id,
+            (parameter.methodtype ? parameter.methodtype.id : null),
+            (parameter.classtype ? parameter.classtype.id : null),
+            (parameter.interfacetype ? parameter.interfacetype.id : null),
             parameter.description_,
             parameter.defaultvalue,
             parameter.optional,
