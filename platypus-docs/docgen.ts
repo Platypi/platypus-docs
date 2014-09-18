@@ -129,6 +129,7 @@ export module DocGen {
                                         description_: parsedDocTags.params[z].description,
                                         published: true,
                                         exported: (!parsedDocTags.exported ? true : false),
+                                        porder: z
                                     };
 
                                     // determine if the parameter is optional 
