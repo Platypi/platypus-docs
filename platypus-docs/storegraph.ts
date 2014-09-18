@@ -27,6 +27,7 @@ import ds = require('./datastructures');
 import markdown = require('./docmarkdown');
 
 var Promise = PromiseStatic.Promise,
+    parametersList = [],
     subproceduresList = [],
     failedClassesList = [],
     pendingLinks = [];
@@ -38,12 +39,13 @@ var saveDocGraph = (graph: any) => {
     }
     if (utils.isObject(graph)) {
         return saveAndTraverse(graph['plat'], 'namespaces').then(() => {
-            // second traversal to fill in missing ids
-            console.log('referencing sub types');
-            return referenceSubTypes().then(() => {
-                // replace links
-                return updatePendingLinks().then(() => {
-                    console.log('done');
+            resolveParameters().then(() => {
+                console.log('referencing sub types');
+                return referenceSubTypes().then(() => {
+                    // replace links
+                    return updatePendingLinks().then(() => {
+                        console.log('done');
+                    });
                 });
             });
         }).then(null, (err) => {
@@ -168,7 +170,14 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 }
 
                 if (!subprocedures) {
-                    return procedures.create(node);
+                    var rtnPromise = procedures.create(node);
+                    if (node.kind === 'method') {
+                        var methodNode: DocNodeTypes.IMethodNode = (<DocNodeTypes.IMethodNode>node);
+                        utils.forEach(Object.keys(methodNode.parameters), (value) => {
+                            parametersList.push(submitNode.bind(null, value);
+                        });
+                    }
+                    return rtnPromise;
                 } else {
                     return procedures.create(node).then(null, (err) => {
                         console.log(node.name_);
@@ -232,6 +241,15 @@ var updatePendingLinks = (): Thenable<any> => {
     var promises = [];
     for (var i = 0; i < pendingLinks.length; i++) {
         promises.push(pendingLinks[i]());
+    }
+    return Promise.all(promises);
+};
+
+var resolveParameters = (): Thenable<any> => {
+    console.log('storing parameters for methods, count: ' + parametersList);
+    var promises = [];
+    for (var i = 0; i < parametersList.length; i++) {
+        promises.push(parametersList[i]());
     }
     return Promise.all(promises);
 };
