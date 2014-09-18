@@ -174,7 +174,8 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                     if (node.kind === 'method') {
                         var methodNode: DocNodeTypes.IMethodNode = (<DocNodeTypes.IMethodNode>node);
                         utils.forEach(Object.keys(methodNode.parameters), (value) => {
-                            parametersList.push(submitNode.bind(null, value);
+                            var parameter = methodNode.parameters[value];
+                            parametersList.push(submitNode.bind(null, parameter));
                         });
                     }
                     return rtnPromise;
