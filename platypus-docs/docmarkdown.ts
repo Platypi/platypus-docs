@@ -9,6 +9,7 @@ import types = require('./docnodes');
 var linkReg = /\{@link (.*?)[|](.*?)\}/g;
 
 var linkToMarkup = (content: string, baseURI: string): string => {
+    content = content || '';
     return content.replace(linkReg, (value: string, qualifiedPath: string, linkValue: string, index) => {
         // account for Type<Type>
         var typeParamStart = qualifiedPath.indexOf('<');
