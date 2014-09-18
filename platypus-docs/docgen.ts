@@ -393,6 +393,7 @@ export module DocGen {
                                 }
                             }
                             param.method = currentMethod;
+                            currentMethod.parameters[j] = param;
                         }
                         this.__appendChild(currentMethod, parent);
                     });
