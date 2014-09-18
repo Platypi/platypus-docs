@@ -94,7 +94,7 @@ export interface IParameterNode extends INode, IHaveTypeNode {
     type?: string;
     defaultvalue?: string;
     optional?: boolean;
-    porder?: string;
+    porder?: number;
 }
 
 export interface IPropertyNode extends INode, IHaveTypeNode, IHaveOverride {
