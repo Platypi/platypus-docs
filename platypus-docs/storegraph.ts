@@ -170,6 +170,11 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                     }
                 }
 
+                if (Object.keys(node.typeparams).length > 0) {
+                    var tp = new typeParameterProcedures();
+                    
+                }
+
                 if (!subprocedures) {
                     var rtnPromise = procedures.create(node);
                     if (node.kind === 'method') {
