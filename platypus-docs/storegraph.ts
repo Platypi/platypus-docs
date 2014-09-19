@@ -268,6 +268,7 @@ var buildTypeParameter = (node: DocNodeTypes.INode, typeParamNode: DocNodeTypes.
 };
 
 var resolveTypeParams = (): Thenable<any> => {
+    console.log('Resolving Type Params, count: ' + typeparametersList.length);
     var promises = [];
     for (var i = 0; i < typeparametersList.length; i++) {
         promises.push(typeparametersList[i]());
