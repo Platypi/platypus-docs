@@ -437,7 +437,13 @@ export module DocGen {
             if (typeparams) {
                 for (var t = 0; t < typeparams.length; t++) {
                     var currentTag: ITag = typeparams[t],
-                        newTypeParameter: DocNodeTypes.ITypeParameterNode;
+                        newTypeParameter: DocNodeTypes.ITypeParameterNode = {
+                            name_: currentTag.name,
+                            kind: 'typeparam',
+                            typeString: currentTag.type,
+                            description_: currentTag.description,
+                            porder: t
+                        };
 
                     switch (node.kind) {
                         case 'interface': 
@@ -452,11 +458,6 @@ export module DocGen {
                         default:
                             break;
                     }
-
-                    newTypeParameter.name_ = currentTag.name;
-                    newTypeParameter.typeString = currentTag.type;
-                    newTypeParameter.description_ = currentTag.description;
-                    newTypeParameter.porder = t;
 
                     node.typeparameters[newTypeParameter.name_ + '_'] = newTypeParameter;
                 }
