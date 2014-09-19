@@ -14,7 +14,7 @@ export interface INode {
     visibility?: string;
     id?: number;
     saved?: boolean;
-    typeparams?: {};
+    typeparameters?: {};
     remarks?: string;
     version?: string;
 }
@@ -110,11 +110,12 @@ export interface IPropertyNode extends INode, IHaveTypeNode, IHaveOverride {
 }
 
 export interface ITypeParameterNode extends INode {
+    typeString?: string;
     interface?: IInterfaceNode;
     class?: IClassNode;
     method?: IMethodNode;
     methodtype?: IMethodNode;
     classtype?: IClassNode;
     interfacetype?: IInterfaceNode
-    porder?: string;
+    porder?: number;
 }
