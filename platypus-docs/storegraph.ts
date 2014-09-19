@@ -28,6 +28,7 @@ import markdown = require('./docmarkdown');
 
 var Promise = PromiseStatic.Promise,
     parametersList = [],
+    typeparametersList = [],
     subproceduresList = [],
     failedClassesList = [],
     pendingLinks = [];
@@ -41,6 +42,8 @@ var saveDocGraph = (graph: any) => {
         return saveAndTraverse(graph['plat'], 'namespaces')
             .then(() => {
                 return resolveParameters();
+            }).then(() => {
+                return resolveTypeParams();
             }).then(() => {
                 console.log('referencing sub types');
                 return referenceSubTypes();
@@ -163,16 +166,20 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 // if the description or remark has links to be replaced
                 // push to an array so that they can be replaced after all
                 // nodes have been saved.
-
+                
                 if (node.description_ || node.remarks) {
                     if ((node.description_.indexOf('@link') > -1) || (node.remarks && node.remarks.indexOf('@link') > -1)) {
                         pendingLinks.push(linkToMarkdown.bind(null, node, procedures));
                     }
                 }
 
-                if (Object.keys(node.typeparams).length > 0) {
-                    var tp = new typeParameterProcedures();
-                    
+                if (node.typeparameters) {
+                    if (Object.keys(node.typeparameters).length > 0) {
+                        utils.forEach(Object.keys(node.typeparameters), (value) => {
+                            var typeparameter = node.typeparameters[value];
+                            typeparametersList.push(buildTypeParameter.bind(null, node, typeparameter));
+                        });
+                    }
                 }
 
                 if (!subprocedures) {
@@ -233,6 +240,39 @@ var ParentToChildNode = (node: DocNodeTypes.INode, extendedNode: DocNodeTypes.IN
         };
         return procedure.create(saveObj);
     }
+};
+
+var buildTypeParameter = (node: DocNodeTypes.INode, typeParamNode: DocNodeTypes.ITypeParameterNode): Thenable<any> => {
+    var tp = new typeParameterProcedures();
+    if (utils.isObject(node) && utils.isObject(typeParamNode)) {
+        var namehash = ds.nameHashTable,
+            typeRef: DocNodeTypes.INode = namehash[typeParamNode.typeString];
+
+        if (utils.isObject(typeRef)) {
+            switch (typeRef.kind) {
+                case 'method':
+                    typeParamNode.methodtype = typeRef;
+                    break;
+                case 'class':
+                    typeParamNode.classtype = typeRef;
+                    break;
+                case 'interface':
+                    typeParamNode.interfacetype = typeRef;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return tp.create(typeParamNode);
+    }
+};
+
+var resolveTypeParams = (): Thenable<any> => {
+    var promises = [];
+    for (var i = 0; i < typeparametersList.length; i++) {
+        promises.push(typeparametersList[i]());
+    }
+    return Promise.all(promises);
 };
 
 var referenceSubTypes = (): Thenable<any> => {
