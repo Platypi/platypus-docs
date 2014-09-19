@@ -569,6 +569,7 @@ module plat {
     
     /* tslint:disable:no-unused-variable */
     var __nodeNameRegex = /<([\w:]+)/,
+        __whiteSpaceRegex = /\s+/g,
         __option = [1, '<select multiple="multiple">', '</select>'],
         __table = [1, '<table>', '</table>'],
         __tableData = [3, '<table><tbody><tr>', '</tr></tbody></table>'],
@@ -873,86 +874,140 @@ module plat {
     }
     
     function addClass(element: HTMLElement, className: string): void {
-        if (!isString(className) || className === '') {
+        var cName = (element || <HTMLElement>{}).className;
+        if (!isString(cName) || !isString(className) || className === '') {
             return;
         }
     
+        var split = className.split(__whiteSpaceRegex),
+            name: string;
         if (isUndefined(element.classList)) {
-            if (isEmpty(element.className)) {
+            if (isEmpty(cName)) {
                 element.className = className;
                 return;
             }
     
-            element.className += ' ' + className;
+            while (split.length > 0) {
+                name = split.shift();
+                if (name !== '') {
+                    element.className += ' ' + name;
+                }
+            }
             return;
         }
     
-        element.classList.add(className);
+        while (split.length > 0) {
+            name = split.shift();
+            if (name !== '') {
+                element.classList.add(name);
+            }
+        }
     }
     
     function removeClass(element: HTMLElement, className: string): void {
-        if (!isString(className) || className === '') {
+        var cName = (element || <HTMLElement>{}).className;
+        if (!isString(cName) || !isString(className) || className === '') {
             return;
         }
     
+        var split = className.split(__whiteSpaceRegex),
+            name: string;
         if (isUndefined(element.classList)) {
-            if (element.className === className) {
+            if (cName === className) {
                 element.className = '';
                 return;
             }
     
-            element.className = element.className
-                .replace(new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g'), '');
+            while (split.length > 0) {
+                name = split.shift();
+                if (name !== '') {
+                    element.className = cName = cName
+                        .replace(new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g'), '');
+                }
+            }
             return;
         }
     
-        element.classList.remove(className);
+        while (split.length > 0) {
+            name = split.shift();
+            if (name !== '') {
+                element.classList.remove(name);
+            }
+        }
     }
     
     function toggleClass(element: HTMLElement, className: string): void {
-        if (!isString(className) || className === '') {
+        var cName = (element || <HTMLElement>{}).className;
+        if (!isString(cName) || !isString(className) || className === '') {
             return;
         }
     
+        var split = className.split(__whiteSpaceRegex),
+            name: string;
         if (isUndefined(element.classList)) {
-            var name = element.className;
-            if (name === '') {
+            var classNameRegex: RegExp;
+            if (cName === '') {
                 element.className = className;
-            } else if (name === className) {
+            } else if (cName === className) {
                 element.className = '';
                 return;
             }
     
-            var classNameRegex = new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g');
-            if (classNameRegex.test(name)) {
-                element.className = name.replace(classNameRegex, '');
-                return;
-            }
+            while (split.length > 0) {
+                name = split.shift();
+                if (name !== '') {
+                    classNameRegex = new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g');
+                    if (classNameRegex.test(cName)) {
+                        element.className = cName = cName.replace(classNameRegex, '');
+                        continue;
+                    }
     
-            element.className += ' ' + className;
+                    element.className += ' ' + name;
+                }
+            }
             return;
         }
     
-        element.classList.toggle(className);
+        while (split.length > 0) {
+            name = split.shift();
+            if (name !== '') {
+                element.classList.toggle(name);
+            }
+        }
     }
     
     function hasClass(element: HTMLElement, className: string): boolean {
-        if (!isString(className) || className === '') {
-            return;
+        var cName = (element || <HTMLElement>{}).className;
+        if (!isString(cName) || !isString(className) || className === '') {
+            return false;
         }
     
+        var split = className.split(__whiteSpaceRegex);
         if (isUndefined(element.classList)) {
-            var name = element.className;
-            if (name === '') {
+            if (cName === '') {
                 return false;
-            } else if (name === className) {
+            } else if (cName === className) {
                 return true;
             }
     
-            return new RegExp('^' + className + '\\s|\\s' + className + '$|\\s' + className + '|' + className + '\\s', 'g').test(name);
+            var name: string;
+            while (split.length > 0) {
+                name = split.shift();
+                if (!(name === '' || new RegExp('^' + name + '\\s|\\s' + name + '$|\\s' + name + '|' + name + '\\s', 'g').test(cName))) {
+                    return false;
+                }
+            }
+            return true;
         }
     
-        return element.classList.contains(className);
+        while (split.length > 0) {
+            name = split.shift();
+            if (!(name === '' || element.classList.contains(name))) {
+                return false;
+            }
+        }
+    
+        return true;
     }
     /* tslint:enable:no-unused-variable */
     
@@ -10031,7 +10086,7 @@ module plat {
              * or on a 'urlChanged' event.
              * 
              * @param {plat.events.IDispatchEventInstance} ev The 'urlChanged' event object.
-             * @param {plat.web.IUrlUtilsInstance} utils The {@link plat.web.IUrlUtils|IUrlUtils} 
+             * @param {plat.web.IUrlUtilsInstance} utils The {@link plat.web.IUrlUtilsInstance|IUrlUtilsInstance} 
              * created for the invoked route function.
              * 
              * @returns {void}
@@ -28714,17 +28769,17 @@ module plat {
              * @access public
              * 
              * @description
-             * Adds a class to the specified element.
+             * Adds a class or multiple classes to the specified element.
              * 
              * @param {Element} element The element to which the class name is being added.
-             * @param {string} className The class name to add to the element.
+             * @param {string} className The class name or space delimited class names to add to the element.
              * 
              * @returns {void}
              */
             addClass(element: Element, className: string): void {
                 return addClass(<HTMLElement>element, className);
             }
-
+        
             /**
              * @name removeClass
              * @memberof plat.ui.Dom
@@ -28732,17 +28787,17 @@ module plat {
              * @access public
              * 
              * @description
-             * Removes a class from the specified element.
+             * Removes a class or multiple classes from the specified element.
              * 
              * @param {Element} element The element from which the class name is being removed.
-             * @param {string} className The class name to remove from the element.
+             * @param {string} className The class name or space delimited class names to remove from the element.
              * 
              * @returns {void}
              */
             removeClass(element: Element, className: string): void {
                 return removeClass(<HTMLElement>element, className);
             }
-
+        
             /**
              * @name toggleClass
              * @memberof plat.ui.Dom
@@ -28750,17 +28805,17 @@ module plat {
              * @access public
              * 
              * @description
-             * Toggles a class from the specified element.
+             * Toggles a class or multiple classes from the specified element.
              * 
              * @param {Element} element The element on which the class name is being toggled.
-             * @param {string} className The class name to toggle on the element.
+             * @param {string} className The class name or space delimited class names to toggle on the element.
              * 
              * @returns {void}
              */
             toggleClass(element: Element, className: string): void {
                 return toggleClass(<HTMLElement>element, className);
             }
-
+        
             /**
              * @name hasClass
              * @memberof plat.ui.Dom
@@ -28768,12 +28823,13 @@ module plat {
              * @access public
              * 
              * @description
-             * Returns whether or not an element has a particular class assigned to it.
+             * Returns whether or not an element has a particular class or classes assigned to it.
              * 
              * @param {Element} element The element on which the class name is being checked.
-             * @param {string} className The class name to check on the element.
+             * @param {string} className The class name or space delimited class names to check on the element.
              * 
-             * @returns {void}
+             * @returns {boolean} Whether or not the element has the class name or all of the class names 
+             * specified in the className argument.
              */
             hasClass(element: Element, className: string): boolean {
                 return hasClass(<HTMLElement>element, className);
@@ -29193,10 +29249,10 @@ module plat {
              * @access public
              * 
              * @description
-             * Adds a class to the specified element.
+             * Adds a class or multiple classes to the specified element.
              * 
              * @param {Element} element The element to which the class name is being added.
-             * @param {string} className The class name to add to the element.
+             * @param {string} className The class name or space delimited class names to add to the element.
              * 
              * @returns {void}
              */
@@ -29209,10 +29265,10 @@ module plat {
              * @access public
              * 
              * @description
-             * Removes a class from the specified element.
+             * Removes a class or multiple classes from the specified element.
              * 
              * @param {Element} element The element from which the class name is being removed.
-             * @param {string} className The class name to remove from the element.
+             * @param {string} className The class name or space delimited class names to remove from the element.
              * 
              * @returns {void}
              */
@@ -29225,10 +29281,10 @@ module plat {
              * @access public
              * 
              * @description
-             * Toggles a class from the specified element.
+             * Toggles a class or multiple classes from the specified element.
              * 
              * @param {Element} element The element on which the class name is being toggled.
-             * @param {string} className The class name to toggle on the element.
+             * @param {string} className The class name or space delimited class names to toggle on the element.
              * 
              * @returns {void}
              */
@@ -29241,14 +29297,15 @@ module plat {
              * @access public
              * 
              * @description
-             * Returns whether or not an element has a particular class assigned to it.
+             * Returns whether or not an element has a particular class or classes assigned to it.
              * 
              * @param {Element} element The element on which the class name is being checked.
-             * @param {string} className The class name to check on the element.
+             * @param {string} className The class name or space delimited class names to check on the element.
              * 
-             * @returns {void}
+             * @returns {boolean} Whether or not the element has the class name or all of the class names 
+             * specified in the className argument.
              */
-            hasClass(element: Element, className: string): void;
+            hasClass(element: Element, className: string): boolean;
         }
 
         /**
@@ -44796,7 +44853,7 @@ module plat {
              * {@link plat.ui.IBaseViewControl|IBaseViewControl} navigation can occur.
              * 
              * @param {plat.events.INavigationEvent<plat.web.IRoute<any>>} ev The 
-             * {@link plat.navigation.INavigationEvent|INavigationEvent} containing information regarding 
+             * {@link plat.events.INavigationEvent|INavigationEvent} containing information regarding 
              * the {@link plat.ui.IBaseViewControl|IBaseViewControl}, the routing information, 
              * and the {@link plat.web.Router|Router}.
              * 
