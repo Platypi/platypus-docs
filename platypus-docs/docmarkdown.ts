@@ -25,6 +25,10 @@ var linkToMarkup = (content: string, baseURI: string): string => {
             node = ds.nameHashTable[qualifiedPath.toUpperCase()];
         }
 
+        if (!!node && (<any>node).length > 0) {
+            node = node[0];
+        }
+
         if (keyCount > 0) {
             if (node && node.id) {
                 // build path using id/kind/name
