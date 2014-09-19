@@ -110,7 +110,7 @@ export module DocGen {
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
                                 exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
-                                typeparamaters: (parsedDocTags.typeparams ? parsedDocTags.typeparams.name : ''),
+                                //typeparamaters: (parsedDocTags.typeparams ? parsedDocTags.typeparams.name : ''),
                                 returntype: (parsedDocTags.returns ? parsedDocTags.returns.type : ''),
                                 returntypedesc: (parsedDocTags.returns ? parsedDocTags.returns.name + ' ' + parsedDocTags.returns.description : ''),
                                 optional: (parsedDocTags.optional ? true : false),
@@ -435,7 +435,7 @@ export module DocGen {
 
         private __handleTypeParams = (typeparams: Array<ITag>, node: DocNodeTypes.INode) => {
             if (typeparams) {
-                for (var t = 0; t < typeparams.length, t++) {
+                for (var t = 0; t < typeparams.length; t++) {
                     var currentTag: ITag = typeparams[t],
                         newTypeParameter: DocNodeTypes.ITypeParameterNode;
 
