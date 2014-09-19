@@ -114,6 +114,7 @@ export interface ITypeParameterNode extends INode {
     interface?: IInterfaceNode;
     class?: IClassNode;
     method?: IMethodNode;
+    interface?: IInterfaceNode;
     methodtype?: IMethodNode;
     classtype?: IClassNode;
     interfacetype?: IInterfaceNode
