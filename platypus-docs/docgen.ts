@@ -459,6 +459,10 @@ export module DocGen {
                             break;
                     }
 
+                    if (!node.typeparameters) {
+                        node.typeparameters = {};
+                    }
+
                     node.typeparameters[newTypeParameter.name_ + '_'] = newTypeParameter;
                 }
             }
