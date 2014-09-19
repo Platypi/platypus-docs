@@ -9,19 +9,19 @@ class TypeParameterProcedures extends base.ApiProcedures<any> {
         super('TypeParameter');
     }
 
-    getArgs(parameter: any): Array<any> {
+    getArgs(parameter: types.ITypeParameterNode): Array<any> {
         if (!utils.isObject(parameter)) {
             return [];
         }
 
         return [
-            parameter.interfaceid,
-            parameter.classid,
-            parameter.methodid,
-            parameter.classtypeid,
-            parameter.interfacetypeid,
-            parameter.name,
-            parameter.description,
+            (parameter.interface ? parameter.interface.id : null),
+            (parameter.class ? parameter.class.id : null),
+            (parameter.method ? parameter.method.id : null),
+            (parameter.classtype ? parameter.classtype.id : null),
+            (parameter.interfacetype ? parameter.interfacetype.id : null),
+            parameter.name_,
+            parameter.description_,
             parameter.porder
         ];
     }

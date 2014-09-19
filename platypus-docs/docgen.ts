@@ -110,7 +110,7 @@ export module DocGen {
                                 remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
                                 published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
                                 exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
-                                typeparamaters: (parsedDocTags.typeparam ? parsedDocTags.typeparam.name : ''),
+                                //typeparamaters: (parsedDocTags.typeparams ? parsedDocTags.typeparams.name : ''),
                                 returntype: (parsedDocTags.returns ? parsedDocTags.returns.type : ''),
                                 returntypedesc: (parsedDocTags.returns ? parsedDocTags.returns.name + ' ' + parsedDocTags.returns.description : ''),
                                 optional: (parsedDocTags.optional ? true : false),
@@ -141,6 +141,8 @@ export module DocGen {
                                     newMethod.parameters[newParameter.name_ + '_'] = newParameter;
                                 }
                             }
+
+                            this.__handleTypeParams(parsedDocTags.typeparams, newMethod);
 
                             var methodName = (newMethod.name_ !== '') ? memberof.toUpperCase() + '.' + newMethod.name_.toUpperCase() : '()';
 
@@ -193,14 +195,17 @@ export module DocGen {
                             if (parsedDocTags.implements) {
                                 for (var k in parsedDocTags.implements) {
                                     var tag = parsedDocTags.implements[k],
+                                        type: string = tag.type,
                                         newInterface: DocNodeTypes.IInterfaceNode = {
-                                            name_: tag.type,
+                                            name_: this.__stripTypeParam(type),
                                             kind: 'interface'
                                         };
 
                                     newClass.interfaces[newInterface.name_] = newInterface;
                                 }
                             }
+
+                            this.__handleTypeParams(parsedDocTags.typeparams, newClass);
 
                             var className = memberof + '.' + newClass.name_;
 
@@ -227,7 +232,7 @@ export module DocGen {
                                 for (var k in parsedDocTags.extends) {
                                     var tag = parsedDocTags.extends[k],
                                         newExtends: DocNodeTypes.IInterfaceNode = {
-                                            name_: tag.type,
+                                            name_: this.__stripTypeParam(tag.type),
                                             kind: 'interface'
                                         };
 
@@ -236,6 +241,8 @@ export module DocGen {
                             }
 
                             var interfaceName = memberof + '.' + newInterface.name_;
+
+                            this.__handleTypeParams(parsedDocTags.typeparams, newInterface);
 
                             flat.interfaces[interfaceName] = newInterface;
                             this.nameHash[interfaceName] = flat.interfaces[interfaceName];
@@ -428,6 +435,49 @@ export module DocGen {
             callback(graph);
         };
 
+        private __handleTypeParams = (typeparams: Array<ITag>, node: DocNodeTypes.INode) => {
+            if (typeparams) {
+                for (var t = 0; t < typeparams.length; t++) {
+                    var currentTag: ITag = typeparams[t],
+                        newTypeParameter: DocNodeTypes.ITypeParameterNode = {
+                            name_: currentTag.name,
+                            kind: 'typeparam',
+                            typeString: currentTag.type,
+                            description_: currentTag.description,
+                            porder: t
+                        };
+
+                    switch (node.kind) {
+                        case 'interface': 
+                            newTypeParameter.interface = node;
+                            break;
+                        case 'class':
+                            newTypeParameter.class = node;
+                            break;
+                        case 'method':
+                            newTypeParameter.method = node;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (!node.typeparameters) {
+                        node.typeparameters = {};
+                    }
+
+                    node.typeparameters[newTypeParameter.name_ + '_'] = newTypeParameter;
+                }
+            }
+        };
+
+        private __stripTypeParam = (typeString: string): string => {
+            if (typeString.indexOf('<') < 0) {
+                return typeString;
+            } else {
+                return typeString.slice(0, typeString.indexOf('<'));
+            }
+        };
+
         private __appendChild = (childNode: DocNodeTypes.INode, parentNode: DocNodeTypes.INode): void => {
             var childContainer = this.__nodeContainer(childNode),
                 parent = parentNode;
@@ -526,11 +576,10 @@ export module DocGen {
         remarks?: ITag;
         published?: ITag;
         exported?: ITag;
-        typeparm?: ITag;
         returns?: ITag;
         optional?: ITag;
         params?: Array<any>;
-        typeparam?: ITag;
+        typeparams?: Array<ITag>;
         implements?: Array<any>;
         type?: ITag;
         readonly?: ITag;
