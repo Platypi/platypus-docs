@@ -455,6 +455,7 @@ export module DocGen {
 
                     newTypeParameter.name_ = currentTag.name;
                     newTypeParameter.typeString = currentTag.type;
+                    newTypeParameter.description_ = currentTag.description;
                     newTypeParameter.porder = t;
 
                     node.typeparameters[newTypeParameter.name_ + '_'] = newTypeParameter;
