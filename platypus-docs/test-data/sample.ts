@@ -1426,7 +1426,7 @@ module plat {
                 export var CSS = __CSS;
         
                 /**
-                 * @name CSS
+                 * @name JS
                  * @memberof plat.register.animation
                  * @kind property
                  * @access public
@@ -37233,7 +37233,7 @@ module plat {
                         };
 
                     node.setAttribute('plat-control', controlType);
-                    node.className = controlType;
+                    node.className = 'plat-viewcontrol';
                     element.appendChild(node);
 
                     this.$Animator.animate(this.element, __Enter);
