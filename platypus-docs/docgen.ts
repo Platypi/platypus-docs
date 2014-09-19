@@ -194,8 +194,9 @@ export module DocGen {
                             if (parsedDocTags.implements) {
                                 for (var k in parsedDocTags.implements) {
                                     var tag = parsedDocTags.implements[k],
+                                        type: string = tag.type,
                                         newInterface: DocNodeTypes.IInterfaceNode = {
-                                            name_: tag.type,
+                                            name_: this.__stripTypeParam(type),
                                             kind: 'interface'
                                         };
 
@@ -230,7 +231,7 @@ export module DocGen {
                                 for (var k in parsedDocTags.extends) {
                                     var tag = parsedDocTags.extends[k],
                                         newExtends: DocNodeTypes.IInterfaceNode = {
-                                            name_: tag.type,
+                                            name_: this.__stripTypeParam(tag.type),
                                             kind: 'interface'
                                         };
 
@@ -465,6 +466,14 @@ export module DocGen {
 
                     node.typeparameters[newTypeParameter.name_ + '_'] = newTypeParameter;
                 }
+            }
+        };
+
+        private __stripTypeParam = (typeString: string): string => {
+            if (typeString.indexOf('<') < 0) {
+                return typeString;
+            } else {
+                return typeString.slice(0, typeString.indexOf('<'));
             }
         };
 
