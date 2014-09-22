@@ -82,7 +82,9 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
         }
         
         try {
-            //console.log('Creating: ' + node.name_);
+            if (globals.debug) {
+                console.log('Creating: ' + node.name_);
+            }
             submitNode(node)
                 .then<void>(() => {
                     node.saved = true;
