@@ -1,30 +1,30 @@
-﻿/// <reference path="typings/tsd.d.ts" />
-/// <reference path="docsave/db/db.d.ts" />
+﻿/// <reference path="../typings/tsd.d.ts" />
+
 
 /*
  * storegraph
  * Traverses the graph and stores the nodes in the database.
  */
 
-import DocNodeTypes = require('./docnodes');
-import utils = require('./utils/utils');
+import DocNodeTypes = require('../docnodes');
+import utils = require('../utils/utils');
 import PromiseStatic = require('es6-promise');
 
 // procedure types
-import globals = require('./globals');
-import apiprocedures = require('./docsave/db/procedures/api.procedures');
-import namespaceProcedure = require('./docsave/db/procedures/namespace.procedures');
-import interfaceProcedure = require('./docsave/db/procedures/interface.procedures');
-import classProcedures = require('./docsave/db/procedures/class.procedures');
-import methodProcedures = require('./docsave/db/procedures/method.procedures');
-import propertyProcedures = require('./docsave/db/procedures/property.procedures');
-import parameterProcedures = require('./docsave/db/procedures/parameter.procedures');
-import eventProcedures = require('./docsave/db/procedures/event.procedures');
-import classInterfaceProcedures = require('./docsave/db/procedures/class.interface.procedures');
-import interfaceInterfaceProcedures = require('./docsave/db/procedures/interface.interface.procedures');
-import typeParameterProcedures = require('./docsave/db/procedures/type.parameter.procedures');
-import ds = require('./datastructures');
-import markdown = require('./docmarkdown');
+import globals = require('../variables/globals');
+import apiprocedures = require('../docsave/db/procedures/api.procedures');
+import namespaceProcedure = require('../docsave/db/procedures/namespace.procedures');
+import interfaceProcedure = require('../docsave/db/procedures/interface.procedures');
+import classProcedures = require('../docsave/db/procedures/class.procedures');
+import methodProcedures = require('../docsave/db/procedures/method.procedures');
+import propertyProcedures = require('../docsave/db/procedures/property.procedures');
+import parameterProcedures = require('../docsave/db/procedures/parameter.procedures');
+import eventProcedures = require('../docsave/db/procedures/event.procedures');
+import classInterfaceProcedures = require('../docsave/db/procedures/class.interface.procedures');
+import interfaceInterfaceProcedures = require('../docsave/db/procedures/interface.interface.procedures');
+import typeParameterProcedures = require('../docsave/db/procedures/type.parameter.procedures');
+import ds = require('../variables/datastructures');
+import markdown = require('../converters/docmarkdown');
 
 var Promise = PromiseStatic.Promise,
     parametersList = [],

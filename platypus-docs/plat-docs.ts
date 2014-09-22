@@ -10,9 +10,9 @@
  *                  into a database schema.
  */
 
-import globals = require('./globals');
-import docgen = require('./docgen');
-import storage = require('./storegraph');
+import globals = require('./variables/globals');
+import docgen = require('./generator/docgen');
+import storage = require('./docsave/storegraph');
 
 var filename = process.argv[2] || 'platypusts.ts',
     generator = new docgen.DocGen.DocGenerator();

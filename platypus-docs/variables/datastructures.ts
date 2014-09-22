@@ -2,15 +2,15 @@
  * Global Data Strucutres
  */
 
-import types = require('./docnodes');
-import tagBuilder = require('./tagbuilder');
+import types = require('../docnodes');
+import tagBuilder = require('../tags/tagbuilder');
 
-import methodhandler = require('./nodehandlers/method.handler');
-import propertyhandler = require('./nodehandlers/property.handler');
-import classhandler = require('./nodehandlers/class.handler');
-import interfacehandler = require('./nodehandlers/interface.handler');
-import eventhandler = require('./nodehandlers/event.handler');
-import namespacehandler = require('./nodehandlers/namespace.handler');
+import methodhandler = require('../nodehandlers/method.handler');
+import propertyhandler = require('../nodehandlers/property.handler');
+import classhandler = require('../nodehandlers/class.handler');
+import interfacehandler = require('../nodehandlers/interface.handler');
+import eventhandler = require('../nodehandlers/event.handler');
+import namespacehandler = require('../nodehandlers/namespace.handler');
 
 /*
  * nameHashTable

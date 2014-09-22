@@ -1,5 +1,5 @@
 ﻿import types = require('../docnodes');
-import tags = require('../tagbuilder');
+import tags = require('../tags/tagbuilder');
 import utils = require('../utils/utils');
 import PromiseStatic = require('es6-promise');
 

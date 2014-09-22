@@ -1,15 +1,15 @@
-﻿/// <reference path="docnodes.ts" />
-/// <reference path="typings/tsd.d.ts" />
+﻿/// <reference path="../typings/tsd.d.ts" />
+
 
 /*
  * DocGen
  * Generates the document graph.
  */
 
-import types = require('./docnodes');
+import types = require('../docnodes');
 import fs = require('fs');
-import ds = require('./datastructures');
-import tags = require('./tagbuilder');
+import ds = require('../variables/datastructures');
+import tags = require('../tags/tagbuilder');
 
 var parser = require('comment-parser');
 

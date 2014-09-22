@@ -1,7 +1,7 @@
 ﻿import BaseHandler = require('./base.handler');
 import utils = require('../utils/utils');
 import types = require('../docnodes');
-import tags = require('../tagbuilder');
+import tags = require('../tags/tagbuilder');
 
 class MethodHandler extends BaseHandler {
     static MakeNewMethodNode = (tag: tags.ParsedDocNode): types.IMethodNode => {
