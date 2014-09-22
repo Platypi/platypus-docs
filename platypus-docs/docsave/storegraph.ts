@@ -1,6 +1,5 @@
 ﻿/// <reference path="../typings/tsd.d.ts" />
 
-
 /*
  * storegraph
  * Traverses the graph and stores the nodes in the database.
@@ -194,9 +193,11 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                     return rtnPromise;
                 } else {
                     return procedures.create(node).then(null, (err) => {
-                        console.log(node.name_);
-                        console.log((<any>node).parentString);
-                        console.log((<any>node).extends.id);
+                        if (globals.debug) {
+                            console.log(node.name_);
+                            console.log((<any>node).parentString);
+                            console.log((<any>node).extends.id);
+                        }
                         throw err;
                     }).then((id) => {
                             if (utils.isObject(node[subprocedureType])) {

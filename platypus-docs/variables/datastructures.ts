@@ -67,7 +67,7 @@ export var populateFlat = (tags: any): void => {
     for (var k in tags) {
 
         // tmpObj stores the tags in an object so they can be referenced by name.
-        var parsedDocTags: tagBuilder.ParsedDocNode = tags.buildTags(tags[k]);
+        var parsedDocTags: tagBuilder.ParsedDocNode = tagBuilder.buildTags(tags[k]);
 
 
         if (parsedDocTags.kind) {

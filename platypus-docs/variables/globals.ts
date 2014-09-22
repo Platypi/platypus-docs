@@ -6,3 +6,5 @@
 export var linkBase = '/#!/docs/api/';
 
 export var versionNumber = '0.0.1';
+
+export var debug = false;

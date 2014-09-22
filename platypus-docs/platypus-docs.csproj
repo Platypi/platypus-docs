@@ -17,9 +17,9 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="datastructures.ts" />
-    <TypeScriptCompile Include="docgen.ts" />
-    <TypeScriptCompile Include="docmarkdown.ts" />
+    <TypeScriptCompile Include="variables\datastructures.ts" />
+    <TypeScriptCompile Include="generator\docgen.ts" />
+    <TypeScriptCompile Include="converters\docmarkdown.ts" />
     <TypeScriptCompile Include="docnodes.ts" />
     <TypeScriptCompile Include="docsave\db\connection.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\api.procedures.ts" />
@@ -34,7 +34,7 @@
     <TypeScriptCompile Include="docsave\db\procedures\parameter.procedures.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\property.procedures.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\type.parameter.procedures.ts" />
-    <TypeScriptCompile Include="globals.ts" />
+    <TypeScriptCompile Include="variables\globals.ts" />
     <TypeScriptCompile Include="nodehandlers\base.handler.ts" />
     <TypeScriptCompile Include="nodehandlers\class.handler.ts" />
     <TypeScriptCompile Include="nodehandlers\event.handler.ts" />
@@ -43,9 +43,9 @@
     <TypeScriptCompile Include="nodehandlers\namespace.handler.ts" />
     <TypeScriptCompile Include="nodehandlers\property.handler.ts" />
     <TypeScriptCompile Include="plat-docs.ts" />
-    <TypeScriptCompile Include="storegraph.ts" />
+    <TypeScriptCompile Include="docsave\storegraph.ts" />
     <TypeScriptCompile Include="docsave\db\db.d.ts" />
-    <TypeScriptCompile Include="tagbuilder.ts" />
+    <TypeScriptCompile Include="tags\tagbuilder.ts" />
     <TypeScriptCompile Include="typings\node\node.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
     <TypeScriptCompile Include="utils\utils.ts" />
