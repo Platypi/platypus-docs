@@ -38,4 +38,19 @@ export var flat: {
         parameters: {},
         properties: {},
         events: {}
-    };
+};
+
+export var findNode = (node: types.INode, callback: (node: any) => void) => {
+    if (!nameHashTable[node.memberof]) {
+        throw new Error(node.memberof + ' not found! Node: ' + node.name_);
+    }
+    callback(nameHashTable[node.memberof]);
+};
+
+export var appendChild = (childNode: types.INode, parentNode: types.INode): void => {
+    var parent = parentNode;
+
+    var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_;
+
+    parent[name] = childNode;
+};

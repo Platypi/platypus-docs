@@ -6,9 +6,18 @@
  * Generates the document graph.
  */
 
-import DocNodeTypes = require('./docnodes');
+import types = require('./docnodes');
 import fs = require('fs');
 import ds = require('./datastructures');
+import tags = require('./tagbuilder');
+
+import methodhandler = require('./nodehandlers/method.handler');
+import propertyhandler = require('./nodehandlers/property.handler');
+import classhandler = require('./nodehandlers/class.handler');
+import interfacehandler = require('./nodehandlers/interface.handler');
+import eventhandler = require('./nodehandlers/event.handler');
+import namespacehandler = require('./nodehandlers/namespace.handler');
+
 var parser = require('comment-parser');
 
 export module DocGen {
@@ -58,23 +67,9 @@ export module DocGen {
         };
 
         /**
-         * Return a node by its fully qualified name
-         * If a node is not found the deepest node found will be returned.
-         */
-        private __findNode = (node: DocNodeTypes.INode, graph: any, callback: (node: any) => void) => {
-            if (!this.nameHash[node.memberof]) {
-                console.log(JSON.stringify(this.nameHash, censor(this.nameHash), 4));
-                throw new Error(node.memberof + ' not found! Node: ' + node.name_);
-            }
-            callback(this.nameHash[node.memberof]);
-        };
-
-        /**
          * Generate a graph of tags as they appear in code.
          */
         private __graphGen = (tags: any, callback: (graph: any) => void) => {
-            var graph = ds.graph;
-
             /*
              * First run through will generate a flat 
              * data structure as we may not yet have all the tags
@@ -89,62 +84,16 @@ export module DocGen {
             for (var k in tags) {
 
                 // tmpObj stores the tags in an object so they can be referenced by name.
-                var parsedDocTags: ParsedDocNode = this.__buildTags(tags[k]);
+                var parsedDocTags: tags.ParsedDocNode = tags.buildTags(tags[k]);
 
 
                 if (parsedDocTags.kind) {
-                    var kind: string = (<string>parsedDocTags.kind.name).trim().toLowerCase(),
-                        memberof: string = (parsedDocTags.memberof ? (<string>parsedDocTags.memberof.name).trim() : '');
+                    var kind: string = (<string>parsedDocTags.kind.name).trim().toLowerCase();
 
                     switch (kind) {
                         case 'function':
-                            // if name is blank, the method is an interface
-                            var newMethod: DocNodeTypes.IMethodNode = {
-                                name_: (parsedDocTags.name ? parsedDocTags.name.name : ''),
-                                description_: parsedDocTags.description.description,
-                                //kind: parsedDocTags.kind.name,
-                                kind: 'method',
-                                overrides: (parsedDocTags.variation ? true : false),
-                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
-                                static: (parsedDocTags.static ? true : false),
-                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
-                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
-                                //typeparamaters: (parsedDocTags.typeparams ? parsedDocTags.typeparams.name : ''),
-                                returntype: (parsedDocTags.returns ? parsedDocTags.returns.type : ''),
-                                returntypedesc: (parsedDocTags.returns ? parsedDocTags.returns.name + ' ' + parsedDocTags.returns.description : ''),
-                                optional: (parsedDocTags.optional ? true : false),
-                                parameters: {},
-                                memberof: memberof
-                            };
-
-                            // push the params onto the tmpObj
-                            if (parsedDocTags.params) {
-                                for (var z = 0; z < parsedDocTags.params.length; z++) {
-                                    var newParameter: DocNodeTypes.IParameterNode = {
-                                        name_: parsedDocTags.params[z].name,
-                                        memberof: parsedDocTags.params[z].memberof,
-                                        kind: 'parameter',
-                                        type: parsedDocTags.params[z].type,
-                                        description_: parsedDocTags.params[z].description,
-                                        published: true,
-                                        exported: (!parsedDocTags.exported ? true : false),
-                                        porder: z
-                                    };
-
-                                    // determine if the parameter is optional 
-                                    if (newParameter.name_.indexOf('?') > 0) {
-                                        newParameter.name_ = newParameter.name_.slice(0, newParameter.name_.indexOf('?'));
-                                        newParameter.optional = true;
-                                    }
-
-                                    newMethod.parameters[newParameter.name_ + '_'] = newParameter;
-                                }
-                            }
-
-                            this.__handleTypeParams(parsedDocTags.typeparams, newMethod);
-
-                            var methodName = (newMethod.name_ !== '') ? memberof.toUpperCase() + '.' + newMethod.name_.toUpperCase() : '()';
+                            var newMethod = methodhandler.MakeNewMethodNode(parsedDocTags),
+                                methodName = (newMethod.name_ !== '') ? newMethod.memberof.toUpperCase() + '.' + newMethod.name_.toUpperCase() : '()';
 
                             if (!(flat.methods[methodName] instanceof Array)) {
                                 flat.methods[methodName] = [];
@@ -155,133 +104,42 @@ export module DocGen {
                             
                             break;
                         case 'property':
-                            var newProperty: DocNodeTypes.IPropertyNode = {
-                                name_: parsedDocTags.name.name,
-                                description_: parsedDocTags.description.description,
-                                kind: parsedDocTags.kind.name,
-                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
-                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
-                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
-                                type: parsedDocTags.type.type,
-                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                static: (parsedDocTags.static ? true : false),
-                                readonly: (parsedDocTags.readonly ? true : false),
-                                optional: (parsedDocTags.optional ? true : false),
-                                memberof: memberof
-                            };
-
-                            var propertyName = memberof + '.' + newProperty.name_;
+                            var newProperty = propertyhandler.MakeNewPropertyNode(parsedDocTags),
+                                propertyName = newProperty.memberof + '.' + newProperty.name_;
 
                             flat.properties[propertyName] = newProperty;
                             this.nameHash[propertyName] = flat.properties[propertyName];
 
                             break;
                         case 'class':
-                            var newClass: DocNodeTypes.IClassNode = {
-                                name_: parsedDocTags.name.name,
-                                description_: parsedDocTags.description.description,
-                                kind: parsedDocTags.kind.name,
-                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
-                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
-                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
-                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                parentString: (parsedDocTags.extends && parsedDocTags.extends[0] ? parsedDocTags.extends[0].type : ''),
-                                namespaceString: memberof,
-                                interfaces: {},
-                                memberof: memberof
-                            };
-
-                            //interfaces (implements) treat like params
-                            if (parsedDocTags.implements) {
-                                for (var k in parsedDocTags.implements) {
-                                    var tag = parsedDocTags.implements[k],
-                                        type: string = tag.type,
-                                        newInterface: DocNodeTypes.IInterfaceNode = {
-                                            name_: this.__stripTypeParam(type),
-                                            kind: 'interface'
-                                        };
-
-                                    newClass.interfaces[newInterface.name_] = newInterface;
-                                }
-                            }
-
-                            this.__handleTypeParams(parsedDocTags.typeparams, newClass);
-
-                            var className = memberof + '.' + newClass.name_;
+                            var newClass = classhandler.MakeNewClassNode(parsedDocTags),
+                                className = newClass.memberof + '.' + newClass.name_;
 
                             flat.classes[className] = newClass;
                             this.nameHash[className] = flat.classes[className];
                             
                             break;
                         case 'interface':
-                            var newInterface: DocNodeTypes.IInterfaceNode = {
-                                name_: parsedDocTags.name.name,
-                                kind: parsedDocTags.kind.name,
-                                description_: parsedDocTags.description.description,
-                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
-                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
-                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
-                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                //methods,
-                                memberof: memberof,
-                                interfaces: {}
-                            };
-
-                            //interfaces (extends) treat like params
-                            if (parsedDocTags.extends) {
-                                for (var k in parsedDocTags.extends) {
-                                    var tag = parsedDocTags.extends[k],
-                                        newExtends: DocNodeTypes.IInterfaceNode = {
-                                            name_: this.__stripTypeParam(tag.type),
-                                            kind: 'interface'
-                                        };
-
-                                    newInterface.interfaces[newExtends.name_] = newExtends;
-                                }
-                            }
-
-                            var interfaceName = memberof + '.' + newInterface.name_;
-
-                            this.__handleTypeParams(parsedDocTags.typeparams, newInterface);
+                            var newInterface = interfacehandler.MakeNewInterfaceNode(parsedDocTags),
+                                interfaceName = newInterface.memberof + '.' + newInterface.name_;
 
                             flat.interfaces[interfaceName] = newInterface;
                             this.nameHash[interfaceName] = flat.interfaces[interfaceName];
                             
                             break;
                         case 'event':
-                            var newEvent: DocNodeTypes.IEvent = {
-                                name_: parsedDocTags.name.name,
-                                kind: parsedDocTags.kind.name,
-                                description_: parsedDocTags.description.description,
-                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
-                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
-                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
-                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                classNameString: parsedDocTags.class.name,
-                                memberof: memberof
-                            };
-
-                            var eventName = memberof + '.' + newEvent.name_;
+                            var newEvent = eventhandler.MakeNewEventNode(parsedDocTags),
+                                eventName = newEvent.memberof + '.' + newEvent.name_;
 
                             flat.events[eventName] = newEvent;
                             this.nameHash[eventName] = flat.events[eventName];
-                            
-                            
+
                             break;
                         case 'namespace':
-                            var newNamespace: DocNodeTypes.INameSpaceNode = {
-                                name_: parsedDocTags.name.name,
-                                kind: parsedDocTags.kind.name,
-                                description_: parsedDocTags.description.description,
-                                visibility: (parsedDocTags.access ? parsedDocTags.access.name : 'public'),
-                                published: (!parsedDocTags.published ? true : (parsedDocTags.published.name !== 'false')),
-                                exported: (!parsedDocTags.exported ? true : (parsedDocTags.exported.name !== 'false')),
-                                remarks: (parsedDocTags.remarks ? parsedDocTags.remarks.description : ''),
-                                memberof: memberof
-                            };
+                            var newNamespace = namespacehandler.MakeNewNamespaceNode(parsedDocTags),
+                                namespaceName = '';
 
-                            var namespaceName = '';
-
+                            // account for root namespaces
                             if (!!newNamespace.memberof) {
                                 namespaceName = newNamespace.memberof + '.' + newNamespace.name_;
                             } else {
@@ -302,7 +160,7 @@ export module DocGen {
                     parent = null;
 
                 if (currentNamespace.memberof) {
-                    this.__findNode(currentNamespace, graph, (node) => {
+                    ds.findNode(currentNamespace, (node) => {
                         parent = node;
                         currentNamespace.parent = parent;
 
@@ -310,10 +168,10 @@ export module DocGen {
                             return;
                         }
 
-                        this.__appendChild(currentNamespace, parent);
+                        ds.appendChild(currentNamespace, parent);
                     });
                 } else {
-                    graph[currentNamespace.name_] = currentNamespace;
+                    ds.graph[currentNamespace.name_] = currentNamespace;
                 }
             }
             //interfaces
@@ -321,7 +179,7 @@ export module DocGen {
                 var currentInterface = flat.interfaces[interfaceNode],
                     parent = null;
 
-                this.__findNode(currentInterface, graph, (node) => {
+                ds.findNode(currentInterface, (node) => {
                     parent = node;
                     currentInterface.parent = parent;
 
@@ -329,7 +187,7 @@ export module DocGen {
                         currentInterface.interfaces[i] = this.nameHash[currentInterface.interfaces[i].name_] || currentInterface.interfaces[i];
                     }
 
-                    this.__appendChild(currentInterface, parent);
+                    ds.appendChild(currentInterface, parent);
                 });
             }
 
@@ -347,7 +205,7 @@ export module DocGen {
                     currentClass.interfaces[i] = this.nameHash[currentClass.interfaces[i].name_] || currentClass.interfaces[i];
                 }
 
-                this.__appendChild(currentClass, parent);
+                ds.appendChild(currentClass, parent);
             }
 
             //methods
@@ -375,13 +233,13 @@ export module DocGen {
                         }
                     }
 
-                    this.__findNode(currentMethod, graph, (node) => {
+                    ds.findNode(currentMethod, (node) => {
                         parent = node;
                         currentMethod.parent = parent;
 
                         for (var j in currentMethod.parameters) {
-                            var param: DocNodeTypes.IParameterNode = currentMethod.parameters[j],
-                                resolvedType: DocNodeTypes.INode = null;
+                            var param: types.IParameterNode = currentMethod.parameters[j],
+                                resolvedType: types.INode = null;
                             if (param.type) {
                                 resolvedType = this.nameHash[param.type];
                             }
@@ -403,7 +261,7 @@ export module DocGen {
                             param.method = currentMethod;
                             currentMethod.parameters[j] = param;
                         }
-                        this.__appendChild(currentMethod, parent);
+                        ds.appendChild(currentMethod, parent);
                     });
                 }
             }
@@ -413,10 +271,10 @@ export module DocGen {
                 var currentProperty = flat.properties[propertyNode],
                     parent = null;
 
-                this.__findNode(currentProperty, graph, (node) => {
+                ds.findNode(currentProperty, (node) => {
                     parent = node;
                     currentProperty.parent = parent;
-                    this.__appendChild(currentProperty, parent);
+                    ds.appendChild(currentProperty, parent);
                 });
             }
 
@@ -425,167 +283,15 @@ export module DocGen {
                 var currentEvent = flat.events[eventNode],
                     parent = null;
 
-                this.__findNode(currentEvent, graph, (node) => {
+                ds.findNode(currentEvent, (node) => {
                     parent = node;
                     currentEvent.parent = parent;
-                    this.__appendChild(currentMethod, parent);
+                    ds.appendChild(currentMethod, parent);
                 });
             }
 
-            callback(graph);
+            callback(ds.graph);
         };
-
-        private __handleTypeParams = (typeparams: Array<ITag>, node: DocNodeTypes.INode) => {
-            if (typeparams) {
-                for (var t = 0; t < typeparams.length; t++) {
-                    var currentTag: ITag = typeparams[t],
-                        newTypeParameter: DocNodeTypes.ITypeParameterNode = {
-                            name_: currentTag.name,
-                            kind: 'typeparam',
-                            typeString: currentTag.type,
-                            description_: currentTag.description,
-                            porder: t
-                        };
-
-                    switch (node.kind) {
-                        case 'interface': 
-                            newTypeParameter.interface = node;
-                            break;
-                        case 'class':
-                            newTypeParameter.class = node;
-                            break;
-                        case 'method':
-                            newTypeParameter.method = node;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    if (!node.typeparameters) {
-                        node.typeparameters = {};
-                    }
-
-                    node.typeparameters[newTypeParameter.name_ + '_'] = newTypeParameter;
-                }
-            }
-        };
-
-        private __stripTypeParam = (typeString: string): string => {
-            if (typeString.indexOf('<') < 0) {
-                return typeString;
-            } else {
-                return typeString.slice(0, typeString.indexOf('<'));
-            }
-        };
-
-        private __appendChild = (childNode: DocNodeTypes.INode, parentNode: DocNodeTypes.INode): void => {
-            var childContainer = this.__nodeContainer(childNode),
-                parent = parentNode;
-
-            var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_;
-
-            parent[name] = childNode;
-        };
-
-        /*
-         * buildTags
-         * Build an array of tags used to assemble the full graph of nodes.
-         */
-        private __buildTags = (tag: any): ParsedDocNode => {
-            var tmpObj: any = {};
-
-            for (var l in tag.tags) {
-                var t = tag.tags[l];
-
-                // There can be multiple params/implements/extends/typeparams for a given comment.
-                if (t.tag === 'param') {
-                    if (!tmpObj.params) {
-                        tmpObj.params = new Array<ITag>();
-                    }
-                    tmpObj.params.push(t);
-                } else if (t.tag === 'typeparam') {
-                    if (!tmpObj.typeparams) {
-                        tmpObj.typeparams = new Array<ITag>();
-                    }
-                    tmpObj.typeparams.push(t);
-                } else if (t.tag === 'implements') {
-                    if (!tmpObj.implements) {
-                        tmpObj.implements = new Array<ITag>();
-                    }
-                    tmpObj.implements.push(t);
-                } else if (t.tag === 'extends') {
-                    if (!tmpObj.extends) {
-                        tmpObj.extends = new Array<ITag>();
-                    }
-                    tmpObj.extends.push(t);
-                } else {
-                    tmpObj[t.tag] = t;
-                }
-            }
-
-            return tmpObj;
-        };
-
-        private __nodeContainer = (node: DocNodeTypes.INode) => {
-            var containerString = '';
-
-            switch (node.kind) {
-                case 'namespace':
-                    containerString = 'namespaces';
-                    break;
-                case 'interface':
-                    containerString = 'interfaces';
-                    break;
-                case 'class':
-                    containerString = 'classes';
-                    break;
-                case 'function':
-                    containerString = 'methods';
-                    break;
-                case 'parameter':
-                    containerString = 'parameters';
-                    break;
-                case 'property':
-                    containerString = 'properties';
-                    break;
-                case 'event':
-                    containerString = 'events'
-                    break;
-            }
-
-            return containerString;
-        };
-
-    }
-
-    export interface ITag {
-        tag: string;
-        name: string;
-        type: string;
-        description: string;
-    }
-
-    export interface ParsedDocNode {
-        name?: ITag;
-        kind?: ITag;
-        memberof?: ITag;
-        description?: ITag;
-        variation: ITag;
-        access?: ITag;
-        static?: ITag;
-        remarks?: ITag;
-        published?: ITag;
-        exported?: ITag;
-        returns?: ITag;
-        optional?: ITag;
-        params?: Array<any>;
-        typeparams?: Array<ITag>;
-        implements?: Array<any>;
-        type?: ITag;
-        readonly?: ITag;
-        namespace?: ITag;
-        extends?: Array<any>;
-        class?: ITag;
     }
 }
 

@@ -35,9 +35,17 @@
     <TypeScriptCompile Include="docsave\db\procedures\property.procedures.ts" />
     <TypeScriptCompile Include="docsave\db\procedures\type.parameter.procedures.ts" />
     <TypeScriptCompile Include="globals.ts" />
+    <TypeScriptCompile Include="nodehandlers\base.handler.ts" />
+    <TypeScriptCompile Include="nodehandlers\class.handler.ts" />
+    <TypeScriptCompile Include="nodehandlers\event.handler.ts" />
+    <TypeScriptCompile Include="nodehandlers\interface.handler.ts" />
+    <TypeScriptCompile Include="nodehandlers\method.handler.ts" />
+    <TypeScriptCompile Include="nodehandlers\namespace.handler.ts" />
+    <TypeScriptCompile Include="nodehandlers\property.handler.ts" />
     <TypeScriptCompile Include="plat-docs.ts" />
     <TypeScriptCompile Include="storegraph.ts" />
     <TypeScriptCompile Include="docsave\db\db.d.ts" />
+    <TypeScriptCompile Include="tagbuilder.ts" />
     <TypeScriptCompile Include="typings\node\node.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
     <TypeScriptCompile Include="utils\utils.ts" />
