@@ -63,7 +63,7 @@ export var appendChild = (childNode: types.INode, parentNode: types.INode): void
     parent[name] = childNode;
 };
 
-export var populateFlat(tags: any) {
+export var populateFlat = (tags: any): void => {
     for (var k in tags) {
 
         // tmpObj stores the tags in an object so they can be referenced by name.
@@ -145,7 +145,7 @@ export var flat2Graph = () => {
             parent = null;
 
         if (currentNamespace.memberof) {
-            ds.findNode(currentNamespace, (node) => {
+            findNode(currentNamespace, (node) => {
                 parent = node;
                 currentNamespace.parent = parent;
 
@@ -156,7 +156,7 @@ export var flat2Graph = () => {
                 appendChild(currentNamespace, parent);
             });
         } else {
-            ds.graph[currentNamespace.name_] = currentNamespace;
+            graph[currentNamespace.name_] = currentNamespace;
         }
     }
     //interfaces
@@ -164,7 +164,7 @@ export var flat2Graph = () => {
         var currentInterface = flat.interfaces[interfaceNode],
             parent = null;
 
-        ds.findNode(currentInterface, (node) => {
+        findNode(currentInterface, (node) => {
             parent = node;
             currentInterface.parent = parent;
 
@@ -218,7 +218,7 @@ export var flat2Graph = () => {
                 }
             }
 
-            ds.findNode(currentMethod, (node) => {
+            findNode(currentMethod, (node) => {
                 parent = node;
                 currentMethod.parent = parent;
 
@@ -256,7 +256,7 @@ export var flat2Graph = () => {
         var currentProperty = flat.properties[propertyNode],
             parent = null;
 
-        ds.findNode(currentProperty, (node) => {
+        findNode(currentProperty, (node) => {
             parent = node;
             currentProperty.parent = parent;
             appendChild(currentProperty, parent);
@@ -268,7 +268,7 @@ export var flat2Graph = () => {
         var currentEvent = flat.events[eventNode],
             parent = null;
 
-        ds.findNode(currentEvent, (node) => {
+        findNode(currentEvent, (node) => {
             parent = node;
             currentEvent.parent = parent;
             appendChild(currentMethod, parent);
