@@ -31,7 +31,8 @@ class ClassProcedures extends base.ApiProcedures<any> {
             c.exported,
             c.static,
             c.registeredtype,
-            c.registeredname
+            c.registeredname,
+            (c.usage ? c.usage : null)
         ];
     }
 
