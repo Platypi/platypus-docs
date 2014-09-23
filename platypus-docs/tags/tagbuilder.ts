@@ -56,6 +56,7 @@ export interface ParsedDocNode {
     namespace?: ITag;
     extends?: Array<any>;
     class?: ITag;
+    usage: ITag;
 }
 
 export interface ITag {
