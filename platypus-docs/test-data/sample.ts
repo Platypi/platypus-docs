@@ -38053,6 +38053,8 @@ module plat {
              * 
              * @extends {plat.ui.TemplateControl}
              * 
+             * @usage plat-foreach|element
+             * 
              * @description
              * A {@link plat.ui.TemplateControl|TemplateControl} for repeating a block of 
              * DOM nodes bound to an array.
