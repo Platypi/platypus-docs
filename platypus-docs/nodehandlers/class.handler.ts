@@ -18,7 +18,8 @@ class ClassHandler extends BaseHandler {
             parentString: (tag.extends && tag.extends[0] ? tag.extends[0].type : ''),
             namespaceString: memberof,
             interfaces: {},
-            memberof: memberof
+            memberof: memberof,
+            usage: tag.usage.name
         };
 
         //interfaces (implements) treat like params
