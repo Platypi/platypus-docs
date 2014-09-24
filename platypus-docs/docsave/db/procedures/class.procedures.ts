@@ -28,11 +28,11 @@ class ClassProcedures extends base.ApiProcedures<any> {
             c.example,
             c.exampleurl,
             c.remarks,
+            (c.usage ? c.usage : null),
             c.exported,
             c.static,
             c.registeredtype,
-            c.registeredname,
-            (c.usage ? c.usage : null)
+            c.registeredname
         ];
     }
 
