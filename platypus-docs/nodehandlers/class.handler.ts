@@ -19,7 +19,7 @@ class ClassHandler extends BaseHandler {
             namespaceString: memberof,
             interfaces: {},
             memberof: memberof,
-            usage: tag.usage.name
+            usage: (tag.usage ? tag.usage.name : null)
         };
 
         //interfaces (implements) treat like params
