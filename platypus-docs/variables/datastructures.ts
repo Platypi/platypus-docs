@@ -114,6 +114,7 @@ export var populateFlat = (tags: any): void => {
 
                     break;
                 case 'event':
+                    console.log('event: ' + parsedDocTags);
                     var newEvent = eventhandler.MakeNewEventNode(parsedDocTags),
                         eventName = newEvent.memberof + '.' + newEvent.name_;
 
