@@ -6,10 +6,8 @@
  * Generates the document graph.
  */
 
-import types = require('../docnodes');
 import fs = require('fs');
 import ds = require('../variables/datastructures');
-import tags = require('../tags/tagbuilder');
 
 var parser = require('comment-parser');
 
@@ -32,7 +30,7 @@ export module DocGen {
                 this.callback = callback;
             }
 
-            fs.readFile(src, { 
+            fs.readFile(src, {
                 encoding: 'utf8'
             }, (err, data) => {
                 this.__parsedCommentsHandler(err, data && parser(data.toString()));
@@ -68,7 +66,6 @@ export module DocGen {
              * data structure as we may not yet have all the tags
              * need to reference each other in memory.
              */
-            var flat = ds.flat;
 
             /**
              * Two loops are needed as the output of the parser 
@@ -90,8 +87,6 @@ export module DocGen {
  * Used for debugging.
  */
 function censor(censor) {
-    var i = 0;
-
     return function (key, value) {
         if (key === 'parent' ||
             key === 'namespace' ||
