@@ -11,6 +11,7 @@ import classhandler = require('../nodehandlers/class.handler');
 import interfacehandler = require('../nodehandlers/interface.handler');
 import eventhandler = require('../nodehandlers/event.handler');
 import namespacehandler = require('../nodehandlers/namespace.handler');
+import utils = require('../utils/utils');
 
 /*
  * nameHashTable
@@ -64,7 +65,8 @@ export var appendChild = (childNode: types.INode, parentNode: types.INode): void
 };
 
 export var populateFlat = (tags: any): void => {
-    for (var k in tags) {
+
+    utils.forEach(tags, (value, k, obj) => {
 
         // tmpObj stores the tags in an object so they can be referenced by name.
         var parsedDocTags: tagBuilder.ParsedDocNode = tagBuilder.buildTags(tags[k]);
@@ -76,7 +78,8 @@ export var populateFlat = (tags: any): void => {
             switch (kind) {
                 case 'function':
                     var newMethod = methodhandler.MakeNewMethodNode(parsedDocTags),
-                        methodName = (newMethod.name_ !== '') ? newMethod.memberof.toUpperCase() + '.' + newMethod.name_.toUpperCase() : '()';
+                        methodName = (newMethod.name_ !== '') ? newMethod.memberof.toUpperCase()
+                        + '.' + newMethod.name_.toUpperCase() : '()';
 
                     if (!(flat.methods[methodName] instanceof Array)) {
                         flat.methods[methodName] = [];
@@ -135,18 +138,19 @@ export var populateFlat = (tags: any): void => {
                     break;
             }
         }
-    }
+    });
 };
 
 export var flat2Graph = () => {
     // start building the graph with namespaces
-    for (var namespace in flat.namespaces) {
-        var currentNamespace = flat.namespaces[namespace],
-            parent = null;
+    utils.forEach(flat.namespaces, (namespaceValue, namespaceKey, namespaceObj) => {
+        var currentNamespace: types.INameSpaceNode = flat.namespaces[namespaceKey];
+
+        parent = null;
 
         if (currentNamespace.memberof) {
             findNode(currentNamespace, (node) => {
-                parent = node;
+                var parent = node;
                 currentNamespace.parent = parent;
 
                 if (!parent) {
@@ -158,49 +162,56 @@ export var flat2Graph = () => {
         } else {
             graph[currentNamespace.name_] = currentNamespace;
         }
-    }
-    //interfaces
-    for (var interfaceNode in flat.interfaces) {
-        var currentInterface = flat.interfaces[interfaceNode],
-            parent = null;
+    });
+    // interfaces
+    utils.forEach(flat.interfaces, (interfaceValue, interfaceKey, interfaceObj) => {
+        var currentInterface = flat.interfaces[interfaceKey];
+
+        parent = null;
 
         findNode(currentInterface, (node) => {
-            parent = node;
+            var parent = node;
             currentInterface.parent = parent;
 
-            for (var i in currentInterface.interfaces) {
-                currentInterface.interfaces[i] = nameHashTable[currentInterface.interfaces[i].name_] || currentInterface.interfaces[i];
+            var subinterfaceKeys = Object.keys(currentInterface.interfaces);
+            for (var subinterfaceNum = 0; subinterfaceNum < subinterfaceKeys.length; subinterfaceNum++) {
+                var subinterface: types.IInterfaceNode = currentInterface.interfaces[subinterfaceKeys[subinterfaceNum]];
+                currentInterface.interfaces[subinterfaceKeys[subinterfaceNum]] = nameHashTable[subinterface.name_] || subinterface;
             }
 
             appendChild(currentInterface, parent);
         });
-    }
+    });
 
-    //classes
-    for (var classNode in flat.classes) {
-        var currentClass = flat.classes[classNode],
-            parent = null;
+    // classes
+    utils.forEach(flat.classes, (classValue, classKey, classObj) => {
+        var currentClass = flat.classes[classKey];
+
+        var parent = null;
 
         currentClass.namespace = nameHashTable[currentClass.namespaceString];
         currentClass.extends = nameHashTable[currentClass.parentString];
 
         parent = currentClass.parent = currentClass.namespace;
 
-        for (var i in currentClass.interfaces) {
-            currentClass.interfaces[i] = nameHashTable[currentClass.interfaces[i].name_] || currentClass.interfaces[i];
+        var subInterfaceKeys = Object.keys(currentClass.interfaces);
+        for (var subInterfaceNum = 0; subInterfaceNum < subInterfaceKeys.length; subInterfaceNum++) {
+            var currentSubInterface: types.IInterfaceNode = currentClass.interfaces[subInterfaceKeys[subInterfaceNum]];
+            currentClass.interfaces[subInterfaceKeys[subInterfaceNum]] = nameHashTable[currentSubInterface.name_]
+            || currentClass.interfaces[subInterfaceKeys[subInterfaceNum]];
         }
 
         appendChild(currentClass, parent);
-    }
+    });
 
-    //methods
-    for (var methodArrayNode in flat.methods) {
-        for (var methodNode in flat.methods[methodArrayNode]) {
-            var currentMethod = flat.methods[methodArrayNode][methodNode],
-                parent = null,
+    // methods
+    utils.forEach(flat.methods, (value, key, obj) => {
+        utils.forEach(flat.methods[key], (v, k, o) => {
+            var currentMethod = flat.methods[key][k],
                 returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype : '');
 
-            //currentMethod.returntype = (returnTypeName !== '' ? nameHashTable[returnTypeName] : currentMethod.returntype);
+            parent = null;
+
 
             var returnTypeNode = nameHashTable[returnTypeName];
 
@@ -219,15 +230,18 @@ export var flat2Graph = () => {
             }
 
             findNode(currentMethod, (node) => {
-                parent = node;
+                var parent = node;
                 currentMethod.parent = parent;
 
-                for (var j in currentMethod.parameters) {
-                    var param: types.IParameterNode = currentMethod.parameters[j],
+                var parameterKeys = Object.keys(currentMethod.parameters);
+                for (var p = 0; p < parameterKeys.length; p++) {
+                    var param: types.IParameterNode = currentMethod.parameters[parameterKeys[p]],
                         resolvedType: types.INode = null;
+
                     if (param.type) {
                         resolvedType = nameHashTable[param.type];
                     }
+
                     if (resolvedType) {
                         switch (resolvedType.kind) {
                             case 'method':
@@ -244,16 +258,16 @@ export var flat2Graph = () => {
                         }
                     }
                     param.method = currentMethod;
-                    currentMethod.parameters[j] = param;
+                    currentMethod.parameters[parameterKeys[p]] = param;
                 }
                 appendChild(currentMethod, parent);
             });
-        }
-    }
+        });
+    });
 
-    //properties 
-    for (var propertyNode in flat.properties) {
-        var currentProperty = flat.properties[propertyNode],
+    // properties 
+    utils.forEach(flat.properties, (value, key, obj) => {
+        var currentProperty = flat.properties[key],
             parent = null;
 
         findNode(currentProperty, (node) => {
@@ -261,17 +275,18 @@ export var flat2Graph = () => {
             currentProperty.parent = parent;
             appendChild(currentProperty, parent);
         });
-    }
+    });
 
-    //events
-    for (var eventNode in flat.events) {
-        var currentEvent = flat.events[eventNode],
-            parent = null;
+    // events
+    utils.forEach(flat.events, (eventValue, eventKey, eventObj) => {
+        var currentEvent = flat.events[eventKey];
+
+        var parent = null;
 
         findNode(currentEvent, (node) => {
             parent = node;
             currentEvent.parent = parent;
-            appendChild(currentMethod, parent);
+            appendChild(currentEvent, parent);
         });
-    }
+    });
 };
