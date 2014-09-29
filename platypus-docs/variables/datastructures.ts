@@ -57,6 +57,12 @@ export var flat: {
         events: {}
 };
 
+/*
+ * Attempts to find the 'memberof' node for the given node.
+ * 
+ * @param node The node you want to find the corresponding memberof node for.
+ * @param callback The Function you wish to execute with the result.
+ */
 export var findNode = (node: INode, callback: (node: any) => void) => {
     if (!nameHashTable[node.memberof]) {
         throw new Error(node.memberof + ' not found! Node: ' + node.name_);
@@ -64,6 +70,12 @@ export var findNode = (node: INode, callback: (node: any) => void) => {
     callback(nameHashTable[node.memberof]);
 };
 
+/*
+ * Appends the child node to the parent node.
+ * 
+ * @param childNode The node you wish to append to the parent.
+ * @param parentNode The node you wish to append the child to.
+ */
 export var appendChild = (childNode: INode, parentNode: INode): void => {
     var parent = parentNode;
 
@@ -72,6 +84,11 @@ export var appendChild = (childNode: INode, parentNode: INode): void => {
     parent[name] = childNode;
 };
 
+/*
+ * Populates the 'flat' array data structure with the given tags from the pareser.
+ * 
+ * @param tags Parsed tags returned from the parser.
+ */
 export var populateFlat = (tags: any): void => {
     utils.forEach(tags, (value, k, obj) => {
 
@@ -99,6 +116,9 @@ export var populateFlat = (tags: any): void => {
     });
 };
 
+/*
+ * Converts the flat array data structure to a graph structure.
+ */
 export var flat2Graph = () => {
     var graphHandlers: Array<IGraphHandler> = [];
 
