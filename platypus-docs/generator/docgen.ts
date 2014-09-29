@@ -8,8 +8,10 @@
 
 import fs = require('fs');
 import ds = require('../variables/datastructures');
+import PromiseStatic = require('es6-promise');
 
-var parser = require('comment-parser');
+var parser = require('comment-parser'),
+    Promise = PromiseStatic.Promise;
 
 export module DocGen {
     
@@ -20,69 +22,62 @@ export module DocGen {
 
         nameHash = ds.nameHashTable;
 
-        callback = (graph) => { };
-
         debug = false;
 
-        buildGraphFromFile (src: string, callback: (graph) => void, debug: boolean = false) {
+        buildGraphFromFile (src: string, debug: boolean = false): Thenable<any> {
             this.debug = debug;
-            if (callback) {
-                this.callback = callback;
-            }
-
-            fs.readFile(src, {
-                encoding: 'utf8'
-            }, (err, data) => {
-                if (err) {
-                    console.log(err);
-                    throw new Error('failed to read file');
-                }
-                this.__parsedCommentsHandler(err, data && parser(data.toString()));
+            return new Promise((resolve, reject) => {
+                fs.readFile(src, {
+                    encoding: 'utf8'
+                }, (err, data) => {
+                        if (err) {
+                            reject(err);
+                        }
+                        this.__parsedCommentsHandler(err, data && parser(data.toString())).then((graph) => {
+                            resolve(graph);
+                        });
+                    });
             });
         }
 
-        private __parsedCommentsHandler(err: any, data: any) {
+        private __parsedCommentsHandler(err: any, data: any): Thenable<any> {
             if (!err) {
-                this.__graphGen(data, this.__graphHandler);
+                return this.__graphGen(data).then((graph) => {
+                    return this.__graphHandler(graph);
+                });
             } else {
                 console.log(new Error(err));
             }
         }
 
 
-        private __graphHandler (graph: any) {
+        private __graphHandler (graph: any): Thenable<any> {
             if (this.debug) {
                 console.log(JSON.stringify(graph, censor(graph), 4));
             }
-
-            if (this.callback) {
+            return new Promise((resolve, reject) => {
                 ds.nameHashTable = this.nameHash;
-                this.callback(graph);
-            }
+                resolve(graph);
+            });
         }
 
         /**
          * Generate a graph of tags as they appear in code.
          */
-        private __graphGen(tags: any, callback: (graph: any) => void) {
-            /*
-             * First run through will generate a flat 
-             * data structure as we may not yet have all the tags
-             * need to reference each other in memory.
-             */
+        private __graphGen(tags: any): Thenable<any> {
+            return new Promise((resolve, reject) => {
+                /*
+                 * Two loops are needed as the output of the parser 
+                 * results in nested tags.
+                 */
+                ds.populateFlat(tags);
 
-            /**
-             * Two loops are needed as the output of the parser 
-             * results in nested tags.
-             */
-            ds.populateFlat(tags);
-
-            /*
-             * Convert the flat data structure into a graph.
-             */
-            ds.flat2Graph();
-
-            this.callback(ds.graph);
+                /*
+                 * Convert the flat data structure into a graph.
+                 */
+                ds.flat2Graph();
+                resolve(ds.graph);
+            });
         }
     }
 }
