@@ -78,73 +78,23 @@ export var populateFlat = (tags: any): void => {
         // tmpObj stores the tags in an object so they can be referenced by name.
         var parsedDocTags: IParsedDocNode = tagBuilder.buildTags(tags[k]);
 
-
         if (parsedDocTags.kind) {
             var kind: string = (<string>parsedDocTags.kind.name).trim().toLowerCase();
 
-            switch (kind) {
-                case 'function':
-                    var newMethod = methodhandler.MakeNewMethodNode(parsedDocTags),
-                        methodName = (newMethod.name_ !== '') ? newMethod.memberof.toUpperCase()
-                        + '.' + newMethod.name_.toUpperCase() : '()';
-
-                    if (!(flat.methods[methodName] instanceof Array)) {
-                        flat.methods[methodName] = [];
-                    }
-
-                    flat.methods[methodName].push(newMethod);
-                    nameHashTable[methodName] = flat.methods[methodName];
-
-                    break;
-                case 'property':
-                    var newProperty = propertyhandler.MakeNewPropertyNode(parsedDocTags),
-                        propertyName = newProperty.memberof + '.' + newProperty.name_;
-
-                    flat.properties[propertyName] = newProperty;
-                    nameHashTable[propertyName] = flat.properties[propertyName];
-
-                    break;
-                case 'class':
-                    var newClass = classhandler.MakeNewClassNode(parsedDocTags),
-                        className = newClass.memberof + '.' + newClass.name_;
-
-                    flat.classes[className] = newClass;
-                    nameHashTable[className] = flat.classes[className];
-
-                    break;
-                case 'interface':
-                    var newInterface = interfacehandler.MakeNewInterfaceNode(parsedDocTags),
-                        interfaceName = newInterface.memberof + '.' + newInterface.name_;
-
-                    flat.interfaces[interfaceName] = newInterface;
-                    nameHashTable[interfaceName] = flat.interfaces[interfaceName];
-
-                    break;
-                case 'event':
-                    console.log('event: ' + parsedDocTags);
-                    var newEvent = eventhandler.MakeNewEventNode(parsedDocTags),
-                        eventName = newEvent.memberof + '.' + newEvent.name_;
-
-                    flat.events[eventName] = newEvent;
-                    nameHashTable[eventName] = flat.events[eventName];
-
-                    break;
-                case 'namespace':
-                    var newNamespace = namespacehandler.MakeNewNamespaceNode(parsedDocTags),
-                        namespaceName = '';
-
-                    // account for root namespaces
-                    if (!!newNamespace.memberof) {
-                        namespaceName = newNamespace.memberof + '.' + newNamespace.name_;
-                    } else {
-                        namespaceName = newNamespace.name_;
-                    }
-
-                    flat.namespaces[namespaceName] = newNamespace;
-                    nameHashTable[namespaceName] = flat.namespaces[namespaceName];
-
-                    break;
+            if (kind === 'function') {
+                methodhandler.addToDataStructures(parsedDocTags);
+            } else if (kind === 'property') {
+                propertyhandler.addToDataStructures(parsedDocTags);
+            } else if (kind === 'class') {
+                classhandler.addToDataStructures(parsedDocTags);
+            } else if (kind === 'interface') {
+                interfacehandler.addToDataStructures(parsedDocTags);
+            } else if (kind === 'event') {
+                eventhandler.addToDataStructures(parsedDocTags);
+            } else if (kind === 'namespace') {
+                namespacehandler.addToDataStructures(parsedDocTags);
             }
+
         }
     });
 };
