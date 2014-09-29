@@ -45,6 +45,11 @@ class BaseHandler {
             return typeString.slice(0, typeString.indexOf('<'));
         }
     }
+
+    static handleName(node: INode): string {
+        return node.memberof + '.' + node.name_;
+    }
+
 }
 
 export = BaseHandler;
