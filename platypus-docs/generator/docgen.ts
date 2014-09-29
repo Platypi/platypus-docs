@@ -1,4 +1,4 @@
-﻿/// <reference path="../typings/tsd.d.ts" />
+﻿/// <reference path="../_references.ts" />
 
 
 /*
@@ -33,11 +33,15 @@ export module DocGen {
             fs.readFile(src, {
                 encoding: 'utf8'
             }, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    throw new Error('failed to read file');
+                }
                 this.__parsedCommentsHandler(err, data && parser(data.toString()));
             });
         }
 
-        private __parsedCommentsHandler (err: any, data: any) {
+        private __parsedCommentsHandler(err: any, data: any) {
             if (!err) {
                 this.__graphGen(data, this.__graphHandler);
             } else {
@@ -60,7 +64,7 @@ export module DocGen {
         /**
          * Generate a graph of tags as they appear in code.
          */
-        private __graphGen (tags: any, callback: (graph: any) => void) {
+        private __graphGen(tags: any, callback: (graph: any) => void) {
             /*
              * First run through will generate a flat 
              * data structure as we may not yet have all the tags
@@ -78,7 +82,7 @@ export module DocGen {
              */
             ds.flat2Graph();
 
-            callback(ds.graph);
+            this.callback(ds.graph);
         }
     }
 }

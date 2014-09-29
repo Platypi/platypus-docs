@@ -73,7 +73,6 @@ export var appendChild = (childNode: INode, parentNode: INode): void => {
 };
 
 export var populateFlat = (tags: any): void => {
-
     utils.forEach(tags, (value, k, obj) => {
 
         // tmpObj stores the tags in an object so they can be referenced by name.
