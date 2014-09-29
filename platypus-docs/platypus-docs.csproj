@@ -32,6 +32,7 @@
     <TypeScriptCompile Include="nodehandlers\nodeinterfaces\methodnode.interface.ts" />
     <TypeScriptCompile Include="nodehandlers\nodeinterfaces\namespacenode.interface.ts" />
     <TypeScriptCompile Include="nodehandlers\nodeinterfaces\node.interface.ts" />
+    <TypeScriptCompile Include="nodehandlers\nodeinterfaces\nodes.interfaces.ts" />
     <TypeScriptCompile Include="nodehandlers\nodeinterfaces\overridenode.interface.ts" />
     <TypeScriptCompile Include="nodehandlers\nodeinterfaces\parameternode.interface.ts" />
     <TypeScriptCompile Include="nodehandlers\nodeinterfaces\propertynode.interface.ts" />
