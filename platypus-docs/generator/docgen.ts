@@ -24,6 +24,12 @@ export module DocGen {
 
         debug = false;
 
+        /*
+         * Build the necessary data structures from an input file.
+         * 
+         * @param src The path to the input file.
+         * @param debug A flag to turn on/off debugging information.
+         */
         buildGraphFromFile (src: string, debug: boolean = false): Thenable<any> {
             this.debug = debug;
             return new Promise((resolve, reject) => {
@@ -40,6 +46,12 @@ export module DocGen {
             });
         }
 
+        /*
+         * Handles the parsed comments, passes them to the graph handler.
+         * 
+         * @param err Any errors that come from the parser.
+         * @param data Data returned from the parser.
+         */
         private __parsedCommentsHandler(err: any, data: any): Thenable<any> {
             if (!err) {
                 return this.__graphGen(data).then((graph) => {
@@ -50,7 +62,11 @@ export module DocGen {
             }
         }
 
-
+        /*
+         * Sets the datastructure for the returned graph.
+         * 
+         * @param graph The graph returned from the graph generator.
+         */
         private __graphHandler (graph: any): Thenable<any> {
             if (this.debug) {
                 console.log(JSON.stringify(graph, censor(graph), 4));
