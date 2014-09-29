@@ -3,7 +3,7 @@
 import BaseHandler = require('./base.handler');
 
 class PropertyHandler extends BaseHandler {
-    static MakeNewPropertyNode = (tag: IParsedDocNode): IPropertyNode => {
+    static MakeNewPropertyNode (tag: IParsedDocNode): IPropertyNode {
         var newProperty: IPropertyNode = {
             name_: tag.name.name,
             description_: tag.description.description,
@@ -20,7 +20,7 @@ class PropertyHandler extends BaseHandler {
         };
 
         return newProperty;
-    };
+    }
 }
 
 export = PropertyHandler;

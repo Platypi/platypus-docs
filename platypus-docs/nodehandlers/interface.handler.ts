@@ -5,7 +5,7 @@ import utils = require('../utils/utils');
 
 
 class InterfaceHandler extends BaseHandler {
-    static MakeNewInterfaceNode = (interfaceTag: IParsedDocNode) => {
+    static MakeNewInterfaceNode (interfaceTag: IParsedDocNode) {
         var newInterface: IInterfaceNode = {
             name_: interfaceTag.name.name,
             kind: interfaceTag.kind.name,
@@ -34,7 +34,7 @@ class InterfaceHandler extends BaseHandler {
         BaseHandler.handleTypeParams(interfaceTag.typeparams, newInterface);
 
         return newInterface;
-    };
+    }
 }
 
 export = InterfaceHandler;

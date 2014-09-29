@@ -4,7 +4,7 @@ import BaseHandler = require('./base.handler');
 import utils = require('../utils/utils');
 
 class ClassHandler extends BaseHandler {
-    static MakeNewClassNode = (tag: IParsedDocNode) => {
+    static MakeNewClassNode (tag: IParsedDocNode) {
         var memberof = (tag.memberof ? tag.memberof.name : '');
 
         var newClass: IClassNode = {
@@ -39,7 +39,7 @@ class ClassHandler extends BaseHandler {
         BaseHandler.handleTypeParams(tag.typeparams, newClass);
 
         return newClass;
-    };
+    }
 }
 
 export = ClassHandler;

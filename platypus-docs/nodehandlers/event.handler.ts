@@ -3,7 +3,7 @@
 import BaseHandler = require('./base.handler');
 
 class EventHandler extends BaseHandler {
-    static MakeNewEventNode = (tag: IParsedDocNode) => {
+    static MakeNewEventNode (tag: IParsedDocNode) {
         var newEvent: IEvent = {
             name_: tag.name.name,
             kind: tag.kind.name,
@@ -17,7 +17,7 @@ class EventHandler extends BaseHandler {
         };
 
         return newEvent;
-    };
-};
+    }
+}
 
 export = EventHandler;

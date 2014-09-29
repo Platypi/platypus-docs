@@ -3,7 +3,7 @@
 import BaseHandler = require('./base.handler');
 
 class NamespaceHandler extends BaseHandler {
-    static MakeNewNamespaceNode = (tag: IParsedDocNode) => {
+    static MakeNewNamespaceNode (tag: IParsedDocNode) {
         var newNamespace: INameSpaceNode = {
             name_: tag.name.name,
             kind: tag.kind.name,
@@ -16,7 +16,7 @@ class NamespaceHandler extends BaseHandler {
         };
 
         return newNamespace;
-    };
+    }
 }
 
 export = NamespaceHandler;

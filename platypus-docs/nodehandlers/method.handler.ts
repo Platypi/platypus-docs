@@ -1,7 +1,7 @@
 ﻿import BaseHandler = require('./base.handler');
 
 class MethodHandler extends BaseHandler {
-    static MakeNewMethodNode = (tag: IParsedDocNode): IMethodNode => {
+    static MakeNewMethodNode (tag: IParsedDocNode): IMethodNode {
         var memberof: string = (tag.memberof ? (<string>tag.memberof.name).trim() : '');
 
         // if name is blank, the method is an interface
@@ -49,7 +49,7 @@ class MethodHandler extends BaseHandler {
         BaseHandler.handleTypeParams(tag.typeparams, newMethod);
 
         return newMethod;
-    };
+    }
 }
 
 export = MethodHandler;

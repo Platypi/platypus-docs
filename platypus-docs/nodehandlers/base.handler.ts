@@ -3,7 +3,7 @@
 import utils = require('../utils/utils');
 
 class BaseHandler {
-    static handleTypeParams = (typeparams: Array<ITag>, node: INode) => {
+    static handleTypeParams(typeparams: Array<ITag>, node: INode) {
         if (!utils.isNull(typeparams)) {
             for (var t = 0; t < typeparams.length; t++) {
                 var currentTag: ITag = typeparams[t],
@@ -36,15 +36,15 @@ class BaseHandler {
                 node.typeparameters[newTypeParameter.name_ + '_'] = newTypeParameter;
             }
         }
-    };
+    }
 
-    static stripTypeParam = (typeString: string): string => {
+    static stripTypeParam (typeString: string): string {
         if (typeString.indexOf('<') < 0) {
             return typeString;
         } else {
             return typeString.slice(0, typeString.indexOf('<'));
         }
-    };
+    }
 }
 
 export = BaseHandler;

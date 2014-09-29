@@ -24,7 +24,7 @@ export module DocGen {
 
         debug = false;
 
-        buildGraphFromFile = (src: string, callback: (graph) => void, debug: boolean = false) => {
+        buildGraphFromFile (src: string, callback: (graph) => void, debug: boolean = false) {
             this.debug = debug;
             if (callback) {
                 this.callback = callback;
@@ -35,18 +35,18 @@ export module DocGen {
             }, (err, data) => {
                 this.__parsedCommentsHandler(err, data && parser(data.toString()));
             });
-        };
+        }
 
-        private __parsedCommentsHandler = (err: any, data: any) => {
+        private __parsedCommentsHandler (err: any, data: any) {
             if (!err) {
                 this.__graphGen(data, this.__graphHandler);
             } else {
                 console.log(new Error(err));
             }
-        };
+        }
 
 
-        private __graphHandler = (graph: any) => {
+        private __graphHandler (graph: any) {
             if (this.debug) {
                 console.log(JSON.stringify(graph, censor(graph), 4));
             }
@@ -55,12 +55,12 @@ export module DocGen {
                 ds.nameHashTable = this.nameHash;
                 this.callback(graph);
             }
-        };
+        }
 
         /**
          * Generate a graph of tags as they appear in code.
          */
-        private __graphGen = (tags: any, callback: (graph: any) => void) => {
+        private __graphGen (tags: any, callback: (graph: any) => void) {
             /*
              * First run through will generate a flat 
              * data structure as we may not yet have all the tags
@@ -79,7 +79,7 @@ export module DocGen {
             ds.flat2Graph();
 
             callback(ds.graph);
-        };
+        }
     }
 }
 
