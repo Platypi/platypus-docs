@@ -1,7 +1,10 @@
-﻿import BaseHandler = require('./base.handler');
+﻿/// <reference path="../_references.ts" />
+
+import BaseHandler = require('./base.handler');
+import ds = require('../variables/datastructures');
 
 class MethodHandler extends BaseHandler {
-    static MakeNewMethodNode (tag: IParsedDocNode): IMethodNode {
+    static makeNewMethodNode (tag: IParsedDocNode): IMethodNode {
         var memberof: string = (tag.memberof ? (<string>tag.memberof.name).trim() : '');
 
         // if name is blank, the method is an interface
@@ -49,6 +52,23 @@ class MethodHandler extends BaseHandler {
         BaseHandler.handleTypeParams(tag.typeparams, newMethod);
 
         return newMethod;
+    }
+
+    static handleName(newMethod: IMethodNode): string {
+        return (newMethod.name_ !== '') ? newMethod.memberof.toUpperCase()
+            + '.' + newMethod.name_.toUpperCase() : '()';
+    }
+
+    static addToDataStructures(tag: IParsedDocNode): void {
+        var newMethod = MethodHandler.makeNewMethodNode(tag),
+            methodName = MethodHandler.handleName(newMethod);
+
+        if (!(ds.flat.methods[methodName] instanceof Array)) {
+            ds.flat.methods[methodName] = [];
+        }
+
+        ds.flat.methods[methodName].push(newMethod);
+        ds.nameHashTable[methodName] = ds.flat.methods[methodName];
     }
 }
 

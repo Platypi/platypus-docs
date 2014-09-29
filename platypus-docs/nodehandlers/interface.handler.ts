@@ -2,6 +2,7 @@
 
 import BaseHandler = require('./base.handler');
 import utils = require('../utils/utils');
+import ds = require('../variables/datastructures');
 
 
 class InterfaceHandler extends BaseHandler {
@@ -34,6 +35,14 @@ class InterfaceHandler extends BaseHandler {
         BaseHandler.handleTypeParams(interfaceTag.typeparams, newInterface);
 
         return newInterface;
+    }
+
+    static addToDataStructures(tag: IParsedDocNode): void {
+        var newInterface = InterfaceHandler.MakeNewInterfaceNode(tag),
+            interfaceName = InterfaceHandler.handleName(newInterface);
+
+        ds.flat.interfaces[interfaceName] = newInterface;
+        ds.nameHashTable[interfaceName] = ds.flat.interfaces[interfaceName];
     }
 }
 

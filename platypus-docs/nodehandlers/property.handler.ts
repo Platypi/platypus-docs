@@ -1,6 +1,7 @@
 ﻿/// <reference path="../_references.ts" />
 
 import BaseHandler = require('./base.handler');
+import ds = require('../variables/datastructures');
 
 class PropertyHandler extends BaseHandler {
     static MakeNewPropertyNode (tag: IParsedDocNode): IPropertyNode {
@@ -20,6 +21,14 @@ class PropertyHandler extends BaseHandler {
         };
 
         return newProperty;
+    }
+
+    static addToDataStructures(tag: IParsedDocNode): void {
+        var newProperty = PropertyHandler.MakeNewPropertyNode(tag),
+            propertyName = PropertyHandler.handleName(newProperty);
+
+        ds.flat.properties[propertyName] = newProperty;
+        ds.nameHashTable[propertyName] = ds.flat.properties[propertyName];
     }
 }
 

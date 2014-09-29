@@ -2,6 +2,7 @@
 
 import BaseHandler = require('./base.handler');
 import utils = require('../utils/utils');
+import ds = require('../variables/datastructures');
 
 class ClassHandler extends BaseHandler {
     static MakeNewClassNode (tag: IParsedDocNode) {
@@ -39,6 +40,15 @@ class ClassHandler extends BaseHandler {
         BaseHandler.handleTypeParams(tag.typeparams, newClass);
 
         return newClass;
+    }
+
+    static addToDataStructures(tag: IParsedDocNode): void {
+        var newClass = ClassHandler.MakeNewClassNode(tag),
+            className = ClassHandler.handleName(newClass);
+
+        ds.flat.classes[className] = newClass;
+        ds.nameHashTable[className] = ds.flat.classes[className];
+
     }
 }
 

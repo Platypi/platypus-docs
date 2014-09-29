@@ -1,6 +1,7 @@
 ﻿/// <reference path="../_references.ts" />
 
 import BaseHandler = require('./base.handler');
+import ds = require('../variables/datastructures');
 
 class EventHandler extends BaseHandler {
     static MakeNewEventNode (tag: IParsedDocNode) {
@@ -17,6 +18,15 @@ class EventHandler extends BaseHandler {
         };
 
         return newEvent;
+    }
+
+    static addToDataStructures(tag: IParsedDocNode): void {
+        var newEvent = EventHandler.MakeNewEventNode(tag),
+            eventName = EventHandler.handleName(newEvent);
+
+        ds.flat.events[eventName] = newEvent;
+        ds.nameHashTable[eventName] = ds.flat.events[eventName];
+
     }
 }
 
