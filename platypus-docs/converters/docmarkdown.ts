@@ -1,10 +1,11 @@
-﻿/*
+﻿/// <reference path="../_references.ts" />
+
+/*
  * docmarkdown
  * Uses a regular expression to replace the {@link } tags with markdown links.
  */
 
 import ds = require('../variables/datastructures');
-import types = require('../docnodes');
 
 var linkReg = /\{@link (.*?)[|](.*?)\}/g;
 
@@ -18,7 +19,7 @@ var linkToMarkup = (content: string, baseURI: string): string => {
             qualifiedPath = qualifiedPath.slice(0, typeParamStart);
         }
 
-        var node: types.INode = ds.nameHashTable[qualifiedPath],
+        var node: INode = ds.nameHashTable[qualifiedPath],
             keyCount: number = Object.keys(ds.nameHashTable).length;
 
         if (!node) {

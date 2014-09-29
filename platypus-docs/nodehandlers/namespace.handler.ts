@@ -1,11 +1,11 @@
-﻿import BaseHandler = require('./base.handler');
-import utils = require('../utils/utils');
-import types = require('../docnodes');
+﻿/// <reference path="../_references.ts" />
+
+import BaseHandler = require('./base.handler');
 import tags = require('../tags/tagbuilder');
 
 class NamespaceHandler extends BaseHandler {
     static MakeNewNamespaceNode = (tag: tags.ParsedDocNode) => {
-        var newNamespace: types.INameSpaceNode = {
+        var newNamespace: INameSpaceNode = {
             name_: tag.name.name,
             kind: tag.kind.name,
             description_: tag.description.description,

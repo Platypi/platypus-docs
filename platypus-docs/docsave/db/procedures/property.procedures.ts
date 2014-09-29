@@ -1,9 +1,7 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
-/// <reference path="../db.d.ts" />
+﻿/// <reference path="../../../_references.ts" />
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import DocNodeTypes = require('../../../docnodes');
 
 class PropertyProcedures extends base.ApiProcedures<any> {
     constructor() {
@@ -14,7 +12,7 @@ class PropertyProcedures extends base.ApiProcedures<any> {
         return this.procedure.substr(0, this.procedure.length - 1) + 'ies';
     }
 
-    getArgs(property: DocNodeTypes.IPropertyNode): Array<any> {
+    getArgs(property: IPropertyNode): Array<any> {
         if (!utils.isObject(property)) {
             return [];
         }
@@ -41,9 +39,9 @@ class PropertyProcedures extends base.ApiProcedures<any> {
             interfaceid,
             property.name_,
             property.type,
-            null,//property.classtype.id,
-            null,//property.interfacetype.id,
-            null,//property.methodtype.id,
+            null, // property.classtype.id,
+            null, // property.interfacetype.id,
+            null, // property.methodtype.id,
             property.description_,
             property.remarks,
             property.visibility,

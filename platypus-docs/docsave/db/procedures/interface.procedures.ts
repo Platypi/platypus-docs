@@ -1,17 +1,14 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
-/// <reference path="../db.d.ts" />
-
+﻿/// <reference path="../../../_references.ts" />
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import DocNodeTypes = require('../../../docnodes');
 
 class InterfaceProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('Interface');
     }
 
-    getArgs(i: DocNodeTypes.IInterfaceNode) {
+    getArgs(i: IInterfaceNode) {
         if (!utils.isObject(i)) {
             return [];
         }

@@ -1,11 +1,11 @@
-﻿import BaseHandler = require('./base.handler');
-import utils = require('../utils/utils');
-import types = require('../docnodes');
+﻿/// <reference path="../_references.ts" />
+
+import BaseHandler = require('./base.handler');
 import tags = require('../tags/tagbuilder');
 
 class PropertyHandler extends BaseHandler {
-    static MakeNewPropertyNode = (tag: tags.ParsedDocNode): types.IPropertyNode => {
-        var newProperty: types.IPropertyNode = {
+    static MakeNewPropertyNode = (tag: tags.ParsedDocNode): IPropertyNode => {
+        var newProperty: IPropertyNode = {
             name_: tag.name.name,
             description_: tag.description.description,
             kind: tag.kind.name,

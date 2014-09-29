@@ -1,14 +1,12 @@
 ﻿import BaseHandler = require('./base.handler');
-import utils = require('../utils/utils');
-import types = require('../docnodes');
 import tags = require('../tags/tagbuilder');
 
 class MethodHandler extends BaseHandler {
-    static MakeNewMethodNode = (tag: tags.ParsedDocNode): types.IMethodNode => {
+    static MakeNewMethodNode = (tag: tags.ParsedDocNode): IMethodNode => {
         var memberof: string = (tag.memberof ? (<string>tag.memberof.name).trim() : '');
 
         // if name is blank, the method is an interface
-        var newMethod: types.IMethodNode = {
+        var newMethod: IMethodNode = {
             name_: (tag.name ? tag.name.name : ''),
             description_: tag.description.description,
             kind: 'method',
@@ -18,7 +16,6 @@ class MethodHandler extends BaseHandler {
             remarks: (tag.remarks ? tag.remarks.description : ''),
             published: (!tag.published ? true : (tag.published.name !== 'false')),
             exported: (!tag.exported ? true : (tag.exported.name !== 'false')),
-            //typeparamaters: (parsedDocTags.typeparams ? parsedDocTags.typeparams.name : ''),
             returntype: (tag.returns ? tag.returns.type : ''),
             returntypedesc: (tag.returns ? tag.returns.name + ' ' + tag.returns.description : ''),
             optional: (tag.optional ? true : false),
@@ -29,7 +26,7 @@ class MethodHandler extends BaseHandler {
         // push the params onto the tmpObj
         if (tag.params) {
             for (var z = 0; z < tag.params.length; z++) {
-                var newParameter: types.IParameterNode = {
+                var newParameter: IParameterNode = {
                     name_: tag.params[z].name,
                     memberof: tag.params[z].memberof,
                     kind: 'parameter',

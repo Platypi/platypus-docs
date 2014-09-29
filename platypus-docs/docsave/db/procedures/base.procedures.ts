@@ -1,14 +1,13 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
+﻿/// <reference path="../../../_references.ts" />
 
 
 import utils = require('../../../utils/utils');
 import PromiseStatic = require('es6-promise');
 import pool = require('../connection');
-import types = require('../../../docnodes');
 
 var Promise = PromiseStatic.Promise;
 
-class BaseProcedures<T extends types.INode> {
+class BaseProcedures<T extends INode> {
     static query(sql: string): Thenable<any>;
     static query(sql: string, values?: Array<any>): Thenable<any>;
     static query(sql: string, values?: Array<any>): Thenable<any> {

@@ -1,10 +1,7 @@
-﻿/// <reference path="../db.d.ts" />
-/// <reference path="../../../typings/tsd.d.ts" />
-
+﻿/// <reference path="../../../_references.ts" />
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import DocNodeTypes = require('../../../docnodes');
 
 class ClassProcedures extends base.ApiProcedures<any> {
     constructor() {
@@ -15,7 +12,7 @@ class ClassProcedures extends base.ApiProcedures<any> {
         return this.procedure + 'es';
     }
 
-    getArgs(c: DocNodeTypes.IClassNode): Array<any> {
+    getArgs(c: IClassNode): Array<any> {
         if (!utils.isObject(c)) {
             return [];
         }

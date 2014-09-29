@@ -1,15 +1,14 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
+﻿/// <reference path="../../../_references.ts" />
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import types = require('../../../docnodes');
 
 class TypeParameterProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('TypeParameter');
     }
 
-    getArgs(parameter: types.ITypeParameterNode): Array<any> {
+    getArgs(parameter: ITypeParameterNode): Array<any> {
         if (!utils.isObject(parameter)) {
             return [];
         }

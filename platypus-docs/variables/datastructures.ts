@@ -1,8 +1,9 @@
-﻿/*
+﻿/// <reference path="../_references.ts" />
+
+/*
  * Global Data Strucutres
  */
 
-import types = require('../docnodes');
 import tagBuilder = require('../tags/tagbuilder');
 
 import methodhandler = require('../nodehandlers/method.handler');
@@ -12,6 +13,7 @@ import interfacehandler = require('../nodehandlers/interface.handler');
 import eventhandler = require('../nodehandlers/event.handler');
 import namespacehandler = require('../nodehandlers/namespace.handler');
 import utils = require('../utils/utils');
+import namespacegraphnodehandler = require('../generator/graphhandlers/namespace.graphhandler');
 
 /*
  * nameHashTable
@@ -24,7 +26,7 @@ export var nameHashTable = {};
  * The actual graph that is traversed and stored in the database.
  */
 export var graph: {
-    [index: string]: types.INameSpaceNode
+    [index: string]: INameSpaceNode
 } = {};
 
 /*
@@ -32,13 +34,13 @@ export var graph: {
  * An array of nodes stored by their 'kind'.
  */
 export var flat: {
-    namespaces: { [name: string]: types.INameSpaceNode };
-    interfaces: { [name: string]: types.IInterfaceNode };
-    classes: { [name: string]: types.IClassNode };
-    methods: { [name: string]: Array<types.IMethodNode> };
-    properties: { [name: string]: types.IPropertyNode };
-    parameters: { [name: string]: types.IParameterNode };
-    events: { [name: string]: types.IEvent };
+    namespaces: { [name: string]: INameSpaceNode };
+    interfaces: { [name: string]: IInterfaceNode };
+    classes: { [name: string]: IClassNode };
+    methods: { [name: string]: Array<IMethodNode> };
+    properties: { [name: string]: IPropertyNode };
+    parameters: { [name: string]: IParameterNode };
+    events: { [name: string]: IEvent };
 } = {
         namespaces: {},
         interfaces: {},
@@ -49,14 +51,14 @@ export var flat: {
         events: {}
 };
 
-export var findNode = (node: types.INode, callback: (node: any) => void) => {
+export var findNode = (node: INode, callback: (node: any) => void) => {
     if (!nameHashTable[node.memberof]) {
         throw new Error(node.memberof + ' not found! Node: ' + node.name_);
     }
     callback(nameHashTable[node.memberof]);
 };
 
-export var appendChild = (childNode: types.INode, parentNode: types.INode): void => {
+export var appendChild = (childNode: INode, parentNode: INode): void => {
     var parent = parentNode;
 
     var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_;
@@ -144,8 +146,9 @@ export var populateFlat = (tags: any): void => {
 
 export var flat2Graph = () => {
     // start building the graph with namespaces
+    
     utils.forEach(flat.namespaces, (namespaceValue, namespaceKey, namespaceObj) => {
-        var currentNamespace: types.INameSpaceNode = flat.namespaces[namespaceKey];
+        var currentNamespace: INameSpaceNode = flat.namespaces[namespaceKey];
 
         parent = null;
 
@@ -176,7 +179,7 @@ export var flat2Graph = () => {
 
             var subinterfaceKeys = Object.keys(currentInterface.interfaces);
             for (var subinterfaceNum = 0; subinterfaceNum < subinterfaceKeys.length; subinterfaceNum++) {
-                var subinterface: types.IInterfaceNode = currentInterface.interfaces[subinterfaceKeys[subinterfaceNum]];
+                var subinterface: IInterfaceNode = currentInterface.interfaces[subinterfaceKeys[subinterfaceNum]];
                 currentInterface.interfaces[subinterfaceKeys[subinterfaceNum]] = nameHashTable[subinterface.name_] || subinterface;
             }
 
@@ -197,7 +200,7 @@ export var flat2Graph = () => {
 
         var subInterfaceKeys = Object.keys(currentClass.interfaces);
         for (var subInterfaceNum = 0; subInterfaceNum < subInterfaceKeys.length; subInterfaceNum++) {
-            var currentSubInterface: types.IInterfaceNode = currentClass.interfaces[subInterfaceKeys[subInterfaceNum]];
+            var currentSubInterface: IInterfaceNode = currentClass.interfaces[subInterfaceKeys[subInterfaceNum]];
             currentClass.interfaces[subInterfaceKeys[subInterfaceNum]] = nameHashTable[currentSubInterface.name_]
             || currentClass.interfaces[subInterfaceKeys[subInterfaceNum]];
         }
@@ -236,8 +239,8 @@ export var flat2Graph = () => {
 
                 var parameterKeys = Object.keys(currentMethod.parameters);
                 for (var p = 0; p < parameterKeys.length; p++) {
-                    var param: types.IParameterNode = currentMethod.parameters[parameterKeys[p]],
-                        resolvedType: types.INode = null;
+                    var param: IParameterNode = currentMethod.parameters[parameterKeys[p]],
+                        resolvedType: INode = null;
 
                     if (param.type) {
                         resolvedType = nameHashTable[param.type];

@@ -1,16 +1,14 @@
-﻿import types = require('../docnodes');
+﻿/// <reference path="../_references.ts" />
+
 import tags = require('../tags/tagbuilder');
 import utils = require('../utils/utils');
-import PromiseStatic = require('es6-promise');
-
-var Promise = PromiseStatic.Promise;
 
 class BaseHandler {
-    static handleTypeParams = (typeparams: Array<tags.ITag>, node: types.INode) => {
+    static handleTypeParams = (typeparams: Array<tags.ITag>, node: INode) => {
         if (!utils.isNull(typeparams)) {
             for (var t = 0; t < typeparams.length; t++) {
                 var currentTag: tags.ITag = typeparams[t],
-                    newTypeParameter: types.ITypeParameterNode = {
+                    newTypeParameter: ITypeParameterNode = {
                         name_: currentTag.name,
                         kind: 'typeparam',
                         typeString: currentTag.type,

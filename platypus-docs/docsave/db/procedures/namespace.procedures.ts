@@ -1,16 +1,14 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
-/// <reference path="../db.d.ts" />
+﻿/// <reference path="../../../_references.ts" />
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import DocNodeTypes = require('../../../docnodes');
 
 class NamespaceProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('Namespace');
     }
 
-    getArgs(namespace: DocNodeTypes.INameSpaceNode): Array<any> {
+    getArgs(namespace: INameSpaceNode): Array<any> {
         if (!utils.isObject(namespace)) {
             return [];
         }

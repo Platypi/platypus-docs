@@ -1,15 +1,14 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
+﻿/// <reference path="../../../_references.ts" />
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import DocNodeTypes = require('../../../docnodes');
 
 class EventProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('Event');
     }
 
-    getArgs(ev: DocNodeTypes.IEvent) {
+    getArgs(ev: IEvent) {
         if (!utils.isObject(ev)) {
             return [];
         }

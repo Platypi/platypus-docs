@@ -1,11 +1,10 @@
-﻿/// <reference path="../typings/tsd.d.ts" />
+﻿/// <reference path="../_references.ts" />
 
 /*
  * storegraph
  * Traverses the graph and stores the nodes in the database.
  */
 
-import DocNodeTypes = require('../docnodes');
 import utils = require('../utils/utils');
 import PromiseStatic = require('es6-promise');
 
@@ -29,7 +28,6 @@ var Promise = PromiseStatic.Promise,
     parametersList = [],
     typeparametersList = [],
     subproceduresList = [],
-    failedClassesList = [],
     pendingLinks = [];
 
 
@@ -38,7 +36,7 @@ var saveDocGraph = (graph: any) => {
         throw new Error('namehash is empty');
     }
     if (utils.isObject(graph)) {
-        return saveAndTraverse(graph['plat'], 'namespaces')
+        return saveAndTraverse(graph.plat, 'namespaces')
             .then(() => {
                 return resolveParameters();
             }).then(() => {
@@ -61,7 +59,7 @@ var saveDocGraph = (graph: any) => {
     }
 };
 
-var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> => {
+var saveAndTraverse = (node: INode, kind: string): Thenable<any> => {
     // save node
 
     return new Promise((resolve, reject) => {
@@ -92,7 +90,7 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
                     // process children
                     var namespaces: Array<any> = [],
                         fn: any = null;
-                    utils.forEach(node, (child: DocNodeTypes.INode, key) => {
+                    utils.forEach(node, (child: INode, key) => {
                         if (key === 'parent' || key === 'extends' || key === 'namespace') {
                             return;
                         }
@@ -100,7 +98,7 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
                         if (child && child.kind && !child.saved && !child.id) {
                             fn = saveAndTraverse.bind(null, child, child.kind);
                             if (child.kind === 'namespace') {
-                                namespaces.push(fn)
+                                namespaces.push(fn);
                             } else {
                                 fns.push(fn);
                             }
@@ -119,7 +117,7 @@ var saveAndTraverse = (node: DocNodeTypes.INode, kind: string): Thenable<any> =>
     });
 };
 
-var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
+var submitNode = (node: INode): Thenable<any> => {
     if (node.kind) {
         var procedures: apiprocedures.ApiProcedures<any> = null,
             subprocedures: apiprocedures.ApiProcedures<any> = null,
@@ -156,7 +154,6 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
             default:
                 console.log(JSON.stringify(node, censor(node), 4));
                 throw new Error('unknown node type: ' + node.kind);
-                break;
         }
 
         // setup type parameters if there are any
@@ -186,7 +183,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 if (!subprocedures) {
                     var rtnPromise = procedures.create(node);
                     if (node.kind === 'method') {
-                        var methodNode: DocNodeTypes.IMethodNode = (<DocNodeTypes.IMethodNode>node);
+                        var methodNode: IMethodNode = (<IMethodNode>node);
                         utils.forEach(Object.keys(methodNode.parameters), (value) => {
                             var parameter = methodNode.parameters[value];
                             parametersList.push(submitNode.bind(null, parameter));
@@ -214,7 +211,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
                 }
             } else {
                 return Promise.resolve();
-            } 
+            }
         } else {
             return Promise.reject(node);
         }
@@ -224,7 +221,7 @@ var submitNode = (node: DocNodeTypes.INode): Thenable<any> => {
 
 };
 
-var ParentToChildNode = (node: DocNodeTypes.INode, extendedNode: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
+var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
     if (utils.isObject(procedure) && utils.isFunction(procedure.create)) {
 
         if (utils.isNull(node.id)) {
@@ -245,11 +242,11 @@ var ParentToChildNode = (node: DocNodeTypes.INode, extendedNode: DocNodeTypes.IN
     }
 };
 
-var buildTypeParameter = (node: DocNodeTypes.INode, typeParamNode: DocNodeTypes.ITypeParameterNode): Thenable<any> => {
+var buildTypeParameter = (node: INode, typeParamNode: ITypeParameterNode): Thenable<any> => {
     var tp = new typeParameterProcedures();
     if (utils.isObject(node) && utils.isObject(typeParamNode)) {
         var namehash = ds.nameHashTable,
-            typeRef: DocNodeTypes.INode = namehash[typeParamNode.typeString];
+            typeRef: INode = namehash[typeParamNode.typeString];
 
         if (utils.isObject(typeRef)) {
             switch (typeRef.kind) {
@@ -306,7 +303,7 @@ var resolveParameters = (): Thenable<any> => {
 };
 
 
-var linkToMarkdown = (node: DocNodeTypes.INode, procedure: apiprocedures.ApiProcedures<DocNodeTypes.INode>): Thenable<any> => {
+var linkToMarkdown = (node: INode, procedure: apiprocedures.ApiProcedures<INode>): Thenable<any> => {
     if (node.id && node.id > 0) {
         // add links to remarks & description
         if (node.description_) {
@@ -317,7 +314,7 @@ var linkToMarkdown = (node: DocNodeTypes.INode, procedure: apiprocedures.ApiProc
             node.remarks = markdown(node.remarks, globals.linkBase);
         }
 
-        //update node
+        // update node
         return procedure.update(node);
     } else {
         console.log(node.name_ + ' has no id!!!!');
@@ -329,7 +326,6 @@ export = saveDocGraph;
 
 
 function censor(censor) {
-    var i = 0;
 
     return function (key, value) {
         if (key === 'parent' ||

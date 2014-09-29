@@ -3,7 +3,7 @@
  * A collection of interfaces used throughout the application.
  */
 
-export interface INode {
+interface INode {
     name_: string;
     description_?: string;
     kind: string;
@@ -19,27 +19,27 @@ export interface INode {
     version?: string;
 }
 
-export interface IHaveExampleNode {
+interface IHaveExampleNode {
     example?: string;
     exampleurl?: string;
 }
 
-export interface IHaveTypeNode {
+interface IHaveTypeNode {
     methodtype?: IMethodNode;
     classtype?: IClassNode;
     interfacetype?: IInterfaceNode;
 }
 
-export interface IRegisteredNode {
+interface IRegisteredNode {
     registeredtype?: string;
     registeredname?: string;
 }
 
-export interface IHaveOverride {
+interface IHaveOverride {
     overrides?: boolean;
 }
 
-export interface INameSpaceNode extends INode {
+interface INameSpaceNode extends INode {
     classes?: {};
     namespaces?: {};
     interfaces?: {};
@@ -47,13 +47,13 @@ export interface INameSpaceNode extends INode {
     properties?: {};
 }
 
-export interface IEvent extends INode {
+interface IEvent extends INode {
     class?: IClassNode;
     classNameString?: string;
     remarks?: string;
 }
 
-export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
+interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
     parentString?: string;
     namespace?: INameSpaceNode;
     namespaceString?: string;
@@ -66,7 +66,7 @@ export interface IClassNode extends INode, IHaveExampleNode, IRegisteredNode {
     usage?: string;
 }
 
-export interface IInterfaceNode extends INode, IRegisteredNode {
+interface IInterfaceNode extends INode, IRegisteredNode {
     namespace?: INameSpaceNode;
     remarks?: string;
     exported?: boolean;
@@ -74,7 +74,7 @@ export interface IInterfaceNode extends INode, IRegisteredNode {
     interfaces?: {};
 }
 
-export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
+interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     interfaceNode?: IInterfaceNode;
     namespaceNode?: INameSpaceNode;
     classNode?: IClassNode;
@@ -90,7 +90,7 @@ export interface IMethodNode extends INode, IHaveExampleNode, IHaveOverride {
     parameters?: {};
 }
 
-export interface IParameterNode extends INode, IHaveTypeNode {
+interface IParameterNode extends INode, IHaveTypeNode {
     method?: IMethodNode;
     type?: string;
     defaultvalue?: string;
@@ -98,7 +98,7 @@ export interface IParameterNode extends INode, IHaveTypeNode {
     porder?: number;
 }
 
-export interface IPropertyNode extends INode, IHaveTypeNode, IHaveOverride {
+interface IPropertyNode extends INode, IHaveTypeNode, IHaveOverride {
     interface?: IInterfaceNode;
     namespace?: INameSpaceNode;
     class?: IClassNode;
@@ -110,7 +110,7 @@ export interface IPropertyNode extends INode, IHaveTypeNode, IHaveOverride {
     optional?: boolean;
 }
 
-export interface ITypeParameterNode extends INode {
+interface ITypeParameterNode extends INode {
     typeString?: string;
     interface?: IInterfaceNode;
     class?: IClassNode;

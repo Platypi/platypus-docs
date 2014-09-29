@@ -1,13 +1,13 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
-
+﻿/// <reference path="../../../_references.ts" />
 
 import BaseProcedures = require('./base.procedures');
 import utils = require('../../../utils/utils');
-import types = require('../../../docnodes');
 
-export class ApiProcedures<T extends types.INode> extends BaseProcedures<T> {
+export class ApiProcedures<T extends INode> extends BaseProcedures<T> {
     static readDocTree(descriptions?: boolean) {
-        return BaseProcedures.callProcedure('GetDocTree' + (!!descriptions ? 'WithDesc' : ''), []).then<any>((tree: db.docs.api.rowsets.IDocTreeRowSets) => {
+        return BaseProcedures.callProcedure('GetDocTree' + (!!descriptions ? 'WithDesc' : ''), [])
+            .then<any>((tree: db.docs.api.rowsets.IDocTreeRowSets) => {
+
             ApiProcedures.tree = tree;
 
             var namespaces: Array<db.docs.api.INamespaceRow> = [];
@@ -33,7 +33,7 @@ export class ApiProcedures<T extends types.INode> extends BaseProcedures<T> {
     static getDocsByName(name): Thenable<Array<any>> {
         return BaseProcedures.callProcedure('GetDocsByName', [name]).then((results) => {
             return results[0];
-        })
+        });
     }
 
     private static tree: db.docs.api.rowsets.IDocTreeRowSets;

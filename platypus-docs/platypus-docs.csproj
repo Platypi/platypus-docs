@@ -17,6 +17,9 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="generator\graphhandlers\base.graphhandler.ts" />
+    <TypeScriptCompile Include="generator\graphhandlers\graphhandler.interface.ts" />
+    <TypeScriptCompile Include="generator\graphhandlers\namespace.graphhandler.ts" />
     <TypeScriptCompile Include="variables\datastructures.ts" />
     <TypeScriptCompile Include="generator\docgen.ts" />
     <TypeScriptCompile Include="converters\docmarkdown.ts" />
@@ -49,6 +52,7 @@
     <TypeScriptCompile Include="typings\node\node.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
     <TypeScriptCompile Include="utils\utils.ts" />
+    <TypeScriptCompile Include="_references.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,16 +1,14 @@
-﻿/// <reference path="../../../typings/tsd.d.ts" />
-/// <reference path="../db.d.ts" />
+﻿/// <reference path="../../../_references.ts" />
 
 import base = require('./api.procedures');
 import utils = require('../../../utils/utils');
-import DocNodeTypes = require('../../../docnodes');
 
 class MethodProcedures extends base.ApiProcedures<any> {
     constructor() {
         super('Method');
     }
 
-    getArgs(method: DocNodeTypes.IMethodNode) {
+    getArgs(method: IMethodNode) {
         if (!utils.isObject(method)) {
             return [];
         }
@@ -32,7 +30,6 @@ class MethodProcedures extends base.ApiProcedures<any> {
                 break;
         }
 
-        //console.log('erroneous method name: ' + method.name_);
 
         var argsRtn = [
             namespaceid,
@@ -44,8 +41,8 @@ class MethodProcedures extends base.ApiProcedures<any> {
             method.exampleurl,
             method.remarks,
             method.visibility,
-            false, //method.static,
-            null, //method.returntype,
+            false, // method.static,
+            null, // method.returntype,
             method.returntypedesc,
             (method.returntypemethod ? method.returntypemethod.id : null),
             (method.returntypeinterface ? method.returntypeinterface.id : null),

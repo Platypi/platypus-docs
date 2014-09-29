@@ -1,11 +1,11 @@
-﻿import BaseHandler = require('./base.handler');
-import utils = require('../utils/utils');
-import types = require('../docnodes');
+﻿/// <reference path="../_references.ts" />
+
+import BaseHandler = require('./base.handler');
 import tags = require('../tags/tagbuilder');
 
 class EventHandler extends BaseHandler {
     static MakeNewEventNode = (tag: tags.ParsedDocNode) => {
-        var newEvent: types.IEvent = {
+        var newEvent: IEvent = {
             name_: tag.name.name,
             kind: tag.kind.name,
             description_: tag.description.description,

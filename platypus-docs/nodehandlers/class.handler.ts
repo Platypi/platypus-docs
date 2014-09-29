@@ -1,13 +1,14 @@
-﻿import BaseHandler = require('./base.handler');
+﻿/// <reference path="../_references.ts" />
+
+import BaseHandler = require('./base.handler');
 import utils = require('../utils/utils');
-import types = require('../docnodes');
 import tags = require('../tags/tagbuilder');
 
 class ClassHandler extends BaseHandler {
     static MakeNewClassNode = (tag: tags.ParsedDocNode) => {
         var memberof = (tag.memberof ? tag.memberof.name : '');
 
-        var newClass: types.IClassNode = {
+        var newClass: IClassNode = {
             name_: tag.name.name,
             description_: tag.description.description,
             kind: tag.kind.name,
@@ -22,18 +23,18 @@ class ClassHandler extends BaseHandler {
             usage: (tag.usage ? tag.usage.name : null)
         };
 
-        //interfaces (implements) treat like params
+        // interfaces (implements) treat like params
         if (tag.implements) {
-            for (var k in tag.implements) {
+            utils.forEach(tag.implements, (value, k, obj) => {
                 var impTag = tag.implements[k],
                     type: string = impTag.type,
-                    newInterface: types.IInterfaceNode = {
+                    newInterface: IInterfaceNode = {
                         name_: BaseHandler.stripTypeParam(type),
                         kind: 'interface'
                     };
 
                 newClass.interfaces[newInterface.name_] = newInterface;
-            }
+            });
         }
 
         BaseHandler.handleTypeParams(tag.typeparams, newClass);
