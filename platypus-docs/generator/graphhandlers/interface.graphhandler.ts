@@ -7,7 +7,7 @@ class InterfaceGraphHandler implements IGraphHandler {
 
     constructor(private flatObj: IFlatObject) { }
 
-    handleGraphNodes = (): void => {
+    handleGraphNodes (): void {
         utils.forEach(this.flatObj, (value, key, obj) => {
             var currentInterface: IInterfaceNode = this.flatObj[key];
 
@@ -30,7 +30,7 @@ class InterfaceGraphHandler implements IGraphHandler {
                 ds.graph[currentInterface.name_] = currentInterface;
             }
         });
-    };
+    }
 }
 
 export = InterfaceGraphHandler;

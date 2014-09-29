@@ -1,8 +1,6 @@
 ﻿/// <reference path="../../_references.ts" />
 
-
 interface IGraphHandler {
-    new(flatObj: IFlatObject): IGraphHandler;
     handleGraphNodes: () => void;
 }
 

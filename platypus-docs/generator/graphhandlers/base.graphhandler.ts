@@ -25,7 +25,7 @@ class GraphNodeHandler implements IGraphHandler {
                 ds.graph[currentNode.name_] = currentNode;
             }
         });
-    };
+    }
 }
 
 export = GraphNodeHandler;

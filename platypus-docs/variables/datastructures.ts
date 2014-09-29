@@ -13,9 +13,13 @@ import interfacehandler = require('../nodehandlers/interface.handler');
 import eventhandler = require('../nodehandlers/event.handler');
 import namespacehandler = require('../nodehandlers/namespace.handler');
 import utils = require('../utils/utils');
+
 import NamespaceGraphHandler = require('../generator/graphhandlers/namespace.graphhandler');
 import InterfaceGraphHandler = require('../generator/graphhandlers/interface.graphhandler');
 import ClassGraphHandler = require('../generator/graphhandlers/class.graphhandler');
+import MethodGraphHandler = require('../generator/graphhandlers/method.graphhandler');
+import PropertyGraphHandler = require('../generator/graphhandlers/property.graphhandler');
+import EventGraphHandler = require('../generator/graphhandlers/event.graphhandler');
 
 /*
  * nameHashTable
@@ -147,98 +151,17 @@ export var populateFlat = (tags: any): void => {
 };
 
 export var flat2Graph = () => {
-    // start building the graph with namespaces
-
     var graphHandlers: Array<IGraphHandler> = [];
 
     graphHandlers.push(new NamespaceGraphHandler(flat.namespaces));
     graphHandlers.push(new InterfaceGraphHandler(flat.interfaces));
     graphHandlers.push(new ClassGraphHandler(flat.classes));
+    graphHandlers.push(new MethodGraphHandler(flat.methods));
+    graphHandlers.push(new PropertyGraphHandler(flat.properties));
+    graphHandlers.push(new EventGraphHandler(flat.events));
 
-
-    // methods
-    utils.forEach(flat.methods, (value, key, obj) => {
-        utils.forEach(flat.methods[key], (v, k, o) => {
-            var currentMethod = flat.methods[key][k],
-                returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype : '');
-
-            parent = null;
-
-
-            var returnTypeNode = nameHashTable[returnTypeName];
-
-            if (returnTypeNode) {
-                switch (returnTypeNode) {
-                    case 'namespace':
-                        currentMethod.returntypenamespace = returnTypeNode;
-                        break;
-                    case 'class':
-                        currentMethod.returntypeclass = returnTypeNode;
-                        break;
-                    case 'interface':
-                        currentMethod.returntypeinterface = returnTypeNode;
-                        break;
-                }
-            }
-
-            findNode(currentMethod, (node) => {
-                var parent = node;
-                currentMethod.parent = parent;
-
-                var parameterKeys = Object.keys(currentMethod.parameters);
-                for (var p = 0; p < parameterKeys.length; p++) {
-                    var param: IParameterNode = currentMethod.parameters[parameterKeys[p]],
-                        resolvedType: INode = null;
-
-                    if (param.type) {
-                        resolvedType = nameHashTable[param.type];
-                    }
-
-                    if (resolvedType) {
-                        switch (resolvedType.kind) {
-                            case 'method':
-                                param.methodtype = resolvedType;
-                                break;
-                            case 'class':
-                                param.classtype = resolvedType;
-                                break;
-                            case 'interface':
-                                param.interfacetype = resolvedType;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    param.method = currentMethod;
-                    currentMethod.parameters[parameterKeys[p]] = param;
-                }
-                appendChild(currentMethod, parent);
-            });
-        });
+    utils.forEach(graphHandlers, (v, k, o) => {
+        v.handleGraphNodes();
     });
 
-    // properties 
-    utils.forEach(flat.properties, (value, key, obj) => {
-        var currentProperty = flat.properties[key],
-            parent = null;
-
-        findNode(currentProperty, (node) => {
-            parent = node;
-            currentProperty.parent = parent;
-            appendChild(currentProperty, parent);
-        });
-    });
-
-    // events
-    utils.forEach(flat.events, (eventValue, eventKey, eventObj) => {
-        var currentEvent = flat.events[eventKey];
-
-        var parent = null;
-
-        findNode(currentEvent, (node) => {
-            parent = node;
-            currentEvent.parent = parent;
-            appendChild(currentEvent, parent);
-        });
-    });
 };

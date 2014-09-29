@@ -24,7 +24,7 @@ class ClassGraphHandler implements IGraphHandler {
             ds.appendChild(currentClass, parentNode);
 
         });
-    };
+    }
 }
 
 export = ClassGraphHandler;
