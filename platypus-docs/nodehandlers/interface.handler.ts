@@ -2,7 +2,6 @@
 
 import BaseHandler = require('./base.handler');
 import utils = require('../utils/utils');
-import tags = require('../tags/tagbuilder');
 
 
 class InterfaceHandler extends BaseHandler {

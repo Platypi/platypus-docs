@@ -1,6 +1,5 @@
 ﻿/// <reference path="../_references.ts" />
 
-import tags = require('../tags/tagbuilder');
 import utils = require('../utils/utils');
 
 class BaseHandler {

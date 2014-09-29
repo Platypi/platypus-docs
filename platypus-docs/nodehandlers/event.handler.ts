@@ -1,7 +1,6 @@
 ﻿/// <reference path="../_references.ts" />
 
 import BaseHandler = require('./base.handler');
-import tags = require('../tags/tagbuilder');
 
 class EventHandler extends BaseHandler {
     static MakeNewEventNode = (tag: IParsedDocNode) => {
