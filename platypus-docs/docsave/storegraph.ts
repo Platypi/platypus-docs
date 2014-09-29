@@ -121,63 +121,61 @@ var submitNode = (node: INode): Thenable<any> => {
     if (node.kind) {
         var procedures: apiprocedures.ApiProcedures<any> = null,
             subprocedures: apiprocedures.ApiProcedures<any> = null,
-            subprocedureType: string = '';
+            subprocedureType: string = '',
+            kind = node.kind;
 
-        switch (node.kind) {
-            case 'namespace':
-                procedures = new namespaceProcedure();
-                break;
-            case 'interface':
-                procedures = new interfaceProcedure();
-                // save interface-interface for future use
-                subprocedureType = 'interfaces';
-                subprocedures = new interfaceInterfaceProcedures();
-                break;
-            case 'class':
-                procedures = new classProcedures();
-                // save class-interface procedure for future use
-                subprocedureType = 'interfaces';
-                subprocedures = new classInterfaceProcedures();
-                break;
-            case 'method':
-                procedures = new methodProcedures();
-                break;
-            case 'property':
-                procedures = new propertyProcedures();
-                break;
-            case 'event':
-                procedures = new eventProcedures();
-                break;
-            case 'parameter':
-                procedures = new parameterProcedures();
-                break;
-            default:
-                console.log(JSON.stringify(node, censor(node), 4));
-                throw new Error('unknown node type: ' + node.kind);
+        if (kind === 'namespace') {
+            procedures = new namespaceProcedure();
+
+        } else if (kind === 'interface') {
+            procedures = new interfaceProcedure();
+            // save interface-interface for future use
+            subprocedureType = 'interfaces';
+            subprocedures = new interfaceInterfaceProcedures();
+
+        } else if (kind === 'class') {
+            procedures = new classProcedures();
+            // save class-interface procedure for future use
+            subprocedureType = 'interfaces';
+            subprocedures = new classInterfaceProcedures();
+
+        } else if (kind === 'method') {
+            procedures = new methodProcedures();
+
+        } else if (kind === 'property') {
+            procedures = new propertyProcedures();
+
+        } else if (kind === 'event') {
+            procedures = new eventProcedures();
+
+        } else if (kind === 'parameter') {
+            procedures = new parameterProcedures();
+
+        } else {
+            console.log(JSON.stringify(node, censor(node), 4));
+            throw new Error('unknown node type: ' + node.kind);
+
         }
 
         // setup type parameters if there are any
         
         if (procedures) {
             if (!node.saved) {
-
                 // if the description or remark has links to be replaced
                 // push to an array so that they can be replaced after all
                 // nodes have been saved.
-                
                 if (node.description_ || node.remarks) {
                     if ((node.description_.indexOf('@link') > -1) || (node.remarks && node.remarks.indexOf('@link') > -1)) {
                         pendingLinks.push(linkToMarkdown.bind(null, node, procedures));
                     }
                 }
 
+                // handle typeparameters
                 if (node.typeparameters) {
-                    if (Object.keys(node.typeparameters).length > 0) {
-                        utils.forEach(Object.keys(node.typeparameters), (value) => {
-                            var typeparameter = node.typeparameters[value];
-                            typeparametersList.push(buildTypeParameter.bind(null, node, typeparameter));
-                        });
-                    }
+                    utils.forEach(Object.keys(node.typeparameters), (value) => {
+                        var typeparameter = node.typeparameters[value];
+                        typeparametersList.push(buildTypeParameter.bind(null, node, typeparameter));
+                    });
                 }
 
                 if (!subprocedures) {
@@ -216,9 +214,12 @@ var submitNode = (node: INode): Thenable<any> => {
             return Promise.reject(node);
         }
     }
-    console.log(node.name_ + ' ' + node.kind + ' is a problem');
-    console.log('shouldnt reach here');
 
+    // fall through
+    if (globals.debug) {
+        console.log(node.name_ + ' ' + node.kind + ' is a problem');
+        console.log('shouldnt reach here');
+    }
 };
 
 var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
@@ -249,19 +250,16 @@ var buildTypeParameter = (node: INode, typeParamNode: ITypeParameterNode): Thena
             typeRef: INode = namehash[typeParamNode.typeString];
 
         if (utils.isObject(typeRef)) {
-            switch (typeRef.kind) {
-                case 'method':
-                    typeParamNode.methodtype = typeRef;
-                    break;
-                case 'class':
-                    typeParamNode.classtype = typeRef;
-                    break;
-                case 'interface':
-                    typeParamNode.interfacetype = typeRef;
-                    break;
-                default:
-                    break;
+            var kind = typeRef.kind;
+
+            if (kind === 'method') {
+                typeParamNode.methodtype = typeRef;
+            } else if (kind === 'class') {
+                typeParamNode.classtype = typeRef;
+            } else if (kind === ' interface') {
+                typeParamNode.interfacetype = typeRef;
             }
+
         }
         return tp.create(typeParamNode);
     }
