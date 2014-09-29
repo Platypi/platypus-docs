@@ -1,10 +1,14 @@
-﻿export var buildTags = (tag: any): ParsedDocNode => {
+﻿/// <reference path="../_references.ts" />
+
+import utils = require('../utils/utils');
+
+export var buildTags = (tag: any): IParsedDocNode => {
     var tmpObj: any = {};
 
-    for (var l in tag.tags) {
+    utils.forEach(tag.tags, (v, l, o) => {
         var t = tag.tags[l];
 
-        // There can be multiple params/implements/extends/typeparams for a given comment.
+        // there can be multiple params/implements/extends/typeparams for a given comment.
         if (t.tag === 'param') {
             if (!tmpObj.params) {
                 tmpObj.params = new Array<ITag>();
@@ -28,40 +32,7 @@
         } else {
             tmpObj[t.tag] = t;
         }
-    }
+    });
 
     return tmpObj;
 };
-
-
-
-export interface ParsedDocNode {
-    name?: ITag;
-    kind?: ITag;
-    memberof?: ITag;
-    description?: ITag;
-    variation: ITag;
-    access?: ITag;
-    static?: ITag;
-    remarks?: ITag;
-    published?: ITag;
-    exported?: ITag;
-    returns?: ITag;
-    optional?: ITag;
-    params?: Array<any>;
-    typeparams?: Array<ITag>;
-    implements?: Array<ITag>;
-    type?: ITag;
-    readonly?: ITag;
-    namespace?: ITag;
-    extends?: Array<any>;
-    class?: ITag;
-    usage: ITag;
-}
-
-export interface ITag {
-    tag: string;
-    name: string;
-    type: string;
-    description: string;
-}

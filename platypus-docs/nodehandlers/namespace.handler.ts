@@ -4,7 +4,7 @@ import BaseHandler = require('./base.handler');
 import tags = require('../tags/tagbuilder');
 
 class NamespaceHandler extends BaseHandler {
-    static MakeNewNamespaceNode = (tag: tags.ParsedDocNode) => {
+    static MakeNewNamespaceNode = (tag: IParsedDocNode) => {
         var newNamespace: INameSpaceNode = {
             name_: tag.name.name,
             kind: tag.kind.name,

@@ -4,10 +4,10 @@ import tags = require('../tags/tagbuilder');
 import utils = require('../utils/utils');
 
 class BaseHandler {
-    static handleTypeParams = (typeparams: Array<tags.ITag>, node: INode) => {
+    static handleTypeParams = (typeparams: Array<ITag>, node: INode) => {
         if (!utils.isNull(typeparams)) {
             for (var t = 0; t < typeparams.length; t++) {
-                var currentTag: tags.ITag = typeparams[t],
+                var currentTag: ITag = typeparams[t],
                     newTypeParameter: ITypeParameterNode = {
                         name_: currentTag.name,
                         kind: 'typeparam',

@@ -4,7 +4,7 @@ import BaseHandler = require('./base.handler');
 import tags = require('../tags/tagbuilder');
 
 class PropertyHandler extends BaseHandler {
-    static MakeNewPropertyNode = (tag: tags.ParsedDocNode): IPropertyNode => {
+    static MakeNewPropertyNode = (tag: IParsedDocNode): IPropertyNode => {
         var newProperty: IPropertyNode = {
             name_: tag.name.name,
             description_: tag.description.description,

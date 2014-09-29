@@ -5,7 +5,7 @@ import utils = require('../utils/utils');
 import tags = require('../tags/tagbuilder');
 
 class ClassHandler extends BaseHandler {
-    static MakeNewClassNode = (tag: tags.ParsedDocNode) => {
+    static MakeNewClassNode = (tag: IParsedDocNode) => {
         var memberof = (tag.memberof ? tag.memberof.name : '');
 
         var newClass: IClassNode = {

@@ -6,7 +6,7 @@ import tags = require('../tags/tagbuilder');
 
 
 class InterfaceHandler extends BaseHandler {
-    static MakeNewInterfaceNode = (interfaceTag: tags.ParsedDocNode) => {
+    static MakeNewInterfaceNode = (interfaceTag: IParsedDocNode) => {
         var newInterface: IInterfaceNode = {
             name_: interfaceTag.name.name,
             kind: interfaceTag.kind.name,

@@ -4,7 +4,7 @@ import BaseHandler = require('./base.handler');
 import tags = require('../tags/tagbuilder');
 
 class EventHandler extends BaseHandler {
-    static MakeNewEventNode = (tag: tags.ParsedDocNode) => {
+    static MakeNewEventNode = (tag: IParsedDocNode) => {
         var newEvent: IEvent = {
             name_: tag.name.name,
             kind: tag.kind.name,

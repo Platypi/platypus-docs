@@ -18,8 +18,15 @@
   </PropertyGroup>
   <ItemGroup>
     <TypeScriptCompile Include="generator\graphhandlers\base.graphhandler.ts" />
+    <TypeScriptCompile Include="generator\graphhandlers\class.graphhandler.ts" />
+    <TypeScriptCompile Include="generator\graphhandlers\event.graphhandler.ts" />
     <TypeScriptCompile Include="generator\graphhandlers\graphhandler.interface.ts" />
+    <TypeScriptCompile Include="generator\graphhandlers\interface.graphhandler.ts" />
+    <TypeScriptCompile Include="generator\graphhandlers\method.graphhandler.ts" />
     <TypeScriptCompile Include="generator\graphhandlers\namespace.graphhandler.ts" />
+    <TypeScriptCompile Include="generator\graphhandlers\property.graphhandler.ts" />
+    <TypeScriptCompile Include="tags\parseddocnode.interface.ts" />
+    <TypeScriptCompile Include="tags\tag.interface.ts" />
     <TypeScriptCompile Include="variables\datastructures.ts" />
     <TypeScriptCompile Include="generator\docgen.ts" />
     <TypeScriptCompile Include="converters\docmarkdown.ts" />
