@@ -2,7 +2,8 @@
 
 
 interface IGraphHandler {
-    handleGraphNodes: (flatObj: IFlatObject) => void;
+    new(flatObj: IFlatObject): IGraphHandler;
+    handleGraphNodes: () => void;
 }
 
 interface IFlatObject {

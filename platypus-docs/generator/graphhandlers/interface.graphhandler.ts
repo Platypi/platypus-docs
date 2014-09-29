@@ -4,9 +4,12 @@ import utils = require('../../utils/utils');
 import ds = require('../../variables/datastructures');
 
 class InterfaceGraphHandler implements IGraphHandler {
-    handleGraphNodes = (flatObj: IFlatObject): void => {
-        utils.forEach(flatObj, (value, key, obj) => {
-            var currentInterface: IInterfaceNode = flatObj[key];
+
+    constructor(private flatObj: IFlatObject) { }
+
+    handleGraphNodes = (): void => {
+        utils.forEach(this.flatObj, (value, key, obj) => {
+            var currentInterface: IInterfaceNode = this.flatObj[key];
 
             if (currentInterface.memberof) {
                 ds.findNode(currentInterface, (node: INode) => {

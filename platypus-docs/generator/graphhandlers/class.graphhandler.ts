@@ -4,9 +4,12 @@ import utils = require('../../utils/utils');
 import ds = require('../../variables/datastructures');
 
 class ClassGraphHandler implements IGraphHandler {
-    handleGraphNodes = (flatObj: IFlatObject): void => {
-        utils.forEach(flatObj, (value, key, obj) => {
-            var currentClass: IClassNode = flatObj[key];
+
+    constructor(private flatObj: IFlatObject) { }
+
+    handleGraphNodes(): void {
+        utils.forEach(this.flatObj, (value, key, obj) => {
+            var currentClass: IClassNode = this.flatObj[key];
 
             currentClass.namespace = ds.nameHashTable[currentClass.namespaceString];
             currentClass.extends = ds.nameHashTable[currentClass.parentString];

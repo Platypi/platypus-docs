@@ -13,7 +13,9 @@ import interfacehandler = require('../nodehandlers/interface.handler');
 import eventhandler = require('../nodehandlers/event.handler');
 import namespacehandler = require('../nodehandlers/namespace.handler');
 import utils = require('../utils/utils');
-import namespacegraphnodehandler = require('../generator/graphhandlers/namespace.graphhandler');
+import NamespaceGraphHandler = require('../generator/graphhandlers/namespace.graphhandler');
+import InterfaceGraphHandler = require('../generator/graphhandlers/interface.graphhandler');
+import ClassGraphHandler = require('../generator/graphhandlers/class.graphhandler');
 
 /*
  * nameHashTable
@@ -146,67 +148,13 @@ export var populateFlat = (tags: any): void => {
 
 export var flat2Graph = () => {
     // start building the graph with namespaces
-    
-    utils.forEach(flat.namespaces, (namespaceValue, namespaceKey, namespaceObj) => {
-        var currentNamespace: INameSpaceNode = flat.namespaces[namespaceKey];
 
-        parent = null;
+    var graphHandlers: Array<IGraphHandler> = [];
 
-        if (currentNamespace.memberof) {
-            findNode(currentNamespace, (node) => {
-                var parent = node;
-                currentNamespace.parent = parent;
+    graphHandlers.push(new NamespaceGraphHandler(flat.namespaces));
+    graphHandlers.push(new InterfaceGraphHandler(flat.interfaces));
+    graphHandlers.push(new ClassGraphHandler(flat.classes));
 
-                if (!parent) {
-                    return;
-                }
-
-                appendChild(currentNamespace, parent);
-            });
-        } else {
-            graph[currentNamespace.name_] = currentNamespace;
-        }
-    });
-    // interfaces
-    utils.forEach(flat.interfaces, (interfaceValue, interfaceKey, interfaceObj) => {
-        var currentInterface = flat.interfaces[interfaceKey];
-
-        parent = null;
-
-        findNode(currentInterface, (node) => {
-            var parent = node;
-            currentInterface.parent = parent;
-
-            var subinterfaceKeys = Object.keys(currentInterface.interfaces);
-            for (var subinterfaceNum = 0; subinterfaceNum < subinterfaceKeys.length; subinterfaceNum++) {
-                var subinterface: IInterfaceNode = currentInterface.interfaces[subinterfaceKeys[subinterfaceNum]];
-                currentInterface.interfaces[subinterfaceKeys[subinterfaceNum]] = nameHashTable[subinterface.name_] || subinterface;
-            }
-
-            appendChild(currentInterface, parent);
-        });
-    });
-
-    // classes
-    utils.forEach(flat.classes, (classValue, classKey, classObj) => {
-        var currentClass = flat.classes[classKey];
-
-        var parent = null;
-
-        currentClass.namespace = nameHashTable[currentClass.namespaceString];
-        currentClass.extends = nameHashTable[currentClass.parentString];
-
-        parent = currentClass.parent = currentClass.namespace;
-
-        var subInterfaceKeys = Object.keys(currentClass.interfaces);
-        for (var subInterfaceNum = 0; subInterfaceNum < subInterfaceKeys.length; subInterfaceNum++) {
-            var currentSubInterface: IInterfaceNode = currentClass.interfaces[subInterfaceKeys[subInterfaceNum]];
-            currentClass.interfaces[subInterfaceKeys[subInterfaceNum]] = nameHashTable[currentSubInterface.name_]
-            || currentClass.interfaces[subInterfaceKeys[subInterfaceNum]];
-        }
-
-        appendChild(currentClass, parent);
-    });
 
     // methods
     utils.forEach(flat.methods, (value, key, obj) => {
