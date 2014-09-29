@@ -30,7 +30,11 @@ var Promise = PromiseStatic.Promise,
     subproceduresList = [],
     pendingLinks = [];
 
-
+/*
+ * Stores the given graph in persistent storage.
+ * 
+ * @param graph A graph data structure containing nodes.
+ */
 var saveDocGraph = (graph: any) => {
     if (Object.keys(ds.nameHashTable).length < 1) {
         throw new Error('namehash is empty');
