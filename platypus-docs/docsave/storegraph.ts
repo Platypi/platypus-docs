@@ -52,7 +52,7 @@ var saveDocGraph = (graph: any) => {
                 // replace links
                 return updatePendingLinks();
             }).then(() => {
-                globals.pubsub.emit('done', 'complete');
+                globals.pubsub.emit('complete', '');
             }, (err) => {
                 if (err) {
                     console.log(err);

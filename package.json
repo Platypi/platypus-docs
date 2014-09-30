@@ -1,13 +1,19 @@
 {
-    "name": "platypus-docs",
+    "name": "Platypus-Docs",
     "description": "Document generation tool for TypeScript projects.",
-    "author": "Donald Jones <donald@getplatypi.com",
-    "version": "0.1.2",
-    "main": "docgen.js",
+    "author": "Donald Jones <donald@getplatypi.com>",
+    "homepage":  "http://getplatypi.com",
+    "version": "0.1.3",
+    "main": "plat-docs.js",
     "dependencies": {
         "mysql":  "latest",
         "es6-promise":  "latest",
         "comment-parser": "git+https://github.com/pwdonald/comment-parser.git",
-        "simple-progress-bar": "git+https://github.com/pwdonald/simple-progress-bar.git"
-    }
+        "simple-progress-bar": "latest"
+    },
+    "repository":  {
+        "type":  "git",
+        "url":  "git+https://github.com/Platypi/platypus-docs.git"
+    },
+    "licence": "MIT"
 }
