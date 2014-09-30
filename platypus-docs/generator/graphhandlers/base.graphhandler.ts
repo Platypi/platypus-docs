@@ -2,6 +2,7 @@
 
 import utils = require('../../utils/utils');
 import ds = require('../../variables/datastructures');
+import globals = require('../../variables/globals');
 
 class GraphNodeHandler implements IGraphHandler {
 
@@ -23,6 +24,7 @@ class GraphNodeHandler implements IGraphHandler {
                 });
             } else {
                 ds.graph[currentNode.name_] = currentNode;
+                globals.nodeCount++;
             }
         });
     }
