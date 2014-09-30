@@ -28,7 +28,8 @@ var Promise = PromiseStatic.Promise,
     parametersList = [],
     typeparametersList = [],
     subproceduresList = [],
-    pendingLinks = [];
+    pendingLinks = [],
+    savedNodes = 0;
 
 /*
  * Stores the given graph in persistent storage.
@@ -46,13 +47,12 @@ var saveDocGraph = (graph: any) => {
             }).then(() => {
                 return resolveTypeParams();
             }).then(() => {
-                console.log('referencing sub types');
                 return referenceSubTypes();
             }).then(() => {
                 // replace links
                 return updatePendingLinks();
             }).then(() => {
-                console.log('done');
+                globals.pubsub.emit('done', 'complete');
             }, (err) => {
                 if (err) {
                     console.log(err);
@@ -89,6 +89,7 @@ var saveAndTraverse = (node: INode, kind: string): Thenable<any> => {
             }
             submitNode(node)
                 .then<void>(() => {
+                    savedNodes++;
                     node.saved = true;
                     
                     // process children
@@ -201,6 +202,7 @@ var submitNode = (node: INode): Thenable<any> => {
                         }
                         throw err;
                     }).then((id) => {
+                            globals.pubsub.emit('savedNode', savedNodes);
                             if (utils.isObject(node[subprocedureType])) {
                                 utils.forEach(node[subprocedureType], (value: any) => {
                                     if (utils.isNull(value.kind)) {
@@ -230,12 +232,16 @@ var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedu
     if (utils.isObject(procedure) && utils.isFunction(procedure.create)) {
 
         if (utils.isNull(node.id)) {
-            console.log('Node: ' + node.name_ + ' has no id.');
+            if (globals.debug) {
+                console.log('Node: ' + node.name_ + ' has no id.');
+            }
             return;
         }
 
         if (utils.isNull(extendedNode.id)) {
-            console.log('Extended node: ' + extendedNode.name_ + ' has no id.');
+            if (globals.debug) {
+                console.log('Extended node: ' + extendedNode.name_ + ' has no id.');
+            }
             return;
         }
 
@@ -265,12 +271,13 @@ var buildTypeParameter = (node: INode, typeParamNode: ITypeParameterNode): Thena
             }
 
         }
-        return tp.create(typeParamNode);
+        return tp.create(typeParamNode).then(() => {
+            globals.pubsub.emit('savedNode', savedNodes);
+        });
     }
 };
 
 var resolveTypeParams = (): Thenable<any> => {
-    console.log('Resolving Type Params, count: ' + typeparametersList.length);
     var promises = [];
     for (var i = 0; i < typeparametersList.length; i++) {
         promises.push(typeparametersList[i]());
@@ -287,7 +294,6 @@ var referenceSubTypes = (): Thenable<any> => {
 };
 
 var updatePendingLinks = (): Thenable<any> => {
-    console.log('updating pending links number: ' + pendingLinks.length);
     var promises = [];
     for (var i = 0; i < pendingLinks.length; i++) {
         promises.push(pendingLinks[i]());
@@ -296,7 +302,6 @@ var updatePendingLinks = (): Thenable<any> => {
 };
 
 var resolveParameters = (): Thenable<any> => {
-    console.log('storing parameters for methods, count: ' + parametersList.length);
     var promises = [];
     for (var i = 0; i < parametersList.length; i++) {
         promises.push(parametersList[i]());
@@ -319,7 +324,9 @@ var linkToMarkdown = (node: INode, procedure: apiprocedures.ApiProcedures<INode>
         // update node
         return procedure.update(node);
     } else {
-        console.log(node.name_ + ' has no id!!!!');
+        if (globals.debug) {
+            console.log(node.name_ + ' has no id!!!!');
+        }
         return Promise.reject(null);
     }
 };
