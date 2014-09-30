@@ -5,6 +5,8 @@
 
 import EventEmitter = require('events');
 
+export var startTime = new Date().getTime();
+
 export var filename = 'platypus.ts';
 
 export var linkBase = '/#!/docs/api/';
