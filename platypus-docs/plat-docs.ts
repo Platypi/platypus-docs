@@ -14,27 +14,21 @@ import globals = require('./variables/globals');
 import docgen = require('./generator/docgen');
 import storage = require('./docsave/storegraph');
 
-var filename = process.argv[2] || 'platypusts.ts',
-    startTime = new Date().getTime(),
+var startTime = new Date().getTime(),
     generator = new docgen.DocGen.DocGenerator(),
     ProgressBar = require('simple-progress-bar'),
     flatPb = null,
     graphPb = null,
     savePb = null;
 
-
-if (process.argv[3]) {
-    globals.linkBase = process.argv[3];
-}
-
-if (process.argv[4]) {
-    globals.versionNumber = process.argv[4];
-}
-
-
+// get command line arguments if any, otherwise revert to default values
+globals.filename = (process.argv[2] ? process.argv[2] : globals.filename);
+globals.linkBase = (process.argv[3] ? process.argv[3] : globals.linkBase);
+globals.versionNumber = (process.argv[4] ? process.argv[4] : globals.versionNumber);
+globals.debug = (process.argv[5] && process.argv[5].indexOf('true') > 0 ? true : false);
 
 // build the graph of nodes
-generator.buildGraphFromFile(filename).then((graph) => {
+generator.buildGraphFromFile(globals.filename).then((graph) => {
     return storage(graph);
 }).then(null, (err) => {
     throw new Error(err);
@@ -43,22 +37,23 @@ generator.buildGraphFromFile(filename).then((graph) => {
 });
 
 globals.pubsub.on('populateFlat', (processedTags, totalTags) => {
-    flatPb = flatPb || new ProgressBar('Generating nodes from tags.', ':label \t [ :bar ] :percent ');
+    flatPb = flatPb || new ProgressBar('Generating Nodes from tags: ', ':label \t [ :bar ] :percent ');
     flatPb.update(1 + processedTags, totalTags);
 });
 
 globals.pubsub.on('graphGen', (processedKinds, totalKinds) => {
-    graphPb = graphPb || new ProgressBar('Generating Graph from nodes.', ':label \t [ :bar ] :percent ');
+    graphPb = graphPb || new ProgressBar('Generating Graph from Nodes: ', ':label \t [ :bar ] :percent ');
     graphPb.update(1 + processedKinds, totalKinds);
 });
 
 globals.pubsub.on('savedNode', (numSaved) => {
-    savePb = savePb || new ProgressBar('Saving nodes to storage: ', ':label \t [ :bar ] :percent ');
+    savePb = savePb || new ProgressBar('Saving Graph to Storage: ', ':label \t [ :bar ] :percent ');
     savePb.update(1 + numSaved, globals.nodeCount);
 });
 
 globals.pubsub.on('done', () => {
+    savePb.update(globals.nodeCount, globals.nodeCount);
     process.stdout.write('\r\nDone! Stats:');
     process.stdout.write('\r\n\tNumber of Nodes Saved:\t' + globals.nodeCount);
-    process.stdout.write('\r\n\tTime Elasped:\t' + ((new Date().getTime() - startTime) / 1000) + ' seconds.');
+    process.stdout.write('\r\n\tTotal Time Elasped:\t' + Math.floor(((new Date().getTime() - startTime) / 1000)) + ' seconds.');
 });
