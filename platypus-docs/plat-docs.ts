@@ -24,7 +24,10 @@ globals.linkBase = (process.argv[3] ? process.argv[3] : globals.linkBase);
 globals.versionNumber = (process.argv[4] ? process.argv[4] : globals.versionNumber);
 globals.debug = (process.argv[5] && process.argv[5].indexOf('true') > 0 ? true : false);
 
-process.stdout.write('\r\n\033[95m\033[1m' + package.name + '\r\nVersion: ' + package.version + '\r\n' + package.homepage +'\r\n');
+process.stdout.write(globals.consoleColorWrap('\r\n' + package.name + '\r\nVersion: '
+    + package.version + '\r\n' + package.homepage
+    + '\r\n', globals.consoleColors.headerPink
+    + globals.consoleStyle.bold));
 
 // start the event listeners
 events.setupEvents();
