@@ -4,6 +4,7 @@
  * Global Data Strucutres
  */
 
+import globals = require('../variables/globals');
 import tagBuilder = require('../tags/tagbuilder');
 
 import methodhandler = require('../nodehandlers/method.handler');
@@ -82,6 +83,7 @@ export var appendChild = (childNode: INode, parentNode: INode): void => {
     var name = (childNode.kind === 'method') ? childNode.name_.toUpperCase() : childNode.name_;
 
     parent[name] = childNode;
+    globals.nodeCount++;
 };
 
 /*
@@ -90,10 +92,14 @@ export var appendChild = (childNode: INode, parentNode: INode): void => {
  * @param tags Parsed tags returned from the parser.
  */
 export var populateFlat = (tags: any): void => {
+    var totalTags = (utils.isObject(tags) ? Object.keys(tags).length : (<Array<any>>tags).length),
+        processedTags = 0;
+    
     utils.forEach(tags, (value, k, obj) => {
-
         // tmpObj stores the tags in an object so they can be referenced by name.
         var parsedDocTags: IParsedDocNode = tagBuilder.buildTags(tags[k]);
+
+        globals.pubsub.emit('populateFlat', processedTags, totalTags );
 
         if (parsedDocTags.kind) {
             var kind: string = (<string>parsedDocTags.kind.name).trim().toLowerCase();
@@ -111,8 +117,8 @@ export var populateFlat = (tags: any): void => {
             } else if (kind === 'namespace') {
                 namespacehandler.addToDataStructures(parsedDocTags);
             }
-
         }
+        processedTags++;
     });
 };
 
@@ -120,7 +126,9 @@ export var populateFlat = (tags: any): void => {
  * Converts the flat array data structure to a graph structure.
  */
 export var flat2Graph = () => {
-    var graphHandlers: Array<IGraphHandler> = [];
+    var graphHandlers: Array<IGraphHandler> = [],
+        processedKinds = 0,
+        totalKinds = 6;
 
     graphHandlers.push(new NamespaceGraphHandler(flat.namespaces));
     graphHandlers.push(new InterfaceGraphHandler(flat.interfaces));
@@ -130,7 +138,9 @@ export var flat2Graph = () => {
     graphHandlers.push(new EventGraphHandler(flat.events));
 
     utils.forEach(graphHandlers, (v, k, o) => {
+        globals.pubsub.emit('graphGen', processedKinds, totalKinds);
         v.handleGraphNodes();
+        processedKinds++;
     });
 
 };
