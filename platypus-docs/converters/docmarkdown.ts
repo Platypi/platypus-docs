@@ -6,6 +6,7 @@
  */
 
 import ds = require('../variables/datastructures');
+import globals = require('../variables/globals');
 
 var linkReg = /\{@link (.*?)[|](.*?)\}/g;
 
@@ -37,7 +38,9 @@ var linkToMarkup = (content: string, baseURI: string): string => {
 
                 return '[' + linkValue + '](' + path + ')';
             } else {
-                console.log(qualifiedPath + ' not found');
+                if (globals.debug) {
+                    console.log(qualifiedPath + ' not found');
+                }
 
                 return value;
             }
