@@ -6,18 +6,20 @@
     "version": "0.1.5",
     "main": "plat-docs.js",
     "scripts":  {
-        "postinstall": "grunt"
+        "prepublish": "grunt"
     },
     "dependencies": {
         "mysql":  "latest",
-        "grunt": "0.4.5",
-        "grunt-cli":  "0.1.13",
-        "grunt-typescript": "0.3.8",
-        "grunt-shell":  "1.1.1",
-        "tsd": "0.5.7",
         "es6-promise":  "latest",
         "comment-parser": "git+https://github.com/pwdonald/comment-parser.git",
         "simple-progress-bar": "latest"
+    },
+    "devDepenencies":  {
+        "grunt": "0.4.5^",
+        "grunt-cli":  "0.1.13^",
+        "grunt-typescript": "0.3.8^",
+        "grunt-shell":  "1.1.1^",
+        "tsd": "0.5.7^"
     },
     "repository":  {
         "type":  "git",

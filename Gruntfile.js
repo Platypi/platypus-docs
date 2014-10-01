@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
     var files = [
-        './platypus-docs/**/*.ts'
+        './platypus-docs/**/*.ts',
+        './platypus-docs/!(typings)/*.ts'
     ];
 
     grunt.initConfig({
@@ -15,7 +16,7 @@ module.exports = function (grunt) {
         },
         shell: {
             tsd: {
-                command: 'node node_modules/tsd/build/cli update -so'
+                command: 'node node_modules/tsd/build/cli update -so --config ./platypus-docs/tsd.json'
             }
         }
     });
