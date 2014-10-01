@@ -20,6 +20,7 @@
         "grunt-typescript": "latest",
         "grunt-shell":  "latest",
         "grunt-prompt": "latest",
+        "grunt-replace": "latest",
         "tsd": "latest"
     },
     "repository":  {

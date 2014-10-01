@@ -178,3 +178,4 @@ output.txt
 output.json
 *.log
 dbconnection.json
+*.sql

@@ -81,8 +81,8 @@
     <TypeScriptCompile Include="_references.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="docsave\db\schema\storedprocedures\storedprocedures.sql" />
-    <Content Include="docsave\db\schema\tables\tables.sql" />
+    <Content Include="docsave\db\schema\storedprocedures\storedprocedures.txt" />
+    <Content Include="docsave\db\schema\tables\tables.txt" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
