@@ -33,10 +33,11 @@ process.stdout.write(globals.consoleColorWrap('\r\n' + package.name + '\r\nVersi
 events.setupEvents();
 
 // build the graph of nodes
-generator.buildGraphFromFile(globals.filename).then((graph) => {
-    return storage(graph);
-}).then(null, (err) => {
-    throw new Error(err);
-}).then(() => {
-    process.exit(0);
-});
+generator.buildGraphFromFile(globals.filename)
+    .then((graph) => {
+        return storage(graph);
+    }).then(null, (err) => {
+        throw new Error(err);
+    }).then(() => {
+        process.exit(0);
+    });
