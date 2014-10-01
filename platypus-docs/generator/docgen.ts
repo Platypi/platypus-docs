@@ -21,17 +21,16 @@ export module DocGen {
     export class DocGenerator {
 
         nameHash = ds.nameHashTable;
-
-        debug = false;
-
         /*
          * Build the necessary data structures from an input file.
          * 
          * @param src The path to the input file.
          * @param debug A flag to turn on/off debugging information.
          */
-        buildGraphFromFile (src: string, debug: boolean = false): Thenable<any> {
-            this.debug = debug;
+        buildGraphFromFile(src: string): Thenable<any> {
+            if (!fs.existsSync(src)) {
+                throw new Error('Source file does not exist!');
+            }
             return new Promise((resolve, reject) => {
                 fs.readFile(src, {
                     encoding: 'utf8'
@@ -68,9 +67,6 @@ export module DocGen {
          * @param graph The graph returned from the graph generator.
          */
         private __graphHandler (graph: any): Thenable<any> {
-            if (this.debug) {
-                console.log(JSON.stringify(graph, censor(graph), 4));
-            }
             return new Promise((resolve, reject) => {
                 ds.nameHashTable = this.nameHash;
                 resolve(graph);
@@ -96,29 +92,4 @@ export module DocGen {
             });
         }
     }
-}
-
-/* 
- * Used for debugging.
- */
-function censor(censor) {
-    return function (key, value) {
-        if (key === 'parent' ||
-            key === 'namespace' ||
-            key === 'class' ||
-            key === 'interface' ||
-            key === 'interfaceNode' ||
-            key === 'namespaceNode' ||
-            key === 'classNode' ||
-            key === 'returntype' ||
-            key === 'method') {
-            if (value && value.name && value.name !== '') {
-                return '[Circular] ' + (value ? value.name : '');
-            } else {
-                return '[Circular] ' + (value ? value.type : '');
-            }
-        }
-
-        return value;
-    };
 }
