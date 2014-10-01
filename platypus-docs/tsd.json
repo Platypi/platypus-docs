@@ -3,16 +3,16 @@
   "repo": "borisyankov/DefinitelyTyped",
   "ref": "master",
   "path": "typings",
-  "bundle": "typings/tsd.d.ts",
+  "bundle": "./platypus-docs/typings/tsd.d.ts",
   "installed": {
     "node/node.d.ts": {
-      "commit": "560434941b80be13ec9a68e68f6978ae76af3d94"
+      "commit": "b6970132c4ddf4b0ffe7952e9e3b08e23f96ea8f"
     },
     "mysql/mysql.d.ts": {
-      "commit": "560434941b80be13ec9a68e68f6978ae76af3d94"
+      "commit": "b6970132c4ddf4b0ffe7952e9e3b08e23f96ea8f"
     },
     "es6-promise/es6-promise.d.ts": {
-      "commit": "560434941b80be13ec9a68e68f6978ae76af3d94"
+      "commit": "b6970132c4ddf4b0ffe7952e9e3b08e23f96ea8f"
     }
   }
 }
