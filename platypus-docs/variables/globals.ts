@@ -19,6 +19,8 @@ export var pubsub = new EventEmitter.EventEmitter();
 
 export var nodeCount = 0;
 
+export var runTimeErrors: Array<string> = [];
+
 export var consoleColors = {
     blue: '\033[94m',
     headerPink: '\033[95m',
