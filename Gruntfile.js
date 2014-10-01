@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                         },
                         {
                             config: 'server.password',
-                            type: 'input',
+                            type: 'password',
                             message: 'Password:'
                         }
                     ]
@@ -86,7 +86,7 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('build', ['shell', 'typescript'])
+    grunt.registerTask('build', ['shell', 'typescript']);
 
     grunt.registerTask('default', ['build', 'checkForDbConfig']);
 };
