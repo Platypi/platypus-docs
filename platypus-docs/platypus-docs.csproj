@@ -17,6 +17,12 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="events\complete.event.ts" />
+    <TypeScriptCompile Include="events\docevents.ts" />
+    <TypeScriptCompile Include="events\error.event.ts" />
+    <TypeScriptCompile Include="events\graphgen.event.ts" />
+    <TypeScriptCompile Include="events\populateflat.event.ts" />
+    <TypeScriptCompile Include="events\savednode.event.ts" />
     <TypeScriptCompile Include="generator\graphhandlers\base.graphhandler.ts" />
     <TypeScriptCompile Include="generator\graphhandlers\class.graphhandler.ts" />
     <TypeScriptCompile Include="generator\graphhandlers\event.graphhandler.ts" />

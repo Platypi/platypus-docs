@@ -12,6 +12,19 @@ var setupEvent = () => {
         process.stdout.write(colorwrap('\r\n\tTotal Time Elasped:\t'
             + Math.floor(((new Date().getTime() - startTime) / 1000))
             + ' seconds.', colors.warningRed));
+
+        if (globals.runTimeErrors.length > 0) {
+            var errors = globals.runTimeErrors;
+
+            process.stdout.write(colorwrap('\r\nA few non-critical runtime errors occurred:\r\n', colors.fail));
+
+            for (var i = 0; i < errors.length; i++) {
+                var error = errors[i];
+
+                process.stdout.write(colorwrap(error, colors.fail));
+            }
+        }
+
     });
 
 };

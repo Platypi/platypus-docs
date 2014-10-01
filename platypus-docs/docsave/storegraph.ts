@@ -75,6 +75,10 @@ var saveAndTraverse = (node: INode, kind: string): Thenable<any> => {
             });
         }
 
+        /*
+         * Determine if we have processed all queued nodes, 
+         *  if not recursively call the traverse method.
+         */
         function next() {
             if (fns.length === 0) {
                 resolve();
@@ -226,6 +230,7 @@ var submitNode = (node: INode): Thenable<any> => {
         console.log(node.name_ + ' ' + node.kind + ' is a problem');
         console.log('shouldnt reach here');
     }
+    globals.pubsub.emit('error', node.name_ + ' has no \'kind\' property.');
 };
 
 var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
@@ -235,6 +240,7 @@ var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedu
             if (globals.debug) {
                 console.log('Node: ' + node.name_ + ' has no id.');
             }
+            globals.pubsub.emit('error', node.name_ + ' could not be extended to ' + extendedNode.name_ + ' because it has no id.');
             return;
         }
 
@@ -242,6 +248,7 @@ var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedu
             if (globals.debug) {
                 console.log('Extended node: ' + extendedNode.name_ + ' has no id.');
             }
+            globals.pubsub.emit('error', node.name_ + ' could not be extended to ' + extendedNode.name_ + ' because it has no id.');
             return;
         }
 
@@ -327,6 +334,7 @@ var linkToMarkdown = (node: INode, procedure: apiprocedures.ApiProcedures<INode>
         if (globals.debug) {
             console.log(node.name_ + ' has no id!!!!');
         }
+        globals.pubsub.emit('error', node.name_ + ' could not be processed by the markdown module (no id)');
         return Promise.reject(null);
     }
 };
