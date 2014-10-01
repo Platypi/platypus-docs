@@ -1,15 +1,5 @@
 ﻿/// <reference path="_references.ts" />
 
-/*
- * Name:            Platypus Doc Generator
- * 
- * Author:          Donald Jones (donald@getplatypi.com)
- * 
- * Description:     Generates a graph of nodes representing the documentation
- *                  in the PlatypusTS source code. It then uploads the graph
- *                  into a database schema.
- */
-
 import globals = require('./variables/globals');
 import docgen = require('./generator/docgen');
 import storage = require('./docsave/storegraph');
