@@ -80,6 +80,10 @@
     <TypeScriptCompile Include="utils\utils.ts" />
     <TypeScriptCompile Include="_references.ts" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="docsave\db\schema\storedprocedures\storedprocedures.sql" />
+    <Content Include="docsave\db\schema\tables\tables.sql" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
