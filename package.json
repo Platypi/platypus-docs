@@ -6,7 +6,7 @@
     "version": "0.1.5",
     "main": "plat-docs.js",
     "scripts":  {
-        "prepublish": "grunt"
+        "prepublish": "./node_modules/.bin/grunt"
     },
     "dependencies": {
         "mysql":  "latest",
@@ -19,11 +19,11 @@
         "grunt-cli":  "latest",
         "grunt-typescript": "latest",
         "grunt-shell":  "latest",
+        "grunt-prompt": "latest",
         "tsd": "latest"
     },
     "repository":  {
         "type":  "git",
         "url":  "git+https://github.com/Platypi/platypus-docs.git"
-    },
-    "licence": "MIT"
+    }
 }
