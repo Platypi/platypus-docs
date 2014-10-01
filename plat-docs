@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 basedir=`dirname "$0"`
 
 case `uname` in
@@ -6,10 +6,10 @@ case `uname` in
 esac
 
 if [ -x "$basedir/node" ]; then
-  "$basedir/node"  "./platypus-docs/plat-docs" "$@"
+  "$basedir/node"  "./platypus-docs/plat-docs.js" "$@"
   ret=$?
 else 
-  node  "./platypus-docs/plat-docs" "$@"
+  node  "./platypus-docs/plat-docs.js" "$@"
   ret=$?
 fi
 exit $ret
