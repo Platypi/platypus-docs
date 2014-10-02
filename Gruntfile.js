@@ -20,7 +20,7 @@ module.exports = function (grunt) {
                                         dbName: 'platypiwebdev',
                                         user: 'b091fc43c1a652'
                                     },
-                                    name: 'DEV (platypiwebdev)'
+                                    name: 'DEV'
                                 },
                                 {
                                     value: {
@@ -28,9 +28,34 @@ module.exports = function (grunt) {
                                         dbName: 'platypiweb',
                                         user: 'b41c2115ab2d1a'
                                     },
-                                    name: 'PRODUCTION (platypiweb)'
+                                    name: 'PRODUCTION'
+                                },
+                                {
+                                    value: 'custom',
+                                    name: 'Enter Custom Server'
                                 }
                             ]
+                        },
+                        {
+                            config: 'server.custom.host',
+                            message: 'Host:',
+                            when: function (answers) {
+                                return answers['server.selection'] === 'custom';
+                            }
+                        },
+                        {
+                            config: 'server.custom.dbName',
+                            message: 'Database name:',
+                            when: function (answers) {
+                                return answers['server.selection'] === 'custom';
+                            }
+                        },
+                        {
+                            config: 'server.custom.user',
+                            message: 'Username:',
+                            when: function (answers) {
+                                return answers['server.selection'] === 'custom';
+                            }
                         },
                         {
                             config: 'server.password',
@@ -101,9 +126,9 @@ module.exports = function (grunt) {
             password = grunt.config('server.password'),
             db = {
                 database: {
-                    host: selection.host,
-                    user: selection.user,
-                    dbName: selection.dbName,
+                    host: selection.host || grunt.config('server.custom.host'),
+                    user: selection.user || grunt.config('server.custom.user'),
+                    dbName: selection.dbName || grunt.config('server.custom.dbName'),
                     password: password
                 }
             };
@@ -144,8 +169,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('configure', ['prompt:database', 'saveDbConfig']);
-
     grunt.registerTask('checkForDbConfig', "Check for dbconnection.json", function () {
         if (!grunt.file.isFile('./dbconnection.json')) {
             grunt.task.run(['configure']);
@@ -153,8 +176,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('generate', ['prompt:scriptGen', 'generateSchemaFiles']);
-
+    grunt.registerTask('configure', ['prompt:database', 'saveDbConfig']);
     grunt.registerTask('build', ['shell', 'typescript']);
-
-    grunt.registerTask('default', ['build', 'checkForDbConfig']);
+    grunt.registerTask('default', ['checkForDbConfig', 'build']);
 };

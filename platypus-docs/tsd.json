@@ -6,13 +6,13 @@
   "bundle": "./platypus-docs/typings/tsd.d.ts",
   "installed": {
     "node/node.d.ts": {
-      "commit": "b6970132c4ddf4b0ffe7952e9e3b08e23f96ea8f"
+      "commit": "0b87ad988f46378342654384728c3a388e6d7178"
     },
     "mysql/mysql.d.ts": {
-      "commit": "b6970132c4ddf4b0ffe7952e9e3b08e23f96ea8f"
+      "commit": "0b87ad988f46378342654384728c3a388e6d7178"
     },
     "es6-promise/es6-promise.d.ts": {
-      "commit": "b6970132c4ddf4b0ffe7952e9e3b08e23f96ea8f"
+      "commit": "0b87ad988f46378342654384728c3a388e6d7178"
     }
   }
 }
