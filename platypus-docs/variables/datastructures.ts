@@ -139,7 +139,11 @@ export var flat2Graph = () => {
 
     utils.forEach(graphHandlers, (v, k, o) => {
         globals.pubsub.emit('graphGen', processedKinds, totalKinds);
-        v.handleGraphNodes();
+        try {
+            v.handleGraphNodes();
+        } catch (e) {
+            globals.pubsub.emit('error', e);
+        }
         processedKinds++;
     });
 
