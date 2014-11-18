@@ -7,7 +7,7 @@ interface INode {
     published?: boolean;
     exported?: boolean;
     memberof?: string;
-    parent?: INode;
+    parent_?: INode;
     visibility?: string;
     id?: number;
     saved?: boolean;

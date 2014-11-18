@@ -13,7 +13,7 @@ class InterfaceGraphHandler implements IGraphHandler {
 
             if (currentInterface.memberof) {
                 ds.findNode(currentInterface, (node: INode) => {
-                    currentInterface.parent = node;
+                    currentInterface.parent_ = node;
 
                     if (!node) {
                         return;

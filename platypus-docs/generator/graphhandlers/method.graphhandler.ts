@@ -28,7 +28,7 @@ class MethodGraphNodeHandler implements IGraphHandler {
 
                 ds.findNode(currentMethod, (node) => {
                     var parentNode = node;
-                    currentMethod.parent = parentNode;
+                    currentMethod.parent_ = parentNode;
 
                     utils.forEach(currentMethod.parameters, (v, k, o) => {
                         var param: IParameterNode = currentMethod.parameters[k],

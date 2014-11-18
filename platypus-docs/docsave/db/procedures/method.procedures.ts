@@ -13,7 +13,7 @@ class MethodProcedures extends base.ApiProcedures<any> {
             return [];
         }
 
-        var parent = method.parent,
+        var parent = method.parent_,
             namespaceid: number = null,
             classid: number = null,
             interfaceid: number = null;

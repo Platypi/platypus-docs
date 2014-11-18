@@ -14,7 +14,7 @@ class ClassGraphHandler implements IGraphHandler {
             currentClass.namespace = ds.nameHashTable[currentClass.namespaceString];
             currentClass.extends = ds.nameHashTable[currentClass.parentString];
 
-            var parentNode = currentClass.parent = currentClass.namespace;
+            var parentNode = currentClass.parent_ = currentClass.namespace;
 
             utils.forEach(currentClass.interfaces, (v, k, o) => {
                 var currentSubInterface: IInterfaceNode = currentClass.interfaces[k];

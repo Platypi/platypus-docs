@@ -14,7 +14,7 @@ class GraphNodeHandler implements IGraphHandler {
 
             if (currentNode.memberof) {
                 ds.findNode(currentNode, (node: INode) => {
-                    currentNode.parent = node;
+                    currentNode.parent_ = node;
 
                     if (!node) {
                         return;
