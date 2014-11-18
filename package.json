@@ -3,7 +3,7 @@
     "description": "Document generation tool for TypeScript projects.",
     "author": "Donald Jones <donald@getplatypi.com>",
     "homepage":  "http://getplatypi.com",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "main": "plat-docs.js",
     "scripts":  {
         "prepublish": "./node_modules/.bin/grunt"
