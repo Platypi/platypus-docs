@@ -21,7 +21,7 @@ var setupEvent = () => {
             for (var i = 0; i < errors.length; i++) {
                 var error = errors[i];
 
-                process.stdout.write(colorwrap(error, colors.fail));
+                process.stdout.write(colorwrap(error, colors.fail) + '\r\n');
             }
         }
 
