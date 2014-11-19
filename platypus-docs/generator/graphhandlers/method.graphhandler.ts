@@ -9,7 +9,7 @@ class MethodGraphNodeHandler implements IGraphHandler {
 
     handleGraphNodes(): void {
         utils.forEach(this.flatObj, (value, key, obj) => {
-            var methodArray: Array<IMethodNode> = (<any>this.flatObj).methods;
+            var methodArray = Object.keys(this.flatObj[key]);
             utils.forEach(methodArray, (v, k, o) => {
                 var currentMethod = ds.flat.methods[key][k],
                     returnTypeName = (typeof currentMethod.returntype === 'string' ? currentMethod.returntype : '');
