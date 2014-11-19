@@ -179,3 +179,4 @@ output.json
 *.log
 dbconnection.json
 *.sql
+*.swp
