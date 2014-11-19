@@ -8,7 +8,7 @@
 /// <reference path="tags/parseddocnode.interface.ts" />
 
 
-/// <reference path="nodehandlers/nodeinterfaces/node.interface.ts" />
+/// <reference path="nodehandlers/nodeinterfaces/nodes.interfaces.ts" />
 
 
 
