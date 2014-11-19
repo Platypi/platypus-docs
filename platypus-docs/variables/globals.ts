@@ -9,7 +9,7 @@ export var startTime = new Date().getTime();
 
 export var filename = 'platypus.ts';
 
-export var linkBase = '/#!/docs/api/';
+export var linkBase = '/docs/api/';
 
 export var versionNumber = '0.0.1';
 
