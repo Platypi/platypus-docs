@@ -9,7 +9,7 @@ var setupEvent = () => {
     globals.pubsub.on('complete', () => {
         process.stdout.write(colorwrap('\r\nDone! Stats:',colors.blue + styles.bold));
         process.stdout.write(colorwrap('\r\n\tNumber of Nodes Saved:\t' + globals.nodeCount,colors.green));
-        process.stdout.write(colorwrap('\r\n\tTotal Time Elasped:\t'
+        process.stdout.write(colorwrap('\r\n\tTotal Time Elapsed:\t'
             + Math.floor(((new Date().getTime() - startTime) / 1000))
             + ' seconds.', colors.warningRed));
 
