@@ -1,4 +1,6 @@
-﻿/*
+﻿/// <reference path="../_references.ts" />
+
+/*
  * Global Variables
  * Set by command line arguments.
  */
