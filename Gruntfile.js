@@ -106,6 +106,19 @@ module.exports = function (grunt) {
         shell: {
             tsd: {
                 command: 'node node_modules/tsd/build/cli update -so --config ./platypus-docs/tsd.json'
+            },
+            link: {
+                command: 'npm link'
+            }
+        }, 
+        file_append: {
+            bin: {
+                // add #! for npm link to transpiled js
+                files: {
+                    './platypus-docs/plat-docs.js': {
+                        prepend: '#!/usr/bin/env node\r\n'
+                    }
+                }
             }
         }
     });
@@ -113,6 +126,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-typescript');
     grunt.loadNpmTasks('grunt-prompt');
+    grunt.loadNpmTasks('grunt-file-append');
 
     grunt.registerTask('saveDbConfig', 'Output a db json file.', function () {
         var selection = grunt.config('server.selection'),
@@ -170,6 +184,6 @@ module.exports = function (grunt) {
 
     grunt.registerTask('generate', ['prompt:scriptGen', 'generateSchemaFiles']);
     grunt.registerTask('configure', ['prompt:database', 'saveDbConfig']);
-    grunt.registerTask('build', ['shell', 'typescript']);
+    grunt.registerTask('build', ['shell:tsd', 'typescript', 'file_append', 'shell:link']);
     grunt.registerTask('default', ['checkForDbConfig', 'build']);
 };
