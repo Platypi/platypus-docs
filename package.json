@@ -1,30 +1,34 @@
 {
-    "name": "Platypus-Docs",
-    "description": "Document generation tool for TypeScript projects.",
-    "author": "Donald Jones <donald@getplatypi.com>",
-    "homepage":  "http://getplatypi.com",
-    "version": "0.1.7",
-    "main": "plat-docs.js",
-    "scripts":  {
-        "prepublish": "./node_modules/.bin/grunt"
-    },
-    "dependencies": {
-        "mysql":  "latest",
-        "es6-promise":  "latest",
-        "comment-parser": "git+https://github.com/pwdonald/comment-parser.git",
-        "simple-progress-bar": "latest"
-    },
-    "devDependencies":  {
-        "grunt": "latest",
-        "grunt-cli":  "latest",
-        "grunt-typescript": "latest",
-        "grunt-shell":  "latest",
-        "grunt-prompt": "latest",
-        "grunt-replace": "latest",
-        "tsd": "latest"
-    },
-    "repository":  {
-        "type":  "git",
-        "url":  "git+https://github.com/Platypi/platypus-docs.git"
-    }
+  "name": "Platypus-Docs",
+  "description": "Document generation tool for TypeScript projects.",
+  "author": "Donald Jones <donald@getplatypi.com>",
+  "homepage": "http://getplatypi.com",
+  "version": "0.1.7",
+  "main": "plat-docs.js",
+  "bin": {
+    "plat-docs": "./platypus-docs/plat-docs.js"
+  },
+  "scripts": {
+    "prepublish": "./node_modules/.bin/grunt"
+  },
+  "dependencies": {
+    "mysql": "latest",
+    "es6-promise": "latest",
+    "comment-parser": "git+https://github.com/pwdonald/comment-parser.git",
+    "simple-progress-bar": "latest"
+  },
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-cli": "latest",
+    "grunt-file-append": "0.0.5",
+    "grunt-prompt": "latest",
+    "grunt-replace": "latest",
+    "grunt-shell": "latest",
+    "grunt-typescript": "latest",
+    "tsd": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Platypi/platypus-docs.git"
+  }
 }
