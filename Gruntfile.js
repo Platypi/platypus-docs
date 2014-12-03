@@ -16,19 +16,11 @@ module.exports = function (grunt) {
                             choices: [
                                 {
                                     value: {
-                                        host: 'us-cdbr-azure-east-a.cloudapp.net',
+                                        host: 'localhost',
                                         dbName: 'platypiwebdev',
-                                        user: 'b091fc43c1a652'
+                                        user: 'root'
                                     },
-                                    name: 'DEV'
-                                },
-                                {
-                                    value: {
-                                        host: 'us-cdbr-azure-east-a.cloudapp.net',
-                                        dbName: 'platypiweb',
-                                        user: 'b41c2115ab2d1a'
-                                    },
-                                    name: 'PRODUCTION'
+                                    name: 'LOCAL'
                                 },
                                 {
                                     value: 'custom',
@@ -60,7 +52,8 @@ module.exports = function (grunt) {
                         {
                             config: 'server.password',
                             type: 'password',
-                            message: 'Password:'
+                            message: 'Password:',
+                            default: ''
                         }
                     ]
                 }
