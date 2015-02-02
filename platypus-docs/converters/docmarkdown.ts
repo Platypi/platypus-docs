@@ -34,9 +34,9 @@ var linkToMarkup = (content: string, baseURI: string): string => {
         if (keyCount > 0) {
             if (node && node.id) {
                 // build path using id/kind/name
-                var path: string = baseURI + node.id + '/' + node.kind + '/' + node.name_;
-
-                return '[' + linkValue + '](' + path + ')';
+                return `<plat-link plat-options="{ view: '${baseURI}${node.id}/${node.kind}/${node.name_}', isUrl: true }">
+                            ${linkValue}
+                        </plat-link>`;
             } else {
                 if (globals.debug) {
                     console.log(qualifiedPath + ' not found');
