@@ -36,17 +36,17 @@ var linkToMarkup = (content: string, baseURI: string): string => {
                 // build path using id/kind/name
                 return `<plat-link plat-options="{ view: '${baseURI}${node.id}/${node.kind}/${node.name_}', isUrl: true }">
                             ${linkValue}
-                        </plat-link>`;
+                         </plat-link>`;
             } else {
                 if (globals.debug) {
                     console.log(qualifiedPath + ' not found');
                 }
 
-                return value;
+                return linkValue;
             }
         } else {
             console.log('namehash is empty');
-            return value;
+            return linkValue;
         }
 
     });

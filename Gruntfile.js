@@ -184,6 +184,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('generate', ['prompt:scriptGen', 'generateSchemaFiles']);
     grunt.registerTask('configure', ['prompt:database', 'saveDbConfig']);
-    grunt.registerTask('build', ['shell:tsd', 'typescript', 'file_append', 'shell:link']);
+    grunt.registerTask('build', ['shell:tsd', 'typescript', 'file_append']);
+    grunt.registerTask('link', ['shell:link']);
     grunt.registerTask('default', ['checkForDbConfig', 'build']);
 };

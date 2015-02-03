@@ -4,6 +4,7 @@
 import utils = require('../../../utils/utils');
 import PromiseStatic = require('es6-promise');
 import pool = require('../connection');
+import mysql = require('mysql');
 
 var Promise = PromiseStatic.Promise;
 
@@ -22,6 +23,7 @@ class BaseProcedures<T extends INode> {
                 connection.query(sql, (err: any, response: Array<any>) => {
                     connection.release();
                     if (utils.isObject(err)) {
+                        console.log('Error on sql: ' + sql);
                         return reject(err);
                     }
 
