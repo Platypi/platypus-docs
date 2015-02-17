@@ -104,7 +104,7 @@ var saveAndTraverse = (node: INode, kind: string): Thenable<any> => {
                             return;
                         }
 
-                        if (child && child.kind && !child.saved && !child.id) {
+                        if (child && child.kind && !child.saved && !child.id_) {
                             fn = saveAndTraverse.bind(null, child, child.kind);
                             if (child.kind === 'namespace') {
                                 namespaces.push(fn);
@@ -202,7 +202,7 @@ var submitNode = (node: INode): Thenable<any> => {
                         if (globals.debug) {
                             console.log(node.name_);
                             console.log((<any>node).parentString);
-                            console.log((<any>node).extends.id);
+                            console.log((<any>node).extends.id_);
                         }
                         throw err;
                     }).then((id) => {
@@ -236,7 +236,7 @@ var submitNode = (node: INode): Thenable<any> => {
 var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedures.ApiProcedures<any>): Thenable<any> => {
     if (utils.isObject(procedure) && utils.isFunction(procedure.create)) {
 
-        if (utils.isNull(node.id)) {
+        if (utils.isNull(node.id_)) {
             if (globals.debug) {
                 console.log('Node: ' + node.name_ + ' has no id.');
             }
@@ -244,7 +244,7 @@ var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedu
             return;
         }
 
-        if (utils.isNull(extendedNode.id)) {
+        if (utils.isNull(extendedNode.id_)) {
             if (globals.debug) {
                 console.log('Extended node: ' + extendedNode.name_ + ' has no id.');
             }
@@ -253,8 +253,8 @@ var ParentToChildNode = (node: INode, extendedNode: INode, procedure: apiprocedu
         }
 
         var saveObj = {
-            id: <number>node.id,
-            extendedId: <number>extendedNode.id
+            id_: <number>node.id_,
+            extendedId: <number>extendedNode.id_
         };
         return procedure.create(saveObj);
     }
@@ -318,7 +318,7 @@ var resolveParameters = (): Thenable<any> => {
 
 
 var linkToMarkdown = (node: INode, procedure: apiprocedures.ApiProcedures<INode>): Thenable<any> => {
-    if (node.id && node.id > 0) {
+    if (node.id_ && node.id_ > 0) {
         // add links to remarks & description
         if (node.description_) {
             node.description_ = markdown(node.description_, globals.linkBase);

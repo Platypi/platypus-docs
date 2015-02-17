@@ -74,8 +74,8 @@ class BaseProcedures<T extends INode> {
             return Promise.resolve(null);
         }
         return this.callProcedure('Insert' + this.procedure, this.getArgs(obj)).then((results) => {
-            obj.id = results[0][0].id;
-            return obj.id;
+            obj.id_ = results[0][0].id;
+            return obj.id_;
         });
     }
 
@@ -87,7 +87,7 @@ class BaseProcedures<T extends INode> {
         if (!utils.isObject(obj)) {
             return Promise.resolve(null);
         }
-        return this.callProcedure('Update' + this.procedure, [obj.id].concat(this.getArgs(obj)));
+        return this.callProcedure('Update' + this.procedure, [obj.id_].concat(this.getArgs(obj)));
     }
 
     destroy(id: number): Thenable<T> {

@@ -32,9 +32,9 @@ var linkToMarkup = (content: string, baseURI: string): string => {
         }
 
         if (keyCount > 0) {
-            if (node && node.id) {
+            if (node && node.id_) {
                 // build path using id/kind/name
-                return `<plat-link plat-options="{ view: '${baseURI}${node.id}/${node.kind}/${node.name_}', isUrl: true }">
+                return `<plat-link plat-options="{ view: '${baseURI}${node.id_}/${node.kind}/${node.name_}', isUrl: true }">
                             ${linkValue}
                          </plat-link>`;
             } else {

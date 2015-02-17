@@ -20,13 +20,13 @@ class MethodProcedures extends base.ApiProcedures<any> {
 
         switch (parent.kind) {
             case 'namespace':
-                namespaceid = parent.id;
+                namespaceid = parent.id_;
                 break;
             case 'class':
-                classid = parent.id;
+                classid = parent.id_;
                 break;
             case 'interface':
-                interfaceid = parent.id;
+                interfaceid = parent.id_;
                 break;
         }
 
@@ -44,10 +44,10 @@ class MethodProcedures extends base.ApiProcedures<any> {
             false, // method.static,
             null, // method.returntype,
             method.returntypedesc,
-            (method.returntypemethod ? method.returntypemethod.id : null),
-            (method.returntypeinterface ? method.returntypeinterface.id : null),
-            (method.returntypeclass ? method.returntypeclass.id : null),
-            (method.returntypenamespace ? method.returntypenamespace.id : null),
+            (method.returntypemethod ? method.returntypemethod.id_ : null),
+            (method.returntypeinterface ? method.returntypeinterface.id_ : null),
+            (method.returntypeclass ? method.returntypeclass.id_ : null),
+            (method.returntypenamespace ? method.returntypenamespace.id_ : null),
             method.overrides,
             method.optional,
             false,

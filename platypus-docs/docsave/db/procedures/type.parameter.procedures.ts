@@ -14,11 +14,11 @@ class TypeParameterProcedures extends base.ApiProcedures<any> {
         }
 
         return [
-            (parameter.interface ? parameter.interface.id : null),
-            (parameter.class ? parameter.class.id : null),
-            (parameter.method ? parameter.method.id : null),
-            (parameter.classtype ? parameter.classtype.id : null),
-            (parameter.interfacetype ? parameter.interfacetype.id : null),
+            (parameter.interface ? parameter.interface.id_ : null),
+            (parameter.class ? parameter.class.id_ : null),
+            (parameter.method ? parameter.method.id_ : null),
+            (parameter.classtype ? parameter.classtype.id_ : null),
+            (parameter.interfacetype ? parameter.interfacetype.id_ : null),
             parameter.name_,
             parameter.description_,
             parameter.porder

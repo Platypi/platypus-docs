@@ -14,7 +14,7 @@ class InterfaceInterfaceProcedures extends base.ApiProcedures<any> {
         }
 
         var toRtn = [
-            Number(i.id),
+            Number(i.id_),
             Number(i.extendedId)
         ];
         

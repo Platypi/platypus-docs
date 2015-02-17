@@ -24,13 +24,13 @@ class PropertyProcedures extends base.ApiProcedures<any> {
 
         switch (parent.kind) {
             case 'namespace':
-                namespaceid = parent.id;
+                namespaceid = parent.id_;
                 break;
             case 'class':
-                classid = parent.id;
+                classid = parent.id_;
                 break;
             case 'interface':
-                interfaceid = parent.id;
+                interfaceid = parent.id_;
                 break;
         }
         return [
@@ -39,9 +39,9 @@ class PropertyProcedures extends base.ApiProcedures<any> {
             interfaceid,
             property.name_,
             property.type,
-            null, // property.classtype.id,
-            null, // property.interfacetype.id,
-            null, // property.methodtype.id,
+            null, // property.classtype.id_,
+            null, // property.interfacetype.id_,
+            null, // property.methodtype.id_,
             property.description_,
             property.remarks,
             property.visibility,

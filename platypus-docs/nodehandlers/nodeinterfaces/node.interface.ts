@@ -9,7 +9,7 @@ interface INode {
     memberof?: string;
     parent_?: INode;
     visibility?: string;
-    id?: number;
+    id_?: number;
     saved?: boolean;
     typeparameters?: {};
     remarks?: string;

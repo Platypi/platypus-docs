@@ -11,6 +11,11 @@ var generator = new docgen.DocGen.DocGenerator(),
 // get command line arguments if any, otherwise revert to default values
 globals.filename = (process.argv[2] ? process.argv[2] : globals.filename);
 globals.linkBase = (process.argv[3] ? process.argv[3] : globals.linkBase);
+
+if (globals.linkBase[globals.linkBase.length - 1] !== '/') {
+    globals.linkBase += '/';
+}
+
 globals.versionNumber = (process.argv[4] ? process.argv[4] : globals.versionNumber);
 globals.debug = (process.argv[5] && process.argv[5].indexOf('true') > 0 ? true : false);
 

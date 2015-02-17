@@ -18,8 +18,8 @@ class ClassProcedures extends base.ApiProcedures<any> {
         }
 
         return [
-            (c.extends ? c.extends.id : null),
-            (c.namespace ? c.namespace.id : null),
+            (c.extends ? c.extends.id_ : null),
+            (c.namespace ? c.namespace.id_ : null),
             c.name_,
             c.description_,
             c.example,

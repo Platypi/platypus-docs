@@ -82,7 +82,7 @@ export class ApiProcedures<T extends INode> extends BaseProcedures<T> {
 
     static joinChildren(obj: any, children: Array<any>, childType: string) {
         var doctype = obj.doctype,
-            id = obj.id,
+            id = obj.id_,
             length = children.length,
             child: any,
             array: Array<any> = [],
